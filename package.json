@@ -1,0 +1,35 @@
+{
+	"name": "easy_resume",
+	"version": "0.1.0",
+	"private": true,
+	"scripts": {
+		"dev": "next dev",
+		"build": "next build",
+		"start": "next start",
+		"format": "biome check --write ./src",
+		"check": "biome check .",
+		"lint": "biome lint ."
+	},
+	"dependencies": {
+		"next": "16.0.5",
+		"react": "19.2.0",
+		"react-dom": "19.2.0"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^2.3.8",
+		"@tailwindcss/postcss": "^4",
+		"@types/node": "^20",
+		"@types/react": "^19",
+		"@types/react-dom": "^19",
+		"babel-plugin-react-compiler": "1.0.0",
+		"eslint": "^9",
+		"eslint-config-next": "16.0.5",
+		"tailwindcss": "^4",
+		"typescript": "^5"
+	},
+	"lint-staged": {
+		"**.{ts,tsx,json}": [
+			"biome check --write --no-errors-on-unmatched"
+		]
+	}
+}
