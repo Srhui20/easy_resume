@@ -1,5 +1,5 @@
 import Image from "next/image";
-
+import { getData } from "../index";
 const a = 1;
 
 const b = 1;
