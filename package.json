@@ -24,8 +24,14 @@
 		"babel-plugin-react-compiler": "1.0.0",
 		"eslint": "^9",
 		"eslint-config-next": "16.0.5",
+		"lint-staged": "^16.2.7",
+		"simple-git-hooks": "^2.13.1",
 		"tailwindcss": "^4",
 		"typescript": "^5"
+	},
+	"simple-git-hooks": {
+		"commit-msg": "npx --no-install commitlint -e",
+		"pre-commit": "npx lint-staged"
 	},
 	"lint-staged": {
 		"**.{ts,tsx,json}": [
