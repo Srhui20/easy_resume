@@ -10,65 +10,77 @@
       }
     }
   },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
+    }
+  },
   "files": {
-    "includes": ["**", "!package.json", "!.release-it.ts"]
+    "includes": ["**", "!package.json", "!node_modules", "!public", "!dist"]
   },
   "formatter": {
     "formatWithErrors": true,
+    "includes": ["**", "!package.json", "!node_modules", "!public", "!dist"],
     "indentStyle": "space"
   },
   "linter": {
     "enabled": true,
-    "includes": ["**", "!package.json"],
+    "includes": ["**", "!package.json", "!node_modules", "!public", "!dist"],
     "rules": {
-      "a11y": {
-        "noStaticElementInteractions": "off",
-        "useAltText": "off",
-        "useKeyWithClickEvents": "off",
-        "useMediaCaption": "off"
-      },
       "correctness": {
         "noUnusedImports": {
           "fix": "safe",
-          "level": "error",
-          "options": {}
+          "level": "error"
         },
-        "noUnusedVariables": "error",
-        "useExhaustiveDependencies": "off"
+        "noUnusedVariables": "error"
       },
       "nursery": {
         "useSortedClasses": {
           "fix": "safe",
-          "level": "error",
-          "options": {}
+          "level": "error"
         }
       },
       "recommended": true,
-      "security": {
-        "noDangerouslySetInnerHtml": "off"
-      },
       "style": {
-        "noNonNullAssertion": "off",
         "noUnusedTemplateLiteral": {
           "fix": "safe",
-          "level": "error",
-          "options": {}
+          "level": "error"
         },
         "useSelfClosingElements": {
           "fix": "safe",
-          "level": "error",
-          "options": {}
+          "level": "error"
         },
         "useTemplate": {
           "fix": "safe",
-          "level": "error",
-          "options": {}
+          "level": "error"
         }
       },
       "suspicious": {
         "noConsole": "error",
-        "noExplicitAny": "off"
+        "noUnknownAtRules": {
+          "level": "off",
+          "options": {
+            "ignore": ["theme"]
+          }
+        }
       }
     }
-  }
+  },
+  "overrides": [
+    {
+      "includes": ["src/app/globals.css"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noUnknownAtRules": {
+              "level": "off",
+              "options": {
+                "ignore": ["theme"]
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
 }
