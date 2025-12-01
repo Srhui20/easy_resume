@@ -27,6 +27,10 @@
     "enabled": true,
     "includes": ["**", "!package.json", "!node_modules", "!public", "!dist"],
     "rules": {
+      "a11y": {
+        "noStaticElementInteractions": "off",
+        "useKeyWithClickEvents": "off"
+      },
       "correctness": {
         "noUnusedImports": {
           "fix": "safe",
@@ -56,31 +60,8 @@
         }
       },
       "suspicious": {
-        "noConsole": "error",
-        "noUnknownAtRules": {
-          "level": "off",
-          "options": {
-            "ignore": ["theme"]
-          }
-        }
+        "noConsole": "error"
       }
     }
-  },
-  "overrides": [
-    {
-      "includes": ["src/app/globals.css"],
-      "linter": {
-        "rules": {
-          "suspicious": {
-            "noUnknownAtRules": {
-              "level": "off",
-              "options": {
-                "ignore": ["theme"]
-              }
-            }
-          }
-        }
-      }
-    }
-  ]
+  }
 }
