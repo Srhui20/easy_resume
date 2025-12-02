@@ -5,7 +5,7 @@ export function useZoom() {
 
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
-      if (!e.ctrlKey) return;
+      if (!e.ctrlKey && !e.metaKey) return;
       e.preventDefault();
       const delta = e.deltaY < 0 ? 0.1 : -0.1;
       setScale((prev) => {
@@ -34,18 +34,16 @@ export function useMousePosition() {
     //   (moveElement.scrollHeight - moveElement.clientHeight) / 2;
 
     const handleMouseDown = (e: MouseEvent) => {
-      // 只处理鼠标中键（button === 1）
       if (e.button !== 1) return;
-
       e.preventDefault();
       isDragging.current = true;
-      document.body.style.cursor = "grabbing";
     };
 
     const handleMouseMove = (e: MouseEvent) => {
       if (!isDragging.current) return;
       moveElement.scrollTop = moveElement.scrollTop - e.movementY;
       moveElement.scrollLeft = moveElement.scrollLeft - e.movementX;
+      document.body.style.cursor = "grabbing";
     };
 
     const handleMouseUp = (e: MouseEvent) => {
@@ -63,6 +61,34 @@ export function useMousePosition() {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
     };
+  });
+
+  useEffect(() => {
+    const moveElement = moveRef.current;
+    if (!moveElement) return;
+    const handleMouseDown = (e: MouseEvent) => {
+      // 只有 Ctrl + 左键 才能拖动
+      if (e.button !== 0 || (!e.ctrlKey && !e.metaKey)) return;
+      e.preventDefault();
+      isDragging.current = true;
+    };
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isDragging.current) return;
+      moveElement.scrollTop -= e.movementY;
+      moveElement.scrollLeft -= e.movementX;
+      document.body.style.cursor = "grabbing";
+    };
+
+    const handleMouseUp = () => {
+      if (!isDragging.current) return;
+      isDragging.current = false;
+      document.body.style.cursor = "default";
+    };
+
+    moveElement.addEventListener("mousedown", handleMouseDown);
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
   });
 
   return {
