@@ -30,8 +30,8 @@ export function useMousePosition() {
     const moveElement = moveRef.current;
     if (!moveElement) return;
 
-    moveElement.scrollLeft =
-      (moveElement.scrollHeight - moveElement.clientHeight) / 2;
+    // moveElement.scrollLeft =
+    //   (moveElement.scrollHeight - moveElement.clientHeight) / 2;
 
     const handleMouseDown = (e: MouseEvent) => {
       // 只处理鼠标中键（button === 1）
