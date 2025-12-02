@@ -1,21 +1,46 @@
-import { useState } from "react";
+import { type CSSProperties, useState } from "react";
+import resumeStyle1 from "@/lib//resume_sytle/resume1";
 import { useMousePosition, useZoom } from "@/lib/userMouseHook";
 import styles from "./index.module.scss";
+
+type PAGE_ATTRIBUTE = {
+  className: string;
+  id: string;
+  pageLabel: string;
+  style: CSSProperties;
+};
+type RESUME_TYPE = {
+  page: number;
+  pageAttributes: PAGE_ATTRIBUTE[];
+};
 
 export default function MainContainer() {
   const { scale } = useZoom();
   const { moveRef } = useMousePosition();
 
-  const [dataList] = useState([
-    { page: 1 },
-    { page: 2 },
-    { page: 3 },
-    { page: 4 },
-  ]);
+  const [dataList, setDataList] = useState<RESUME_TYPE[]>(resumeStyle1);
 
-  const chooseDom = (e: React.MouseEvent<HTMLDivElement>) => {
-    const element = e.target as HTMLElement;
-    element.style.border = "1px dashed red";
+  const setPageAttributeBorder = (attr: PAGE_ATTRIBUTE) => {
+    setDataList((prevArr) => {
+      return prevArr.map((page) => {
+        return {
+          ...page,
+          pageAttributes: page.pageAttributes.map((mapAttr) => {
+            let className = mapAttr.className;
+            if (className.includes(" choose_label")) {
+              className = className.replace(" choose_label", "");
+            }
+            if (attr.id === mapAttr.id) {
+              className += " choose_label";
+            }
+            return {
+              ...mapAttr,
+              className,
+            };
+          }),
+        };
+      });
+    });
   };
 
   return (
@@ -41,50 +66,16 @@ export default function MainContainer() {
                 key={item.page}
                 style={{ fontSize: "20px" }}
               >
-                <div
-                  className="absolute"
-                  style={{ fontSize: "34px", left: "40px", top: "40px" }}
-                >
-                  张三
-                </div>
-                <div
-                  className="absolute"
-                  onClick={($e) => chooseDom($e)}
-                  style={{ fontSize: "16px", left: "40px", top: "120px" }}
-                >
-                  电话: 13333333333
-                </div>
-                <div
-                  className="absolute"
-                  style={{ fontSize: "16px", left: "300px", top: "120px" }}
-                >
-                  年龄: 28岁
-                </div>
-                <div
-                  className="absolute"
-                  style={{ fontSize: "16px", left: "500px", top: "120px" }}
-                >
-                  性别: 男
-                </div>
-
-                <div
-                  className="absolute"
-                  style={{ fontSize: "16px", left: "40px", top: "150px" }}
-                >
-                  邮箱: 13333333333@qq.com
-                </div>
-                <div
-                  className="absolute"
-                  style={{ fontSize: "16px", left: "300px", top: "150px" }}
-                >
-                  地址: 某某省某某市
-                </div>
-                <div
-                  className="absolute"
-                  style={{ fontSize: "16px", left: "500px", top: "150px" }}
-                >
-                  工作经验: 三年
-                </div>
+                {item.pageAttributes.map((attr) => (
+                  <div
+                    className={attr.className}
+                    key={attr.id}
+                    onClick={() => setPageAttributeBorder(attr)}
+                    style={attr.style}
+                  >
+                    {attr.pageLabel}
+                  </div>
+                ))}
               </div>
             ))}
           </div>

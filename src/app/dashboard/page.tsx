@@ -3,10 +3,14 @@
 import {
   DownloadOutlined,
   ExportOutlined,
+  FileAddOutlined,
+  FileExcelOutlined,
   ImportOutlined,
+  RedoOutlined,
   SaveOutlined,
+  UndoOutlined,
 } from "@ant-design/icons";
-import { Button, message } from "antd";
+import { Button, message, Tooltip } from "antd";
 import LeftInfo from "./components/LeftInfo";
 import MainContainer from "./components/MainContainer";
 import RightInfo from "./components/RightInfo";
@@ -17,37 +21,75 @@ interface BtnType {
   icon: React.ReactNode;
   label: string;
   handleFunc: () => void;
+  isTip: boolean;
 }
 export default function Dashboard() {
   const [messageApi] = message.useMessage();
   const btnList: BtnType[] = [
     {
-      handleFunc: () => handleDownload(),
-      icon: <DownloadOutlined />,
-      key: "download",
-      label: "下载为pdf",
-      type: "primary",
-    },
-    {
       handleFunc: () => {},
       icon: <SaveOutlined />,
+      isTip: true,
       key: "save",
       label: "保存",
       type: "default",
     },
     {
       handleFunc: () => {},
-      icon: <ExportOutlined />,
-      key: "export",
-      label: "导出文件",
+      icon: <UndoOutlined />,
+      isTip: true,
+      key: "undo",
+      label: "撤销",
+      type: "default",
+    },
+    {
+      handleFunc: () => {},
+      icon: <RedoOutlined />,
+      isTip: true,
+      key: "redo",
+      label: "重做",
+      type: "default",
+    },
+    {
+      handleFunc: () => {},
+      icon: <FileAddOutlined />,
+      isTip: true,
+      key: "add",
+      label: "加一页",
+      type: "default",
+    },
+    {
+      handleFunc: () => {},
+      icon: <FileExcelOutlined />,
+      isTip: true,
+      key: "delete",
+      label: "删掉最后一页",
       type: "default",
     },
     {
       handleFunc: () => {},
       icon: <ImportOutlined />,
+      isTip: true,
       key: "import",
       label: "导入文件 ",
       type: "default",
+    },
+    {
+      handleFunc: () => {},
+      icon: <ExportOutlined />,
+      isTip: true,
+      key: "export",
+      label: "导出文件",
+      type: "default",
+    },
+
+    {
+      handleFunc: () => handleDownload(),
+      icon: <DownloadOutlined />,
+      isTip: false,
+      key: "download",
+      label: "下载为pdf",
+      type: "primary",
     },
   ];
 
@@ -87,14 +129,25 @@ export default function Dashboard() {
         </div>
         <div className="flex gap-3">
           {btnList.map((btn) => (
-            <Button
-              icon={btn.icon}
-              key={btn.key}
-              onClick={() => btn.handleFunc()}
-              type={btn.type}
-            >
-              {btn.label}
-            </Button>
+            <div key={btn.key}>
+              {!btn.isTip ? (
+                <Button
+                  icon={btn.icon}
+                  onClick={() => btn.handleFunc()}
+                  type={btn.type}
+                >
+                  {btn.label}
+                </Button>
+              ) : (
+                <Tooltip placement="top" title={btn.label}>
+                  <Button
+                    icon={btn.icon}
+                    onClick={() => btn.handleFunc()}
+                    type={btn.type}
+                  />
+                </Tooltip>
+              )}
+            </div>
           ))}
         </div>
       </div>

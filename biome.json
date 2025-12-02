@@ -31,6 +31,9 @@
         "noStaticElementInteractions": "off",
         "useKeyWithClickEvents": "off"
       },
+      "complexity": {
+        "noImportantStyles": "off"
+      },
       "correctness": {
         "noUnusedImports": {
           "fix": "safe",
