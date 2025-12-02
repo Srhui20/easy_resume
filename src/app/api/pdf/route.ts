@@ -1,5 +1,5 @@
-import { type NextRequest, NextResponse } from "next/server";
 import chromium from "@sparticuz/chromium";
+import { type NextRequest, NextResponse } from "next/server";
 import puppeteer from "puppeteer";
 import puppeteerCore from "puppeteer-core";
 
@@ -20,15 +20,15 @@ export async function getBrowser() {
   if (isLinuxServer) {
     // 运行在 Linux 服务器（比如宝塔、ECS）
     return puppeteer.launch({
-      headless: true,
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      headless: true,
     });
   }
 
   // 本地开发
   return puppeteer.launch({
-    headless: true,
     args: [],
+    headless: true,
   });
 }
 
@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
         </head>
         <body>${html}</body>
       </html>`,
-      { waitUntil: "networkidle0" }
+      { waitUntil: "networkidle0" },
     );
 
     // 生成 PDF
