@@ -207,9 +207,6 @@ export const usePublicStore = create<PublicState>((set) => ({
               let className = mapAttr.className;
               const style = { ...mapAttr.style };
 
-              /**
-               * 鼠标抬起事件和点击事件重复了，导致元素a移动到元素b上面后重新移动a就没反应
-               */
               if (style?.zIndex) {
                 style.zIndex = 0;
               }
@@ -221,6 +218,7 @@ export const usePublicStore = create<PublicState>((set) => ({
                 state.pageId = page.page;
                 state.attributeIndex = index;
                 className += " choose_label";
+                style.zIndex = 99;
               }
 
               return {
