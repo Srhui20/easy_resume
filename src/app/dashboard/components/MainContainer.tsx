@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import resumeStyle1 from "@/lib//resume_sytle/resume1";
 import { usePublicStore } from "@/lib/store/public";
 import { useMousePosition, useZoom } from "@/lib/userMouseHook";
@@ -7,6 +7,8 @@ import styles from "./index.module.scss";
 export default function MainContainer() {
   const { scale } = useZoom();
   const { moveRef } = useMousePosition();
+
+  const printContainerRef = useRef<HTMLDivElement>(null);
 
   const {
     resumeData,
@@ -23,6 +25,19 @@ export default function MainContainer() {
   useEffect(() => {
     setResumeData(resumeStyle1);
   }, [setResumeData]);
+
+  useEffect(() => {
+    if (!isMoving && printContainerRef.current) {
+      const allNodes = printContainerRef.current.querySelectorAll("*");
+      allNodes.forEach((node) => {
+        Array.from(node.classList).forEach((cls) => {
+          if (cls.includes("align_label")) {
+            node.classList.remove(cls);
+          }
+        });
+      });
+    }
+  }, [isMoving]);
 
   const [position, setPosition] = useState({
     x: 0,
@@ -83,6 +98,7 @@ export default function MainContainer() {
           <div
             className={`flex flex-col gap-[10] ${styles.print_container}`}
             id="print-container"
+            ref={printContainerRef}
             style={{
               transform: `scale(${scale})`,
             }}

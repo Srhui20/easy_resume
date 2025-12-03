@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
         </head>
         <body>${html}</body>
       </html>`,
-      { waitUntil: "networkidle0" }
+      { waitUntil: "networkidle0" },
     );
 
     // 生成 PDF

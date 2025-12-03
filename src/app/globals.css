@@ -3,6 +3,11 @@
 .choose_label {
   border: 1px dashed red !important;
 }
+
+.align_label {
+  border: 1px dashed red !important;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
