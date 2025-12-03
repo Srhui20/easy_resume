@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 
-export function useZoom() {
+export function useMouseOpeartion() {
+  const moveRef = useRef<HTMLDivElement>(null);
+  const isDragging = useRef(false);
+
   const [scale, setScale] = useState(1);
 
   useEffect(() => {
@@ -19,13 +22,6 @@ export function useZoom() {
     return () => document.body.removeEventListener("wheel", handleWheel);
   }, []);
 
-  return { scale };
-}
-
-export function useMousePosition() {
-  const moveRef = useRef<HTMLDivElement>(null);
-  const isDragging = useRef(false);
-
   useEffect(() => {
     const moveElement = moveRef.current;
     if (!moveElement) return;
@@ -34,53 +30,32 @@ export function useMousePosition() {
     //   (moveElement.scrollHeight - moveElement.clientHeight) / 2;
 
     const handleMouseDown = (e: MouseEvent) => {
-      if (e.button !== 1) return;
-      e.preventDefault();
-      isDragging.current = true;
+      if (e.button === 1) {
+        // 中键拖动
+        e.preventDefault();
+        isDragging.current = true;
+      } else if (e.button === 0 && (e.ctrlKey || e.metaKey)) {
+        // Ctrl/Command + 左键拖动
+        e.preventDefault();
+        isDragging.current = true;
+      }
     };
 
     const handleMouseMove = (e: MouseEvent) => {
       if (!isDragging.current) return;
-      moveElement.scrollTop = moveElement.scrollTop - e.movementY;
-      moveElement.scrollLeft = moveElement.scrollLeft - e.movementX;
+      let i = 1;
+      if (scale > 1) {
+        i = scale / 100;
+      } else {
+        i = scale / 3;
+      }
+      moveElement.scrollTop = moveElement.scrollTop - e.movementY * i;
+      moveElement.scrollLeft = moveElement.scrollLeft - e.movementX * i;
+
       document.body.style.cursor = "grabbing";
     };
 
     const handleMouseUp = (e: MouseEvent) => {
-      if (e.button !== 1) return;
-      isDragging.current = false;
-      document.body.style.cursor = "default";
-    };
-
-    moveElement.addEventListener("mousedown", handleMouseDown);
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("mouseup", handleMouseUp);
-
-    return () => {
-      moveElement.removeEventListener("mousedown", handleMouseDown);
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("mouseup", handleMouseUp);
-    };
-  });
-
-  useEffect(() => {
-    const moveElement = moveRef.current;
-    if (!moveElement) return;
-    const handleMouseDown = (e: MouseEvent) => {
-      // 只有 Ctrl + 左键 才能拖动
-      if (e.button !== 0 || (!e.ctrlKey && !e.metaKey)) return;
-      e.preventDefault();
-      isDragging.current = true;
-    };
-
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!isDragging.current) return;
-      moveElement.scrollTop -= e.movementY;
-      moveElement.scrollLeft -= e.movementX;
-      document.body.style.cursor = "grabbing";
-    };
-
-    const handleMouseUp = () => {
       if (!isDragging.current) return;
       isDragging.current = false;
       document.body.style.cursor = "default";
@@ -93,5 +68,6 @@ export function useMousePosition() {
 
   return {
     moveRef,
+    scale,
   };
 }

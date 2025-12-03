@@ -1,12 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import resumeStyle1 from "@/lib//resume_sytle/resume1";
 import { usePublicStore } from "@/lib/store/public";
-import { useMousePosition, useZoom } from "@/lib/userMouseHook";
+import { useMouseOpeartion } from "@/lib/userMouseHook";
 import styles from "./index.module.scss";
 
 export default function MainContainer() {
-  const { scale } = useZoom();
-  const { moveRef } = useMousePosition();
+  const { moveRef, scale } = useMouseOpeartion();
   const isFirst = useRef(true);
 
   const printContainerRef = useRef<HTMLDivElement>(null);
@@ -93,7 +92,7 @@ export default function MainContainer() {
       <div className="h-full w-full">
         <div
           className="flex w-[1688px] items-center justify-center bg-red-200"
-          style={{ height: `${1122 * (resumeData.length + 1)}px` }}
+          style={{ height: `${1122 * resumeData.length * scale + 500}px` }}
         >
           <div
             className={`flex flex-col gap-[10] ${styles.print_container}`}
