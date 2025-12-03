@@ -68,7 +68,7 @@ interface PublicState {
     clientY: number,
     attrX: number,
     attrY: number,
-    scale: number
+    scale: number,
   ) => void;
 
   /**
@@ -79,7 +79,7 @@ interface PublicState {
    */
   findAlignAttr: (
     x: number,
-    y: number
+    y: number,
   ) => { alignLeft: number; alignTop: number };
 }
 
@@ -89,7 +89,7 @@ export const usePublicStore = create<PublicState>((set) => ({
     set((state) => {
       const arr = [...state.resumeData];
       const attrs = arr.find(
-        (item) => item.page === state.pageId
+        (item) => item.page === state.pageId,
       ) as RESUME_TYPE;
       attrs.pageAttributes.forEach((item) => {
         if (item.className.includes(" align_label")) {
@@ -112,7 +112,7 @@ export const usePublicStore = create<PublicState>((set) => ({
     set((state) => {
       const arr = [...state.resumeData];
       const attrs = arr.find(
-        (item) => item.page === state.pageId
+        (item) => item.page === state.pageId,
       ) as RESUME_TYPE;
       attrs.pageAttributes.map((item, index) => {
         const { left = "", top = "" } = item.style;
