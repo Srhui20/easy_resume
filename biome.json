@@ -48,6 +48,9 @@
         }
       },
       "recommended": true,
+      "security": {
+        "noDangerouslySetInnerHtml": "off"
+      },
       "style": {
         "noUnusedTemplateLiteral": {
           "fix": "safe",

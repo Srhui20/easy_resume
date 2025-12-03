@@ -53,13 +53,21 @@ interface PublicState {
 
   /**
    * 移动页面元素
-   * @param pid pageId
-   * @param ai attributeIndex
-   * @param stepX 横向移动距离
-   * @param stepY 纵向移动距离
+   * clientX - pageLeft 鼠标在纸里的位置
+   * attrX - attrLeft 鼠标在元素里的位置
+   * @param clientX 鼠标当前距离最左边距离
+   * @param clientY 移动点距离最下边的距离
+   * @param attrX 上一次鼠标在最左边距离
+   * @param attrY 上一次鼠标在最下边距离
    * @returns
    */
-  movePageAttribute: (stepX: number, stepY: number) => void;
+  movePageAttribute: (
+    clientX: number,
+    clientY: number,
+    attrX: number,
+    attrY: number,
+    scale: number,
+  ) => void;
 }
 
 export const usePublicStore = create<PublicState>((set) => ({
@@ -70,22 +78,41 @@ export const usePublicStore = create<PublicState>((set) => ({
       pageId: 0,
     }),
   isMoving: false,
-  movePageAttribute: (stepX, stepY) =>
+  movePageAttribute: (clientX, clientY, attrX, attrY, scale) =>
     set((state) => {
       const { pageId: pid, attributeIndex: ai } = state;
       const arr = [...state.resumeData];
       const attrs = arr.find((item) => item.page === pid) as RESUME_TYPE;
-      const { left = "0px", top = "0px" } = attrs.pageAttributes[ai].style;
-      let leftNum = parseInt(left?.toString(), 10);
-      let topNum = parseInt(top?.toString(), 10);
 
-      if (topNum <= 40) topNum = 40;
-      if (leftNum <= 40) leftNum = 40;
+      const {
+        left: pageLeft = 0,
+        top: pageTop = 0,
+        width: pageWidth,
+        height: pageHeight,
+      } = attrs.ref?.getBoundingClientRect() as DOMRect;
+      const {
+        left: attrLeft = 0,
+        top: attrTop = 0,
+        width: attrWidth,
+        height: attrHeight,
+      } = attrs.pageAttributes[ai].ref?.getBoundingClientRect() as DOMRect;
 
+      /**
+       * clientX - pageLeft 鼠标在纸里的位置
+       * attrX - attrLeft 鼠标在元素里的位置
+       */
+      let left = (clientX - pageLeft - attrX + attrLeft) / scale;
+      let top = (clientY - pageTop - attrY + attrTop) / scale;
+      const maxLeft = (pageWidth - attrWidth) / scale - 40;
+      const maxTop = (pageHeight - attrHeight) / scale - 40;
+      if (left <= 40) left = 40;
+      if (top <= 40) top = 40;
+      if (left >= maxLeft) left = maxLeft;
+      if (top >= maxTop) top = maxTop;
       attrs.pageAttributes[ai].style = {
         ...attrs.pageAttributes[ai].style,
-        left: `${leftNum + stepX}px`,
-        top: `${topNum + stepY}px`,
+        left: `${left}px`,
+        top: `${top}px`,
         zIndex: 99,
       };
 

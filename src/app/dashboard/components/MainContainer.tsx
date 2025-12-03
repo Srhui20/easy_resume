@@ -39,6 +39,7 @@ export default function MainContainer() {
       x: $e.nativeEvent.clientX,
       y: $e.nativeEvent.clientY,
     });
+
     setChooseValue(pid, ai);
     setIsMoving(true);
   };
@@ -47,9 +48,13 @@ export default function MainContainer() {
     $e: React.MouseEvent<HTMLDivElement, MouseEvent>,
   ) => {
     if (!isMoving) return;
-    const stepX = $e.nativeEvent.clientX - position.x;
-    const stepY = $e.nativeEvent.clientY - position.y;
-    movePageAttribute(stepX, stepY);
+    movePageAttribute(
+      $e.nativeEvent.clientX,
+      $e.nativeEvent.clientY,
+      position.x,
+      position.y,
+      scale,
+    );
     setPosition({
       x: $e.nativeEvent.clientX,
       y: $e.nativeEvent.clientY,
@@ -87,20 +92,25 @@ export default function MainContainer() {
                 className={`relative flex h-[1122px] w-[794px] flex-col justify-between overflow-hidden bg-white p-[40px] ${styles.page_container}`}
                 key={page.page}
                 onMouseMove={($e) => moveChooseAttribute($e)}
+                ref={($el) => {
+                  page.ref = $el;
+                }}
                 style={{ fontSize: "20px" }}
               >
                 {page.pageAttributes.map((attr, index) => (
                   <div
                     className={attr.className}
+                    dangerouslySetInnerHTML={{ __html: attr.pageLabel }}
                     key={attr.id}
                     onClick={() => setChooseResumeData(attr.id)}
                     onMouseDown={($e) =>
                       mouseDownAttribute($e, page.page, index)
                     }
+                    ref={($el) => {
+                      attr.ref = $el;
+                    }}
                     style={attr.style}
-                  >
-                    {attr.pageLabel}
-                  </div>
+                  />
                 ))}
               </div>
             ))}
