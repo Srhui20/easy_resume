@@ -7,6 +7,7 @@ import styles from "./index.module.scss";
 export default function MainContainer() {
   const { scale } = useZoom();
   const { moveRef } = useMousePosition();
+  const isFirst = useRef(true);
 
   const printContainerRef = useRef<HTMLDivElement>(null);
 
@@ -18,6 +19,7 @@ export default function MainContainer() {
     movePageAttribute,
     setResumeData,
     setChooseResumeData,
+    clearAlignLabel,
     setIsMoving,
     setChooseValue,
   } = usePublicStore();
@@ -25,19 +27,6 @@ export default function MainContainer() {
   useEffect(() => {
     setResumeData(resumeStyle1);
   }, [setResumeData]);
-
-  useEffect(() => {
-    if (!isMoving && printContainerRef.current) {
-      const allNodes = printContainerRef.current.querySelectorAll("*");
-      allNodes.forEach((node) => {
-        Array.from(node.classList).forEach((cls) => {
-          if (cls.includes("align_label")) {
-            node.classList.remove(cls);
-          }
-        });
-      });
-    }
-  }, [isMoving]);
 
   const [position, setPosition] = useState({
     x: 0,
@@ -54,7 +43,6 @@ export default function MainContainer() {
       x: $e.nativeEvent.clientX,
       y: $e.nativeEvent.clientY,
     });
-
     setChooseValue(pid, ai);
     setIsMoving(true);
   };
@@ -77,12 +65,24 @@ export default function MainContainer() {
   };
 
   const mouseUpAttribute = () => {
+    if (!isMoving) return;
     setIsMoving(false);
     setPosition({
       x: 0,
       y: 0,
     });
   };
+
+  useEffect(() => {
+    // 初始化不执行
+    if (isFirst.current) {
+      isFirst.current = false;
+      return;
+    }
+    if (!isMoving) {
+      clearAlignLabel();
+    }
+  }, [isMoving, clearAlignLabel]);
 
   return (
     <div

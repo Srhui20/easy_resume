@@ -51,6 +51,8 @@ interface PublicState {
    */
   setChooseValue: (pid: number, ai: number) => void;
 
+  clearAlignLabel: () => void;
+
   /**
    * 移动页面元素
    * clientX - pageLeft 鼠标在纸里的位置
@@ -83,6 +85,22 @@ interface PublicState {
 
 export const usePublicStore = create<PublicState>((set) => ({
   attributeIndex: 0,
+  clearAlignLabel: () =>
+    set((state) => {
+      const arr = [...state.resumeData];
+      const attrs = arr.find(
+        (item) => item.page === state.pageId
+      ) as RESUME_TYPE;
+      attrs.pageAttributes.forEach((item) => {
+        if (item.className.includes(" align_label")) {
+          item.className = item.className.replace(/ align_label/g, "");
+        }
+      });
+
+      return {
+        resumeData: arr,
+      };
+    }),
   clearChoose: () =>
     set({
       attributeIndex: 0,
@@ -103,7 +121,7 @@ export const usePublicStore = create<PublicState>((set) => ({
 
         if (index !== state.attributeIndex) {
           if (item.className.includes(" align_label")) {
-            item.className = item.className.replace(" align_label", "");
+            item.className = item.className.replace(/ align_label/g, "");
           }
 
           if (Math.abs(leftInt - x) < 2) {
@@ -189,12 +207,15 @@ export const usePublicStore = create<PublicState>((set) => ({
               let className = mapAttr.className;
               const style = { ...mapAttr.style };
 
+              /**
+               * 鼠标抬起事件和点击事件重复了，导致元素a移动到元素b上面后重新移动a就没反应
+               */
               if (style?.zIndex) {
                 style.zIndex = 0;
               }
 
               if (className.includes(" choose_label")) {
-                className = className.replace(" choose_label", "");
+                className = className.replace(/ choose_label/g, "");
               }
               if (id === mapAttr.id) {
                 state.pageId = page.page;
