@@ -70,17 +70,6 @@ interface PublicState {
     attrY: number,
     scale: number,
   ) => void;
-
-  /**
-   * 找到所有对齐的点位
-   * @param x left点位
-   * @param y top点位
-   * @returns
-   */
-  findAlignAttr: (
-    x: number,
-    y: number,
-  ) => { alignLeft: number; alignTop: number };
 }
 
 export const usePublicStore = create<PublicState>((set) => ({
@@ -106,46 +95,6 @@ export const usePublicStore = create<PublicState>((set) => ({
       attributeIndex: 0,
       pageId: 0,
     }),
-  findAlignAttr: (x, y) => {
-    let alignLeft = 0;
-    let alignTop = 0;
-    set((state) => {
-      const arr = [...state.resumeData];
-      const attrs = arr.find(
-        (item) => item.page === state.pageId,
-      ) as RESUME_TYPE;
-      attrs.pageAttributes.map((item, index) => {
-        const { left = "", top = "" } = item.style;
-        const leftInt = parseInt(left as string, 10);
-        const topInt = parseInt(top as string, 10);
-
-        if (index !== state.attributeIndex) {
-          if (item.className.includes(" align_label")) {
-            item.className = item.className.replace(/ align_label/g, "");
-          }
-
-          if (Math.abs(leftInt - x) < 2) {
-            alignLeft = leftInt;
-            item.className += " align_label";
-          }
-          if (Math.abs(topInt - y) < 2) {
-            alignTop = topInt;
-            item.className += " align_label";
-          }
-        }
-        return {
-          ...item,
-        };
-      });
-
-      return { resumeData: state.resumeData };
-    });
-
-    return {
-      alignLeft,
-      alignTop,
-    };
-  },
   isMoving: false,
   movePageAttribute: (clientX, clientY, attrX, attrY, scale) =>
     set((state) => {
@@ -180,7 +129,32 @@ export const usePublicStore = create<PublicState>((set) => ({
       if (left >= maxLeft) left = maxLeft;
       if (top >= maxTop) top = maxTop;
 
-      const { alignLeft, alignTop } = state.findAlignAttr(left, top);
+      // 计算对齐点位，并在同一次 set 中更新对齐辅助线，避免嵌套调用 set
+      let alignLeft = 0;
+      let alignTop = 0;
+
+      attrs.pageAttributes.forEach((item, index) => {
+        if (index === ai) return;
+
+        const { left: itLeft = "", top: itTop = "" } = item.style;
+        const leftInt = parseInt(itLeft as string, 10);
+        const topInt = parseInt(itTop as string, 10);
+
+        // 清除旧的对齐样式
+        if (item.className.includes(" align_label")) {
+          item.className = item.className.replace(/ align_label/g, "");
+        }
+
+        // 计算新的对齐点
+        if (Math.abs(leftInt - left) < 2) {
+          alignLeft = leftInt;
+          item.className += " align_label";
+        }
+        if (Math.abs(topInt - top) < 2) {
+          alignTop = topInt;
+          item.className += " align_label";
+        }
+      });
 
       left = alignLeft === 0 ? left : alignLeft;
       top = alignTop === 0 ? top : alignTop;

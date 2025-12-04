@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import resumeStyle1 from "@/lib//resume_sytle/resume1";
 import { usePublicStore } from "@/lib/store/public";
 import { useMouseOpeartion } from "@/lib/userMouseHook";
@@ -32,6 +32,10 @@ export default function MainContainer() {
     y: 0,
   });
 
+  // 使用 requestAnimationFrame 合并一帧内多次 move 调用
+  const lastPosRef = useRef<{ clientX: number; clientY: number } | null>(null);
+  const rafIdRef = useRef<number | null>(null);
+
   const mouseDownAttribute = (
     $e: React.MouseEvent<HTMLDivElement, MouseEvent>,
     pid: number,
@@ -46,22 +50,30 @@ export default function MainContainer() {
     setIsMoving(true);
   };
 
-  const moveChooseAttribute = (
-    $e: React.MouseEvent<HTMLDivElement, MouseEvent>,
-  ) => {
-    if (!isMoving) return;
-    movePageAttribute(
-      $e.nativeEvent.clientX,
-      $e.nativeEvent.clientY,
-      position.x,
-      position.y,
-      scale,
-    );
-    setPosition({
-      x: $e.nativeEvent.clientX,
-      y: $e.nativeEvent.clientY,
-    });
-  };
+  const moveChooseAttribute = useCallback(
+    ($e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      if (!isMoving) return;
+
+      const clientX = $e.nativeEvent.clientX;
+      const clientY = $e.nativeEvent.clientY;
+
+      lastPosRef.current = { clientX, clientY };
+      // 一帧内执行一次moveChooseAttribute
+      if (rafIdRef.current == null) {
+        rafIdRef.current = window.requestAnimationFrame(() => {
+          rafIdRef.current = null;
+          if (!lastPosRef.current) return;
+          const { clientX: lx, clientY: ly } = lastPosRef.current;
+          movePageAttribute(lx, ly, position.x, position.y, scale);
+          setPosition({
+            x: lx,
+            y: ly,
+          });
+        });
+      }
+    },
+    [isMoving, movePageAttribute, position.x, position.y, scale],
+  );
 
   const mouseUpAttribute = () => {
     if (!isMoving) return;
@@ -71,6 +83,15 @@ export default function MainContainer() {
       y: 0,
     });
   };
+
+  // 组件卸载时清理未完成的动画帧
+  useEffect(() => {
+    return () => {
+      if (rafIdRef.current != null) {
+        cancelAnimationFrame(rafIdRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     // 初始化不执行
