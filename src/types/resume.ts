@@ -7,6 +7,8 @@ export type PAGE_ATTRIBUTE = {
   pageLabel: string;
   style: CSSProperties;
   ref?: HTMLDivElement | null;
+  type: "baseInfo" | "paragraph";
+  title?: string;
 };
 export type RESUME_TYPE = {
   page: number;

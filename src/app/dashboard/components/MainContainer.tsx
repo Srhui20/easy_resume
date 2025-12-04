@@ -112,21 +112,45 @@ export default function MainContainer() {
                 }}
                 style={{ fontSize: "20px" }}
               >
-                {page.pageAttributes.map((attr, index) => (
-                  <div
-                    className={attr.className}
-                    dangerouslySetInnerHTML={{ __html: attr.pageLabel }}
-                    key={attr.id}
-                    onClick={() => setChooseResumeData(attr.id)}
-                    onMouseDown={($e) =>
-                      mouseDownAttribute($e, page.page, index)
-                    }
-                    ref={($el) => {
-                      attr.ref = $el;
-                    }}
-                    style={attr.style}
-                  />
-                ))}
+                {page.pageAttributes.map((attr, index) => {
+                  return attr.type === "baseInfo" ? (
+                    <div
+                      className={attr.className}
+                      key={attr.id}
+                      onClick={() => setChooseResumeData(attr.id)}
+                      onMouseDown={($e) =>
+                        mouseDownAttribute($e, page.page, index)
+                      }
+                      ref={($el) => {
+                        attr.ref = $el;
+                      }}
+                      style={attr.style}
+                    >
+                      {attr.pageLabel}
+                    </div>
+                  ) : (
+                    <div
+                      className={attr.className}
+                      key={attr.id}
+                      onClick={() => setChooseResumeData(attr.id)}
+                      onMouseDown={($e) =>
+                        mouseDownAttribute($e, page.page, index)
+                      }
+                      ref={($el) => {
+                        attr.ref = $el;
+                      }}
+                      style={attr.style}
+                    >
+                      <div className="flex flex-col">
+                        <div className="w-[714px] font-bold">{attr.title}</div>
+                        <div
+                          className="w-[714px]"
+                          dangerouslySetInnerHTML={{ __html: attr.pageLabel }}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             ))}
           </div>

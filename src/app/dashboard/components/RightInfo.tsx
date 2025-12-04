@@ -1,6 +1,6 @@
 import { Empty } from "antd";
 import { usePublicStore } from "@/lib/store/public";
-import ResumeBaseInfo from "./ResumeBaseInfo";
+import ResumeAttribute from "./ResumeAttribute";
 import ResumeOperation from "./ResumeOperation";
 
 export default function RightInfo() {
@@ -29,7 +29,7 @@ export default function RightInfo() {
               />{" "}
             </div>
           ) : (
-            <ResumeBaseInfo />
+            <ResumeAttribute />
           )}
         </div>
       </div>
