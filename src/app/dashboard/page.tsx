@@ -50,9 +50,7 @@ export default function Dashboard() {
   return (
     <div className="flex h-screen flex-col">
       <div className="flex h-15 items-center justify-between border-gray-300 border-b pr-4 pl-4">
-        <div className="font-bold" onClick={() => handleDownload()}>
-          EASY_RESUME
-        </div>
+        <div className="font-bold">EASY_RESUME</div>
         <div className="flex gap-3">
           {btnList.map((btn) => (
             <Button
