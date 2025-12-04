@@ -10,8 +10,7 @@ import {
   SaveOutlined,
   UndoOutlined,
 } from "@ant-design/icons";
-import { Button, message, Tooltip } from "antd";
-import LeftInfo from "./components/LeftInfo";
+import { Button, message, Splitter, Tooltip } from "antd";
 import MainContainer from "./components/MainContainer";
 import RightInfo from "./components/RightInfo";
 
@@ -152,15 +151,25 @@ export default function Dashboard() {
         </div>
       </div>
       <div className="flex min-h-0 flex-1">
-        <div className="w-100 border-gray-300 border-r">
+        {/* <div className="w-100 border-gray-300 border-r">
           <LeftInfo />
-        </div>
-        <div className="min-w-0 flex-1">
-          <MainContainer />
+        </div> */}
+        <Splitter
+          style={{ boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)", height: "100%" }}
+        >
+          <Splitter.Panel defaultSize="70%" max="70%" min="50%">
+            <MainContainer />
+          </Splitter.Panel>
+          <Splitter.Panel>
+            <RightInfo />
+          </Splitter.Panel>
+        </Splitter>
+        {/* <div className="min-w-0 flex-1">
+         
         </div>
         <div className="w-100 border-gray-300 border-l">
-          <RightInfo />
-        </div>
+         
+        </div> */}
       </div>
     </div>
   );
