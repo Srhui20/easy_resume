@@ -3,7 +3,7 @@ import {
   ItalicOutlined,
   UnderlineOutlined,
 } from "@ant-design/icons";
-import { ColorPicker, Input, InputNumber } from "antd";
+import { ColorPicker, Input, InputNumber, Tooltip } from "antd";
 import { useEffect, useState } from "react";
 import { usePublicStore } from "@/lib/store/public";
 import type { PAGE_ATTRIBUTE } from "@/types/resume";
@@ -123,12 +123,13 @@ export default function ResumeAttribute() {
             <div className="flex-1 text-gray-600">样式</div>
             <div className="flex h-full justify-center gap-[4px] rounded-lg bg-gray-100 p-[3px] pr-[8px] pl-[8px]">
               {fontStylesList.map((item) => (
-                <div
-                  className={`flex w-[36px] cursor-pointer items-center justify-center rounded-lg ${item.isChoose ? "bg-blue-400 text-white" : "hover:bg-gray-300"}`}
-                  key={item.key}
-                >
-                  {item.icon}
-                </div>
+                <Tooltip key={item.key} title={item.label}>
+                  <div
+                    className={`flex w-[36px] cursor-pointer items-center justify-center rounded-lg ${item.isChoose ? "bg-blue-200 text-blue-500" : "hover:bg-gray-300"}`}
+                  >
+                    {item.icon}
+                  </div>
+                </Tooltip>
               ))}
             </div>
           </div>
