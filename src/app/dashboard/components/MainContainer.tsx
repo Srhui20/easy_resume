@@ -91,7 +91,7 @@ export default function MainContainer() {
     >
       <div className="h-full w-full">
         <div
-          className="flex w-[1688px] items-center justify-center bg-red-200"
+          className="flex w-[1688px] items-center justify-center bg-gray-200"
           style={{ height: `${1122 * resumeData.length * scale + 500}px` }}
         >
           <div

@@ -1,87 +1,14 @@
 "use client";
 
-import {
-  DownloadOutlined,
-  ExportOutlined,
-  FileAddOutlined,
-  FileExcelOutlined,
-  ImportOutlined,
-  RedoOutlined,
-  SaveOutlined,
-  UndoOutlined,
-} from "@ant-design/icons";
-import { Button, message, Splitter, Tooltip } from "antd";
+import { DownloadOutlined } from "@ant-design/icons";
+import { Button, message, Splitter } from "antd";
+import type { OperationBtnType } from "@/types/resume";
 import MainContainer from "./components/MainContainer";
 import RightInfo from "./components/RightInfo";
 
-interface BtnType {
-  key: string;
-  type: "default" | "primary" | "dashed" | "text" | "link";
-  icon: React.ReactNode;
-  label: string;
-  handleFunc: () => void;
-  isTip: boolean;
-}
 export default function Dashboard() {
   const [messageApi] = message.useMessage();
-  const btnList: BtnType[] = [
-    {
-      handleFunc: () => {},
-      icon: <SaveOutlined />,
-      isTip: true,
-      key: "save",
-      label: "保存",
-      type: "default",
-    },
-    {
-      handleFunc: () => {},
-      icon: <UndoOutlined />,
-      isTip: true,
-      key: "undo",
-      label: "撤销",
-      type: "default",
-    },
-    {
-      handleFunc: () => {},
-      icon: <RedoOutlined />,
-      isTip: true,
-      key: "redo",
-      label: "重做",
-      type: "default",
-    },
-    {
-      handleFunc: () => {},
-      icon: <FileAddOutlined />,
-      isTip: true,
-      key: "add",
-      label: "加一页",
-      type: "default",
-    },
-    {
-      handleFunc: () => {},
-      icon: <FileExcelOutlined />,
-      isTip: true,
-      key: "delete",
-      label: "删掉最后一页",
-      type: "default",
-    },
-    {
-      handleFunc: () => {},
-      icon: <ImportOutlined />,
-      isTip: true,
-      key: "import",
-      label: "导入文件 ",
-      type: "default",
-    },
-    {
-      handleFunc: () => {},
-      icon: <ExportOutlined />,
-      isTip: true,
-      key: "export",
-      label: "导出文件",
-      type: "default",
-    },
-
+  const btnList: OperationBtnType[] = [
     {
       handleFunc: () => handleDownload(),
       icon: <DownloadOutlined />,
@@ -128,32 +55,18 @@ export default function Dashboard() {
         </div>
         <div className="flex gap-3">
           {btnList.map((btn) => (
-            <div key={btn.key}>
-              {!btn.isTip ? (
-                <Button
-                  icon={btn.icon}
-                  onClick={() => btn.handleFunc()}
-                  type={btn.type}
-                >
-                  {btn.label}
-                </Button>
-              ) : (
-                <Tooltip placement="top" title={btn.label}>
-                  <Button
-                    icon={btn.icon}
-                    onClick={() => btn.handleFunc()}
-                    type={btn.type}
-                  />
-                </Tooltip>
-              )}
-            </div>
+            <Button
+              icon={btn.icon}
+              key={btn.key}
+              onClick={() => btn.handleFunc()}
+              type={btn.type}
+            >
+              {btn.label}
+            </Button>
           ))}
         </div>
       </div>
       <div className="flex min-h-0 flex-1">
-        {/* <div className="w-100 border-gray-300 border-r">
-          <LeftInfo />
-        </div> */}
         <Splitter
           style={{ boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)", height: "100%" }}
         >
@@ -164,12 +77,6 @@ export default function Dashboard() {
             <RightInfo />
           </Splitter.Panel>
         </Splitter>
-        {/* <div className="min-w-0 flex-1">
-         
-        </div>
-        <div className="w-100 border-gray-300 border-l">
-         
-        </div> */}
       </div>
     </div>
   );
