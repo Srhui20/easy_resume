@@ -42,6 +42,10 @@ export default function MainContainer() {
     ai: number,
   ) => {
     if (pid !== pageId || ai !== attributeIndex) return;
+    if ($e.ctrlKey || $e.metaKey) {
+      return;
+    }
+    $e.stopPropagation();
     setPosition({
       x: $e.nativeEvent.clientX,
       y: $e.nativeEvent.clientY,
@@ -53,6 +57,10 @@ export default function MainContainer() {
   const moveChooseAttribute = useCallback(
     ($e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
       if (!isMoving) return;
+      if ($e.ctrlKey || $e.metaKey) {
+        return;
+      }
+      $e.stopPropagation();
 
       const clientX = $e.nativeEvent.clientX;
       const clientY = $e.nativeEvent.clientY;

@@ -43,19 +43,20 @@ export function useMouseOpeartion() {
 
     const handleMouseMove = (e: MouseEvent) => {
       if (!isDragging.current) return;
-      let i = 1;
-      if (scale > 1) {
-        i = scale / 100;
-      } else {
-        i = scale / 3;
-      }
-      moveElement.scrollTop = moveElement.scrollTop - e.movementY * i;
-      moveElement.scrollLeft = moveElement.scrollLeft - e.movementX * i;
+
+      // 根据缩放比例适当调整拖动速度，保证放大后依然可明显拖动
+      const baseSpeed = 1;
+      const factor = 1 / scale; // 放大越大，单位拖动越小，但不会接近 0
+
+      moveElement.scrollTop =
+        moveElement.scrollTop - e.movementY * baseSpeed * factor;
+      moveElement.scrollLeft =
+        moveElement.scrollLeft - e.movementX * baseSpeed * factor;
 
       document.body.style.cursor = "grabbing";
     };
 
-    const handleMouseUp = (e: MouseEvent) => {
+    const handleMouseUp = () => {
       if (!isDragging.current) return;
       isDragging.current = false;
       document.body.style.cursor = "default";
@@ -64,7 +65,14 @@ export function useMouseOpeartion() {
     moveElement.addEventListener("mousedown", handleMouseDown);
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mouseup", handleMouseUp);
-  });
+
+    // 清理函数，避免重复绑定导致拖动越来越快
+    return () => {
+      moveElement.removeEventListener("mousedown", handleMouseDown);
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [scale]);
 
   return {
     moveRef,
