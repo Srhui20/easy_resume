@@ -8,7 +8,7 @@ const resumeStyle1: RESUME_TYPE[] = [
       {
         className: "absolute",
         id: uuidv4(),
-        pageLabel: "张三",
+        pageLabel: "",
         style: { fontSize: "34px", left: "40px", top: "40px" },
         type: "baseInfo",
       },
@@ -60,6 +60,14 @@ const resumeStyle1: RESUME_TYPE[] = [
         pageLabel: `<p> &nbsp; &nbsp; &nbsp; &nbsp;为了统一多个上层业务的交易链路，可以更高效的做到对交易链路的资损防控及异常的统一处理，搭建了订单领域服务，包括但<span style="color: rgb(225, 60, 57);">不限于</span><strong>订单创建</strong>、<strong>订单预支付</strong>、<strong>标记支付</strong>、<strong>订单的交付</strong>、<strong>订单的履约</strong>等功能。商品领域服务的搭建，包括但不限于商品的创建、审核、上下架等功能。以及营销服务的搭建，包括但不限于优惠券、优惠码、限时折扣、订单满减等功能。</p>`,
         style: { fontSize: "16px", left: "40px", top: "200px" },
         title: "技术栈",
+        type: "paragraph",
+      },
+      {
+        className: "absolute",
+        id: uuidv4(),
+        pageLabel: "",
+        style: { fontSize: "16px", left: "40px", top: "380px" },
+        title: "",
         type: "paragraph",
       },
     ],
