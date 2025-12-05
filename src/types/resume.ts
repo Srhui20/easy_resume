@@ -25,3 +25,12 @@ export type OperationBtnType = {
   isTip: boolean;
   color?: ButtonColorType;
 };
+
+export type BaseInfoFontStyleType = {
+  defaultValue: string;
+  icon: React.ReactNode;
+  isChoose: boolean;
+  key: string;
+  label: string;
+  styleKey: string;
+};

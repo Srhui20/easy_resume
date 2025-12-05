@@ -138,7 +138,7 @@ export default function MainContainer() {
                 {page.pageAttributes.map((attr, index) => {
                   return attr.type === "baseInfo" ? (
                     <div
-                      className={attr.className}
+                      className={`${attr.className} ${attr.pageLabel}`}
                       key={attr.id}
                       onClick={() => setChooseResumeData(attr.id)}
                       onMouseDown={($e) =>
@@ -149,7 +149,7 @@ export default function MainContainer() {
                       }}
                       style={attr.style}
                     >
-                      {attr.pageLabel}
+                      {attr.pageLabel || "空"}
                     </div>
                   ) : (
                     <div
@@ -165,10 +165,14 @@ export default function MainContainer() {
                       style={attr.style}
                     >
                       <div className="flex flex-col">
-                        <div className="w-[714px] font-bold">{attr.title}</div>
+                        <div className="w-[714px] font-bold">
+                          {attr.title || "空"}
+                        </div>
                         <div
                           className="w-[714px]"
-                          dangerouslySetInnerHTML={{ __html: attr.pageLabel }}
+                          dangerouslySetInnerHTML={{
+                            __html: attr.pageLabel || "空",
+                          }}
                         />
                       </div>
                     </div>

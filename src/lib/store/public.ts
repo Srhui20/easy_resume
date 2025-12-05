@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { RESUME_TYPE } from "@/types/resume";
+import type { PAGE_ATTRIBUTE, RESUME_TYPE } from "@/types/resume";
 
 interface PublicState {
   /**
@@ -70,6 +70,12 @@ interface PublicState {
     attrY: number,
     scale: number,
   ) => void;
+  /**
+   * 修改里面pageAttributes的值
+   * @param data
+   * @returns
+   */
+  updateResumeData: (data: PAGE_ATTRIBUTE) => void;
 }
 
 export const usePublicStore = create<PublicState>((set) => ({
@@ -212,4 +218,14 @@ export const usePublicStore = create<PublicState>((set) => ({
     }),
   setIsMoving: (val) => set({ isMoving: val }),
   setResumeData: (value) => set({ resumeData: value }),
+  updateResumeData: (data) =>
+    set((state) => ({
+      resumeData: state.resumeData.map((item) => {
+        if (item.page !== state.pageId) return item;
+        item.pageAttributes[state.attributeIndex] = data;
+        return {
+          ...item,
+        };
+      }),
+    })),
 }));
