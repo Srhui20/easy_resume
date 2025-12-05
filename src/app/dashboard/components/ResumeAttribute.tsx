@@ -66,9 +66,9 @@ export default function ResumeAttribute() {
                   className="flex-1"
                   size="large"
                   style={{ fontSize: "16px", height: "50px", width: "100%" }}
+                  suffix="PX"
                   value={12}
                 />
-                <div className="ml-[5px] flex items-center">px</div>
               </div>
             </div>
             <div className="flex flex-1 flex-col">
@@ -96,9 +96,9 @@ export default function ResumeAttribute() {
                   className="flex-1"
                   size="large"
                   style={{ fontSize: "16px", height: "50px", width: "100%" }}
+                  suffix="PX"
                   value={12}
                 />
-                <div className="ml-[5px] flex items-center">px</div>
               </div>
             </div>
             <div className="flex flex-1 flex-col">
@@ -108,9 +108,9 @@ export default function ResumeAttribute() {
                   className="flex-1"
                   size="large"
                   style={{ fontSize: "16px", height: "50px", width: "100%" }}
+                  suffix="PX"
                   value={12}
                 />
-                <div className="ml-[5px] flex items-center">px</div>
               </div>
             </div>
           </div>
