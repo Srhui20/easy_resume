@@ -9,7 +9,12 @@ const resumeStyle1: RESUME_TYPE[] = [
         className: "absolute",
         id: uuidv4(),
         pageLabel: "",
-        style: { fontSize: "34px", left: "40px", top: "40px" },
+        style: {
+          fontSize: "34px",
+          fontWeight: "bold",
+          left: "40px",
+          top: "40px",
+        },
         type: "baseInfo",
       },
       {
