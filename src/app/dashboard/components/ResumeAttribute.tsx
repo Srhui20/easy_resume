@@ -4,25 +4,21 @@ import {
   UnderlineOutlined,
 } from "@ant-design/icons";
 import { ColorPicker, Input, InputNumber, Tooltip } from "antd";
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import { usePublicStore } from "@/lib/store/public";
 import type { PAGE_ATTRIBUTE } from "@/types/resume";
 
 export default function ResumeAttribute() {
   const { resumeData, pageId, attributeIndex } = usePublicStore();
-  const [isBaseInfo, setIsBaseInfo] = useState(false);
-  const [currentNode, setCurrentNode] = useState<PAGE_ATTRIBUTE | null>(null);
-
-  useEffect(() => {
-    if (!pageId) return;
-    const cNode =
+  const currentNode: PAGE_ATTRIBUTE | null = useMemo(() => {
+    if (!pageId) return null;
+    return (
       resumeData.find((item) => item.page === pageId)?.pageAttributes[
         attributeIndex
-      ] ?? null;
-
-    setCurrentNode(() => cNode);
-    setIsBaseInfo(() => cNode?.type === "baseInfo");
+      ] ?? null
+    );
   }, [pageId, attributeIndex, resumeData]);
+  const isBaseInfo = currentNode?.type === "baseInfo";
 
   const fontStylesList = [
     {

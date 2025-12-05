@@ -1,3 +1,4 @@
+import { useUpdateEffect } from "ahooks";
 import { useCallback, useEffect, useRef, useState } from "react";
 import resumeStyle1 from "@/lib//resume_sytle/resume1";
 import { usePublicStore } from "@/lib/store/public";
@@ -6,8 +7,6 @@ import styles from "./index.module.scss";
 
 export default function MainContainer() {
   const { moveRef, scale } = useMouseOpeartion();
-  const isFirst = useRef(true);
-
   const printContainerRef = useRef<HTMLDivElement>(null);
 
   const {
@@ -101,12 +100,7 @@ export default function MainContainer() {
     };
   }, []);
 
-  useEffect(() => {
-    // 初始化不执行
-    if (isFirst.current) {
-      isFirst.current = false;
-      return;
-    }
+  useUpdateEffect(() => {
     if (!isMoving) {
       clearAlignLabel();
     }
