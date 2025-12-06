@@ -5,7 +5,7 @@ import {
 } from "@ant-design/icons";
 import { ColorPicker, Input, InputNumber, Tooltip } from "antd";
 import type { Color } from "antd/es/color-picker";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { usePublicStore } from "@/lib/store/public";
 import type { BaseInfoFontStyleType, PAGE_ATTRIBUTE } from "@/types/resume";
 export default function ResumeBaseInfoStyle() {
@@ -20,32 +20,35 @@ export default function ResumeBaseInfoStyle() {
     );
   }, [pageId, attributeIndex, resumeData]);
 
-  const [fontStylesList, setFontStyleList] = useState<BaseInfoFontStyleType[]>([
-    {
-      defaultValue: "normal",
-      icon: <BoldOutlined />,
-      isChoose: currentNode?.style?.fontWeight === "bold",
-      key: "bold",
-      label: "加粗",
-      styleKey: "fontWeight",
-    },
-    {
-      defaultValue: "normal",
-      icon: <ItalicOutlined />,
-      isChoose: currentNode?.style?.fontStyle === "italic",
-      key: "italic",
-      label: "斜体",
-      styleKey: "fontStyle",
-    },
-    {
-      defaultValue: "none",
-      icon: <UnderlineOutlined />,
-      isChoose: currentNode?.style?.textDecoration === "underline",
-      key: "underline",
-      label: "下划线",
-      styleKey: "textDecoration",
-    },
-  ]);
+  const fontStylesList: BaseInfoFontStyleType[] = useMemo(
+    () => [
+      {
+        defaultValue: "normal",
+        icon: <BoldOutlined />,
+        isChoose: currentNode?.style?.fontWeight === "bold",
+        key: "bold",
+        label: "加粗",
+        styleKey: "fontWeight",
+      },
+      {
+        defaultValue: "normal",
+        icon: <ItalicOutlined />,
+        isChoose: currentNode?.style?.fontStyle === "italic",
+        key: "italic",
+        label: "斜体",
+        styleKey: "fontStyle",
+      },
+      {
+        defaultValue: "none",
+        icon: <UnderlineOutlined />,
+        isChoose: currentNode?.style?.textDecoration === "underline",
+        key: "underline",
+        label: "下划线",
+        styleKey: "textDecoration",
+      },
+    ],
+    [currentNode],
+  );
 
   const editLabel = (e: React.ChangeEvent<HTMLInputElement>) => {
     const cNode = resumeData.find((item) => item.page === pageId)
@@ -112,14 +115,6 @@ export default function ResumeBaseInfoStyle() {
 
   const editFontStyle = (editItem: BaseInfoFontStyleType) => {
     const { isChoose, defaultValue, key } = editItem;
-    setFontStyleList(
-      fontStylesList.map((item) => {
-        return {
-          ...item,
-          isChoose: item.key === editItem.key ? !isChoose : item.isChoose,
-        };
-      }),
-    );
     const cNode = resumeData.find((item) => item.page === pageId)
       ?.pageAttributes[attributeIndex];
     if (!cNode) return;
