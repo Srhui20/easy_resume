@@ -150,6 +150,7 @@ export default function MainContainer() {
           >
             <div
               className="absolute top-[-40px] right-[-40px] z-[-1] w-[874px] bg-white"
+              id="print-page-bg"
               style={{ height: `${1123 * pageLength + 80}px` }}
             />
 

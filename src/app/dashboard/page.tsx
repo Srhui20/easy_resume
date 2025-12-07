@@ -22,11 +22,14 @@ export default function Dashboard() {
   // const [html] = useState("<h1 style='color:red;'>Hello PDF</h1>");
 
   const handleDownload = async () => {
-    const html = document.getElementById("print-container")?.innerHTML;
+    const html = document.getElementById("print-container");
+    const cloneHtml = html?.cloneNode(true) as HTMLElement;
+    const bgInClone = cloneHtml.querySelector("#print-page-bg");
+    if (bgInClone) bgInClone.remove();
 
     const res = await fetch("/api/pdf", {
       body: JSON.stringify({
-        html: `${html}`,
+        html: `${cloneHtml.innerHTML}`,
       }),
       headers: { "Content-Type": "application/json" },
       method: "POST",
