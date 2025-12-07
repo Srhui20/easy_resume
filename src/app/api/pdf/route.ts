@@ -19,16 +19,45 @@ export async function POST(req: NextRequest) {
     await page.setContent(
       `<html>
         <head>
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+          <style>
+          ul,
+          ol {
+            padding-left: 20px;
+            margin: 0;
+            font-size: 14px;
+            line-height: 1.6;
+            list-style-position: outside;
+          }
+          ul {
+            list-style-type: disc;
+          }
+
+          ol {
+            list-style-type: decimal;
+          }
+          </style>
         </head>
         <body>${html}</body>
       </html>`,
       { waitUntil: "networkidle0" },
     );
+    await page.setViewport({
+      deviceScaleFactor: 1,
+      height: 1123,
+      width: 794, // A4 width px
+    });
 
     // 生成 PDF
     const pdfBuffer = await page.pdf({
       format: "A4",
+      margin: {
+        bottom: "40px",
+        left: "40px",
+        right: "40px",
+        top: "40px",
+      },
       printBackground: true,
     });
 

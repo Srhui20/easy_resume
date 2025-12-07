@@ -29,14 +29,14 @@ export default function MainContainer() {
 
     for (const item of resumeData) {
       const num = parseInt(item?.style?.top as string, 10);
-      const rect = item?.ref?.getBoundingClientRect();
-      const mv = (rect?.height ?? 0) + num;
+      const height = item?.ref?.offsetHeight ?? 0;
+      const mv = height + num;
       if (mv > maxValue) {
         maxValue = mv;
       }
     }
 
-    return Math.ceil(maxValue / (1122 - 41));
+    return Math.ceil(maxValue / (1123 - 41));
   }, [resumeData]);
 
   useEffect(() => {
@@ -132,11 +132,11 @@ export default function MainContainer() {
     >
       <div className="h-full w-full">
         <div
-          className="flex w-[1688px] items-center justify-center bg-gray-200"
-          style={{ height: `${1122 * pageLength * scale + 500}px` }}
+          className="relative flex w-[1688px] items-center justify-center bg-gray-200"
+          style={{ height: `${1123 * pageLength * scale + 500}px` }}
         >
           <div
-            className={`flex flex-col gap-[10] ${styles.print_container}`}
+            className={`relative flex flex-col gap-[10] ${styles.print_container}`}
             id="print-container"
             ref={printContainerRef}
             style={{
@@ -144,10 +144,15 @@ export default function MainContainer() {
             }}
           >
             <div
-              className={`relative flex w-[794px] flex-col justify-between overflow-hidden bg-white p-[40px] ${styles.page_container}`}
+              className="absolute top-[-40px] right-[-40px] z-[-1] w-[874px] bg-white"
+              style={{ height: `${1123 * pageLength + 80}px` }}
+            />
+
+            <div
+              className={`relative flex w-[794px] flex-col justify-between overflow-hidden bg-white ${styles.page_container}`}
               onMouseMove={($e) => moveChooseAttribute($e)}
               ref={($el: HTMLDivElement) => setPageRef($el)}
-              style={{ fontSize: "20px", height: `${1122 * pageLength}px` }}
+              style={{ fontSize: "20px", height: `${1123 * pageLength}px` }}
             >
               {resumeData.map((attr, index) => {
                 return attr.type === "baseInfo" ? (
@@ -175,11 +180,11 @@ export default function MainContainer() {
                     style={attr.style}
                   >
                     <div className="flex flex-col">
-                      <div className="w-[714px] font-bold">
+                      <div className="w-[790px] font-bold">
                         {attr.title || "空"}
                       </div>
                       <div
-                        className="w-[714px]"
+                        className="w-[790px]"
                         dangerouslySetInnerHTML={{
                           __html: attr.pageLabel || "空",
                         }}
