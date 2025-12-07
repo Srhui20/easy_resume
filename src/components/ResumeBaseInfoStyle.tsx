@@ -5,106 +5,92 @@ import {
 } from "@ant-design/icons";
 import { ColorPicker, Input, InputNumber, Tooltip } from "antd";
 import type { Color } from "antd/es/color-picker";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { usePublicStore } from "@/lib/store/public";
 import type { BaseInfoFontStyleType, PAGE_ATTRIBUTE } from "@/types/resume";
 export default function ResumeBaseInfoStyle() {
-  const { resumeData, pageId, attributeIndex, updateResumeData } =
-    usePublicStore();
-  const currentNode: PAGE_ATTRIBUTE | null = useMemo(() => {
-    if (!pageId) return null;
-    return (
-      resumeData.find((item) => item.page === pageId)?.pageAttributes[
-        attributeIndex
-      ] ?? null
-    );
-  }, [pageId, attributeIndex, resumeData]);
+  const { updateResumeData } = usePublicStore();
+  const currentNode: PAGE_ATTRIBUTE | null = usePublicStore((state) => {
+    if (!state.chooseId) return null;
+    return state.resumeData[state.attributeIndex];
+  });
 
-  const [fontStylesList, setFontStyleList] = useState<BaseInfoFontStyleType[]>([
-    {
-      defaultValue: "normal",
-      icon: <BoldOutlined />,
-      isChoose: currentNode?.style?.fontWeight === "bold",
-      key: "bold",
-      label: "加粗",
-      styleKey: "fontWeight",
-    },
-    {
-      defaultValue: "normal",
-      icon: <ItalicOutlined />,
-      isChoose: currentNode?.style?.fontStyle === "italic",
-      key: "italic",
-      label: "斜体",
-      styleKey: "fontStyle",
-    },
-    {
-      defaultValue: "none",
-      icon: <UnderlineOutlined />,
-      isChoose: currentNode?.style?.textDecoration === "underline",
-      key: "underline",
-      label: "下划线",
-      styleKey: "textDecoration",
-    },
-  ]);
+  const fontStylesList: BaseInfoFontStyleType[] = useMemo(
+    () => [
+      {
+        defaultValue: "normal",
+        icon: <BoldOutlined />,
+        isChoose: currentNode?.style?.fontWeight === "bold",
+        key: "bold",
+        label: "加粗",
+        styleKey: "fontWeight",
+      },
+      {
+        defaultValue: "normal",
+        icon: <ItalicOutlined />,
+        isChoose: currentNode?.style?.fontStyle === "italic",
+        key: "italic",
+        label: "斜体",
+        styleKey: "fontStyle",
+      },
+      {
+        defaultValue: "none",
+        icon: <UnderlineOutlined />,
+        isChoose: currentNode?.style?.textDecoration === "underline",
+        key: "underline",
+        label: "下划线",
+        styleKey: "textDecoration",
+      },
+    ],
+    [currentNode],
+  );
 
   const editLabel = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const cNode = resumeData.find((item) => item.page === pageId)
-      ?.pageAttributes[attributeIndex];
-
-    if (!cNode) return;
+    if (!currentNode) return;
     updateResumeData({
-      ...cNode,
+      ...currentNode,
       pageLabel: e.target.value,
     });
   };
 
   const editFontSize = (val: number | null) => {
-    const cNode = resumeData.find((item) => item.page === pageId)
-      ?.pageAttributes[attributeIndex];
-
-    if (!cNode) return;
+    if (!currentNode) return;
     updateResumeData({
-      ...cNode,
+      ...currentNode,
       style: {
-        ...cNode.style,
+        ...currentNode.style,
         fontSize: val ? `${val}px` : "18px",
       },
     });
   };
 
   const editFontColor = (_: Color, css: string) => {
-    const cNode = resumeData.find((item) => item.page === pageId)
-      ?.pageAttributes[attributeIndex];
-    if (!cNode) return;
+    if (!currentNode) return;
     updateResumeData({
-      ...cNode,
+      ...currentNode,
       style: {
-        ...cNode.style,
+        ...currentNode.style,
         color: css,
       },
     });
   };
 
   const editLeft = (val: number | null) => {
-    const cNode = resumeData.find((item) => item.page === pageId)
-      ?.pageAttributes[attributeIndex];
-    if (!cNode) return;
+    if (!currentNode) return;
     updateResumeData({
-      ...cNode,
+      ...currentNode,
       style: {
-        ...cNode.style,
+        ...currentNode.style,
         left: val ? `${val}px` : "40px",
       },
     });
   };
   const editTop = (val: number | null) => {
-    const cNode = resumeData.find((item) => item.page === pageId)
-      ?.pageAttributes[attributeIndex];
-    if (!cNode) return;
+    if (!currentNode) return;
     updateResumeData({
-      ...cNode,
+      ...currentNode,
       style: {
-        ...cNode.style,
+        ...currentNode.style,
         top: val ? `${val}px` : "40px",
       },
     });
@@ -112,21 +98,12 @@ export default function ResumeBaseInfoStyle() {
 
   const editFontStyle = (editItem: BaseInfoFontStyleType) => {
     const { isChoose, defaultValue, key } = editItem;
-    setFontStyleList(
-      fontStylesList.map((item) => {
-        return {
-          ...item,
-          isChoose: item.key === editItem.key ? !isChoose : item.isChoose,
-        };
-      }),
-    );
-    const cNode = resumeData.find((item) => item.page === pageId)
-      ?.pageAttributes[attributeIndex];
-    if (!cNode) return;
+
+    if (!currentNode) return;
     updateResumeData({
-      ...cNode,
+      ...currentNode,
       style: {
-        ...cNode.style,
+        ...currentNode.style,
         [editItem.styleKey]: isChoose ? defaultValue : key,
       },
     });

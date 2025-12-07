@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 .choose_label {
   border: 1px dashed red !important;
@@ -8,27 +8,18 @@
   border: 1px dashed red !important;
 }
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+ul,
+ol {
+  padding-left: 20px;
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  list-style-position: outside;
+}
+ul {
+  list-style-type: disc;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-/* @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-} */
-
-body {
-  font-family: Arial, Helvetica, sans-serif;
-  color: var(--foreground);
-  background: var(--background);
+ol {
+  list-style-type: decimal;
 }

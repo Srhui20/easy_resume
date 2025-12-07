@@ -1,11 +1,11 @@
 import { create } from "zustand";
-import type { PAGE_ATTRIBUTE, RESUME_TYPE } from "@/types/resume";
+import type { PAGE_ATTRIBUTE } from "@/types/resume";
 
 interface PublicState {
   /**
    * 页面所有元素
    */
-  resumeData: RESUME_TYPE[];
+  resumeData: PAGE_ATTRIBUTE[];
   /**
    * 选中的元素下标
    */
@@ -15,15 +15,20 @@ interface PublicState {
    */
   isMoving: boolean;
   /**
-   * 选中的页码,页码为0说明未选中
+   * 选中的id
    */
-  pageId: number;
+  chooseId: string;
+
+  pageRef: HTMLDivElement | null;
+
+  setPageRef: (val: HTMLDivElement) => void;
+
   /**
    * 设置resumeData值
    * @param value
    * @returns
    */
-  setResumeData: (value: RESUME_TYPE[]) => void;
+  setResumeData: (value: PAGE_ATTRIBUTE[]) => void;
   /**
    * 选择页面元素
    * @param id
@@ -45,11 +50,11 @@ interface PublicState {
   clearChoose: () => void;
   /**
    * 移动页面元素
-   * @param pid pageId
+   * @param chooseId chooseId
    * @param ai attributeIndex
    * @returns
    */
-  setChooseValue: (pid: number, ai: number) => void;
+  setChooseValue: (chooseId: string, ai: number) => void;
 
   clearAlignLabel: () => void;
 
@@ -80,46 +85,42 @@ interface PublicState {
 
 export const usePublicStore = create<PublicState>((set) => ({
   attributeIndex: 0,
+  chooseId: "",
   clearAlignLabel: () =>
     set((state) => {
       const arr = [...state.resumeData];
-      const attrs = arr.find(
-        (item) => item.page === state.pageId,
-      ) as RESUME_TYPE;
-      attrs.pageAttributes.forEach((item) => {
+      arr.forEach((item) => {
         if (item.className.includes(" align_label")) {
           item.className = item.className.replace(/ align_label/g, "");
         }
       });
-
       return {
         resumeData: arr,
       };
     }),
+
   clearChoose: () =>
     set({
-      attributeIndex: 0,
-      pageId: 0,
+      chooseId: "",
     }),
   isMoving: false,
   movePageAttribute: (clientX, clientY, attrX, attrY, scale) =>
     set((state) => {
-      const { pageId: pid, attributeIndex: ai } = state;
-      const arr = [...state.resumeData];
-      const attrs = arr.find((item) => item.page === pid) as RESUME_TYPE;
+      const attrs = [...state.resumeData];
+      const { attributeIndex: ai } = state;
 
       const {
         left: pageLeft = 0,
         top: pageTop = 0,
         width: pageWidth,
         height: pageHeight,
-      } = attrs.ref?.getBoundingClientRect() as DOMRect;
+      } = state.pageRef?.getBoundingClientRect() as DOMRect;
       const {
         left: attrLeft = 0,
         top: attrTop = 0,
         width: attrWidth,
         height: attrHeight,
-      } = attrs.pageAttributes[ai].ref?.getBoundingClientRect() as DOMRect;
+      } = attrs[ai].ref?.getBoundingClientRect() as DOMRect;
 
       /**
        * clientX - pageLeft 鼠标在纸里的位置
@@ -139,7 +140,7 @@ export const usePublicStore = create<PublicState>((set) => ({
       let alignLeft = 0;
       let alignTop = 0;
 
-      attrs.pageAttributes.forEach((item, index) => {
+      attrs.forEach((item, index) => {
         if (index === ai) return;
 
         const { left: itLeft = "", top: itTop = "" } = item.style;
@@ -165,67 +166,60 @@ export const usePublicStore = create<PublicState>((set) => ({
       left = alignLeft === 0 ? left : alignLeft;
       top = alignTop === 0 ? top : alignTop;
 
-      attrs.pageAttributes[ai].style = {
-        ...attrs.pageAttributes[ai].style,
+      attrs[ai].style = {
+        ...attrs[ai].style,
         left: `${left}px`,
         top: `${top}px`,
         zIndex: 99,
       };
 
-      return { resumeData: arr };
+      return { resumeData: attrs };
     }),
   pageId: 0,
+  pageRef: null,
   resumeData: [],
   setChooseResumeData: (id: string) =>
     set((state) => {
       return {
         isChooseAttributes: true,
-        resumeData: state.resumeData.map((page) => {
+        resumeData: state.resumeData.map((mapAttr, index) => {
+          let className = mapAttr.className;
+          const style = { ...mapAttr.style };
+
+          if (style?.zIndex) {
+            style.zIndex = 0;
+          }
+
+          if (className.includes(" choose_label")) {
+            className = className.replace(/ choose_label/g, "");
+          }
+          if (id === mapAttr.id) {
+            state.attributeIndex = index;
+            state.chooseId = id;
+            className += " choose_label";
+            style.zIndex = 99;
+          }
+
           return {
-            ...page,
-            pageAttributes: page.pageAttributes.map((mapAttr, index) => {
-              let className = mapAttr.className;
-              const style = { ...mapAttr.style };
-
-              if (style?.zIndex) {
-                style.zIndex = 0;
-              }
-
-              if (className.includes(" choose_label")) {
-                className = className.replace(/ choose_label/g, "");
-              }
-              if (id === mapAttr.id) {
-                state.pageId = page.page;
-                state.attributeIndex = index;
-                className += " choose_label";
-                style.zIndex = 99;
-              }
-
-              return {
-                ...mapAttr,
-                className,
-                style,
-              };
-            }),
+            ...mapAttr,
+            className,
+            style,
           };
         }),
       };
     }),
-  setChooseValue: (pid, ai) =>
+  setChooseValue: (chooseId, ai) =>
     set({
       attributeIndex: ai,
-      pageId: pid,
+      chooseId,
     }),
   setIsMoving: (val) => set({ isMoving: val }),
+  setPageRef: (val) => set({ pageRef: val }),
   setResumeData: (value) => set({ resumeData: value }),
   updateResumeData: (data) =>
     set((state) => ({
       resumeData: state.resumeData.map((item) => {
-        if (item.page !== state.pageId) return item;
-        item.pageAttributes[state.attributeIndex] = data;
-        return {
-          ...item,
-        };
+        return item.id === state.chooseId ? data : item;
       }),
     })),
 }));

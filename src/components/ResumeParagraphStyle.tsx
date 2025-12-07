@@ -5,54 +5,137 @@ import {
 } from "@ant-design/icons";
 import { ColorPicker, Input, InputNumber, Tabs, Tooltip } from "antd";
 import dynamic from "next/dynamic";
-import { useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { usePublicStore } from "@/lib/store/public";
-import type { PAGE_ATTRIBUTE } from "@/types/resume";
+import type { BaseInfoFontStyleType, PAGE_ATTRIBUTE } from "@/types/resume";
+
+const EditorWrapper = memo(
+  function EditorWrapper({
+    chooseId,
+    attributeIndex,
+  }: {
+    chooseId: string;
+    attributeIndex: number;
+  }) {
+    const MyEditor = dynamic(() => import("./MyEditor"), { ssr: false });
+
+    const updateResumeData = usePublicStore((state) => state.updateResumeData);
+
+    const resumeDataRef = useRef(usePublicStore.getState().resumeData);
+    const chooseIdRef = useRef(chooseId);
+    const attributeIndexRef = useRef(attributeIndex);
+
+    const getInitialPageLabel = () => {
+      const state = usePublicStore.getState();
+      if (chooseId || state.attributeIndex !== attributeIndex) {
+        return "";
+      }
+      return resumeDataRef.current[attributeIndexRef.current]?.pageLabel ?? "";
+    };
+
+    const [editValue, setEditValue] = useState(getInitialPageLabel());
+
+    const editorKeyRef = useRef(`${chooseId}`);
+
+    useEffect(() => {
+      const state = usePublicStore.getState();
+      resumeDataRef.current = state.resumeData;
+      chooseIdRef.current = chooseId;
+      attributeIndexRef.current = attributeIndex;
+
+      // 重新读取初始值并更新 key，强制 MyEditor 重新创建
+      if (state.chooseId === chooseId) {
+        setEditValue(state.resumeData[state.attributeIndex]?.pageLabel ?? "");
+        editorKeyRef.current = `${chooseId}`;
+      }
+    }, [chooseId, attributeIndex]);
+
+    const editPageContent = useCallback(
+      (val: string) => {
+        const currentState = usePublicStore.getState();
+        resumeDataRef.current = currentState.resumeData;
+
+        const cNode = resumeDataRef.current[attributeIndexRef.current];
+        if (!cNode) return;
+
+        updateResumeData({
+          ...cNode,
+          pageLabel: val,
+        });
+
+        // 更新 ref
+        resumeDataRef.current = usePublicStore.getState().resumeData;
+      },
+      [updateResumeData],
+    );
+
+    return (
+      <MyEditor
+        key={editorKeyRef.current}
+        onChange={editPageContent}
+        value={editValue}
+      />
+    );
+  },
+  (prevProps, nextProps) => {
+    // 自定义比较函数：只有 chooseId 变化时才重新渲染
+    return prevProps.chooseId === nextProps.chooseId;
+  },
+);
 
 export default function ResumeParagraphStyle() {
-  const MyEditor = dynamic(() => import("./MyEditor"), { ssr: false });
+  // 使用 selector 只订阅需要的值
+  const chooseId = usePublicStore((state) => state.chooseId);
+  const attributeIndex = usePublicStore((state) => state.attributeIndex);
 
-  const { resumeData, pageId, attributeIndex } = usePublicStore();
-  const currentNode: PAGE_ATTRIBUTE | null = useMemo(() => {
-    if (!pageId) return null;
-    return (
-      resumeData.find((item) => item.page === pageId)?.pageAttributes[
-        attributeIndex
-      ] ?? null
-    );
-  }, [pageId, attributeIndex, resumeData]);
+  // 订阅 currentNode 的其他属性（用于样式等）
+  const currentNode: PAGE_ATTRIBUTE | null = usePublicStore((state) => {
+    if (!state.chooseId) return null;
+    return state.resumeData[state.attributeIndex];
+  });
 
   const [activeKey, setActiveKey] = useState("text");
 
-  const fontStylesList = [
-    {
-      handlerFun: () => {},
-      icon: <BoldOutlined />,
-      isChoose: true,
-      key: "blod",
-      label: "加粗",
-    },
-    {
-      handlerFun: () => {},
-      icon: <ItalicOutlined />,
-      isChoose: false,
-      key: "italics",
-      label: "斜体",
-    },
-    {
-      handlerFun: () => {},
-      icon: <UnderlineOutlined />,
-      isChoose: false,
-      key: "underline",
-      label: "下划线",
-    },
-  ];
+  // 使用 useMemo 稳定 fontStylesList，只在 style 相关属性变化时更新
+  const fontWeight = currentNode?.style?.fontWeight;
+  const fontStyle = currentNode?.style?.fontStyle;
+  const textDecoration = currentNode?.style?.textDecoration;
+
+  const fontStylesList: BaseInfoFontStyleType[] = useMemo(
+    () => [
+      {
+        defaultValue: "normal",
+        icon: <BoldOutlined />,
+        isChoose: fontWeight === "bold",
+        key: "bold",
+        label: "加粗",
+        styleKey: "fontWeight",
+      },
+      {
+        defaultValue: "normal",
+        icon: <ItalicOutlined />,
+        isChoose: fontStyle === "italic",
+        key: "italic",
+        label: "斜体",
+        styleKey: "fontStyle",
+      },
+      {
+        defaultValue: "none",
+        icon: <UnderlineOutlined />,
+        isChoose: textDecoration === "underline",
+        key: "underline",
+        label: "下划线",
+        styleKey: "textDecoration",
+      },
+    ],
+    [fontWeight, fontStyle, textDecoration],
+  );
 
   return (
     <div className="flex flex-col">
       <Tabs
+        activeKey={activeKey}
         centered
-        defaultActiveKey={activeKey}
         items={[
           { children: "", key: "text", label: "文本" },
           { children: "", key: "title", label: "标题" },
@@ -155,7 +238,7 @@ export default function ResumeParagraphStyle() {
           </div>
         </div>
       ) : (
-        <MyEditor onChange={(val) => {}} value={currentNode?.pageLabel ?? ""} />
+        <EditorWrapper attributeIndex={attributeIndex} chooseId={chooseId} />
       )}
     </div>
   );

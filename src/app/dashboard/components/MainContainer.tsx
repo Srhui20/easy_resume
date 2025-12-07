@@ -1,5 +1,5 @@
 import { useUpdateEffect } from "ahooks";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import resumeStyle1 from "@/lib//resume_sytle/resume1";
 import { usePublicStore } from "@/lib/store/public";
 import { useMouseOpeartion } from "@/lib/userMouseHook";
@@ -9,18 +9,35 @@ export default function MainContainer() {
   const { moveRef, scale } = useMouseOpeartion();
   const printContainerRef = useRef<HTMLDivElement>(null);
 
-  const {
-    resumeData,
-    isMoving,
-    pageId,
-    attributeIndex,
-    movePageAttribute,
-    setResumeData,
-    setChooseResumeData,
-    clearAlignLabel,
-    setIsMoving,
-    setChooseValue,
-  } = usePublicStore();
+  const resumeData = usePublicStore((state) => state.resumeData);
+  const isMoving = usePublicStore((state) => state.isMoving);
+  const chooseId = usePublicStore((state) => state.chooseId);
+  const attributeIndex = usePublicStore((state) => state.attributeIndex);
+  // const pageRef = usePublicStore((state) => state.pageRef);
+  const setPageRef = usePublicStore((state) => state.setPageRef);
+  const movePageAttribute = usePublicStore((state) => state.movePageAttribute);
+  const setResumeData = usePublicStore((state) => state.setResumeData);
+  const setChooseResumeData = usePublicStore(
+    (state) => state.setChooseResumeData,
+  );
+  const clearAlignLabel = usePublicStore((state) => state.clearAlignLabel);
+  const setIsMoving = usePublicStore((state) => state.setIsMoving);
+  const setChooseValue = usePublicStore((state) => state.setChooseValue);
+
+  const pageLength = useMemo(() => {
+    let maxValue = 0;
+
+    for (const item of resumeData) {
+      const num = parseInt(item?.style?.top as string, 10);
+      const rect = item?.ref?.getBoundingClientRect();
+      const mv = (rect?.height ?? 0) + num;
+      if (mv > maxValue) {
+        maxValue = mv;
+      }
+    }
+
+    return Math.ceil(maxValue / (1122 - 41));
+  }, [resumeData]);
 
   useEffect(() => {
     setResumeData(resumeStyle1);
@@ -37,10 +54,10 @@ export default function MainContainer() {
 
   const mouseDownAttribute = (
     $e: React.MouseEvent<HTMLDivElement, MouseEvent>,
-    pid: number,
+    attrId: string,
     ai: number,
   ) => {
-    if (pid !== pageId || ai !== attributeIndex) return;
+    if (attrId !== chooseId || ai !== attributeIndex) return;
     if ($e.ctrlKey || $e.metaKey) {
       return;
     }
@@ -49,7 +66,7 @@ export default function MainContainer() {
       x: $e.nativeEvent.clientX,
       y: $e.nativeEvent.clientY,
     });
-    setChooseValue(pid, ai);
+    setChooseValue(attrId, ai);
     setIsMoving(true);
   };
 
@@ -71,6 +88,7 @@ export default function MainContainer() {
           rafIdRef.current = null;
           if (!lastPosRef.current) return;
           const { clientX: lx, clientY: ly } = lastPosRef.current;
+
           movePageAttribute(lx, ly, position.x, position.y, scale);
           setPosition({
             x: lx,
@@ -115,7 +133,7 @@ export default function MainContainer() {
       <div className="h-full w-full">
         <div
           className="flex w-[1688px] items-center justify-center bg-gray-200"
-          style={{ height: `${1122 * resumeData.length * scale + 500}px` }}
+          style={{ height: `${1122 * pageLength * scale + 500}px` }}
         >
           <div
             className={`flex flex-col gap-[10] ${styles.print_container}`}
@@ -125,61 +143,52 @@ export default function MainContainer() {
               transform: `scale(${scale})`,
             }}
           >
-            {resumeData.map((page) => (
-              <div
-                className={`relative flex h-[1122px] w-[794px] flex-col justify-between overflow-hidden bg-white p-[40px] ${styles.page_container}`}
-                key={page.page}
-                onMouseMove={($e) => moveChooseAttribute($e)}
-                ref={($el) => {
-                  page.ref = $el;
-                }}
-                style={{ fontSize: "20px" }}
-              >
-                {page.pageAttributes.map((attr, index) => {
-                  return attr.type === "baseInfo" ? (
-                    <div
-                      className={`${attr.className} ${attr.pageLabel}`}
-                      key={attr.id}
-                      onClick={() => setChooseResumeData(attr.id)}
-                      onMouseDown={($e) =>
-                        mouseDownAttribute($e, page.page, index)
-                      }
-                      ref={($el) => {
-                        attr.ref = $el;
-                      }}
-                      style={attr.style}
-                    >
-                      {attr.pageLabel || "空"}
-                    </div>
-                  ) : (
-                    <div
-                      className={attr.className}
-                      key={attr.id}
-                      onClick={() => setChooseResumeData(attr.id)}
-                      onMouseDown={($e) =>
-                        mouseDownAttribute($e, page.page, index)
-                      }
-                      ref={($el) => {
-                        attr.ref = $el;
-                      }}
-                      style={attr.style}
-                    >
-                      <div className="flex flex-col">
-                        <div className="w-[714px] font-bold">
-                          {attr.title || "空"}
-                        </div>
-                        <div
-                          className="w-[714px]"
-                          dangerouslySetInnerHTML={{
-                            __html: attr.pageLabel || "空",
-                          }}
-                        />
+            <div
+              className={`relative flex w-[794px] flex-col justify-between overflow-hidden bg-white p-[40px] ${styles.page_container}`}
+              onMouseMove={($e) => moveChooseAttribute($e)}
+              ref={($el: HTMLDivElement) => setPageRef($el)}
+              style={{ fontSize: "20px", height: `${1122 * pageLength}px` }}
+            >
+              {resumeData.map((attr, index) => {
+                return attr.type === "baseInfo" ? (
+                  <div
+                    className={`${attr.className} ${attr.pageLabel}`}
+                    key={attr.id}
+                    onClick={() => setChooseResumeData(attr.id)}
+                    onMouseDown={($e) => mouseDownAttribute($e, attr.id, index)}
+                    ref={($el) => {
+                      attr.ref = $el;
+                    }}
+                    style={attr.style}
+                  >
+                    {attr.pageLabel || "空"}
+                  </div>
+                ) : (
+                  <div
+                    className={attr.className}
+                    key={attr.id}
+                    onClick={() => setChooseResumeData(attr.id)}
+                    onMouseDown={($e) => mouseDownAttribute($e, attr.id, index)}
+                    ref={($el) => {
+                      attr.ref = $el;
+                    }}
+                    style={attr.style}
+                  >
+                    <div className="flex flex-col">
+                      <div className="w-[714px] font-bold">
+                        {attr.title || "空"}
                       </div>
+                      <div
+                        className="w-[714px]"
+                        dangerouslySetInnerHTML={{
+                          __html: attr.pageLabel || "空",
+                        }}
+                      />
                     </div>
-                  );
-                })}
-              </div>
-            ))}
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>
