@@ -78,11 +78,8 @@ const EditorWrapper = memo(
     );
   },
   (prevProps, nextProps) => {
-    // 自定义比较函数：只有 pageId 或 attributeIndex 变化时才重新渲染
-    return (
-      prevProps.pageId === nextProps.pageId &&
-      prevProps.attributeIndex === nextProps.attributeIndex
-    );
+    // 自定义比较函数：只有 chooseId 变化时才重新渲染
+    return prevProps.chooseId === nextProps.chooseId;
   },
 );
 

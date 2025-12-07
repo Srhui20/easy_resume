@@ -25,21 +25,18 @@ export default function MainContainer() {
   const setChooseValue = usePublicStore((state) => state.setChooseValue);
 
   const pageLength = useMemo(() => {
-    let maxItem = null;
-    let maxValue = -Infinity;
+    let maxValue = 0;
 
     for (const item of resumeData) {
       const num = parseInt(item?.style?.top as string, 10);
-
-      if (num > maxValue) {
-        maxValue = num;
-        maxItem = item; // 记录整个对象
+      const rect = item?.ref?.getBoundingClientRect();
+      const mv = (rect?.height ?? 0) + num;
+      if (mv > maxValue) {
+        maxValue = mv;
       }
     }
 
-    const rect = maxItem?.ref?.getBoundingClientRect();
-
-    return Math.ceil(((rect?.height ?? 0) + maxValue) / (1122 - 50));
+    return Math.ceil(maxValue / (1122 - 41));
   }, [resumeData]);
 
   useEffect(() => {
