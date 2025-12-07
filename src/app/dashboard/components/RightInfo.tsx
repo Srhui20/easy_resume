@@ -4,7 +4,7 @@ import ResumeAttribute from "./ResumeAttribute";
 import ResumeOperation from "./ResumeOperation";
 
 export default function RightInfo() {
-  const { pageId } = usePublicStore();
+  const pageId = usePublicStore((state) => state.pageId);
 
   return (
     <div className="flex h-full w-full flex-col bg-gray-200 p-[0px]">

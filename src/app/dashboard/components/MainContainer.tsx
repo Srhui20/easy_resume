@@ -9,18 +9,18 @@ export default function MainContainer() {
   const { moveRef, scale } = useMouseOpeartion();
   const printContainerRef = useRef<HTMLDivElement>(null);
 
-  const {
-    resumeData,
-    isMoving,
-    pageId,
-    attributeIndex,
-    movePageAttribute,
-    setResumeData,
-    setChooseResumeData,
-    clearAlignLabel,
-    setIsMoving,
-    setChooseValue,
-  } = usePublicStore();
+  const resumeData = usePublicStore((state) => state.resumeData);
+  const isMoving = usePublicStore((state) => state.isMoving);
+  const pageId = usePublicStore((state) => state.pageId);
+  const attributeIndex = usePublicStore((state) => state.attributeIndex);
+  const movePageAttribute = usePublicStore((state) => state.movePageAttribute);
+  const setResumeData = usePublicStore((state) => state.setResumeData);
+  const setChooseResumeData = usePublicStore(
+    (state) => state.setChooseResumeData,
+  );
+  const clearAlignLabel = usePublicStore((state) => state.clearAlignLabel);
+  const setIsMoving = usePublicStore((state) => state.setIsMoving);
+  const setChooseValue = usePublicStore((state) => state.setChooseValue);
 
   useEffect(() => {
     setResumeData(resumeStyle1);

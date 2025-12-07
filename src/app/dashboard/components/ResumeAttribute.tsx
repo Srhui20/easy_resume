@@ -1,19 +1,17 @@
-import { useMemo } from "react";
 import ResumeBaseInfoStyle from "@/components/ResumeBaseInfoStyle";
 import ResumeParagraphStyle from "@/components/ResumeParagraphStyle";
 import { usePublicStore } from "@/lib/store/public";
 import type { PAGE_ATTRIBUTE } from "@/types/resume";
 
 export default function ResumeAttribute() {
-  const { resumeData, pageId, attributeIndex } = usePublicStore();
-  const currentNode: PAGE_ATTRIBUTE | null = useMemo(() => {
-    if (!pageId) return null;
+  const currentNode: PAGE_ATTRIBUTE | null = usePublicStore((state) => {
+    if (!state.pageId) return null;
     return (
-      resumeData.find((item) => item.page === pageId)?.pageAttributes[
-        attributeIndex
-      ] ?? null
+      state.resumeData.find((item) => item.page === state.pageId)
+        ?.pageAttributes[state.attributeIndex] ?? null
     );
-  }, [pageId, attributeIndex, resumeData]);
+  });
+
   const isBaseInfo = currentNode?.type === "baseInfo";
 
   return (
