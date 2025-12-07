@@ -1,4 +1,4 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
 .choose_label {
   border: 1px dashed red !important;
