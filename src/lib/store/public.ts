@@ -90,8 +90,11 @@ export const usePublicStore = create<PublicState>((set) => ({
     set((state) => {
       const arr = [...state.resumeData];
       arr.forEach((item) => {
-        if (item.className.includes(" align_label")) {
-          item.className = item.className.replace(/ align_label/g, "");
+        if (item.className) {
+          item.className = item.className
+            .replace(/\balign_label\b/g, "")
+            .replace(/\s+/g, " ")
+            .trim();
         }
       });
       return {
@@ -147,19 +150,25 @@ export const usePublicStore = create<PublicState>((set) => ({
         const leftInt = parseInt(itLeft as string, 10);
         const topInt = parseInt(itTop as string, 10);
 
-        // 清除旧的对齐样式
-        if (item.className.includes(" align_label")) {
-          item.className = item.className.replace(/ align_label/g, "");
+        if (item.className) {
+          item.className = item.className
+            .replace(/\balign_label\b/g, "")
+            .replace(/\s+/g, " ")
+            .trim();
         }
 
         // 计算新的对齐点
         if (Math.abs(leftInt - left) < 2) {
           alignLeft = leftInt;
-          item.className += " align_label";
+          if (!item.className.includes("align_label")) {
+            item.className += item.className ? " align_label" : "align_label";
+          }
         }
         if (Math.abs(topInt - top) < 2) {
           alignTop = topInt;
-          item.className += " align_label";
+          if (!item.className.includes("align_label")) {
+            item.className += item.className ? " align_label" : "align_label";
+          }
         }
       });
 

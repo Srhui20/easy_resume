@@ -51,6 +51,11 @@ export default function MainContainer() {
   // 使用 requestAnimationFrame 合并一帧内多次 move 调用
   const lastPosRef = useRef<{ clientX: number; clientY: number } | null>(null);
   const rafIdRef = useRef<number | null>(null);
+  const isMovingRef = useRef<boolean>(false);
+
+  useEffect(() => {
+    isMovingRef.current = isMoving;
+  }, [isMoving]);
 
   const mouseDownAttribute = (
     $e: React.MouseEvent<HTMLDivElement, MouseEvent>,
@@ -86,7 +91,7 @@ export default function MainContainer() {
       if (rafIdRef.current == null) {
         rafIdRef.current = window.requestAnimationFrame(() => {
           rafIdRef.current = null;
-          if (!lastPosRef.current) return;
+          if (!lastPosRef.current || !isMovingRef.current) return;
           const { clientX: lx, clientY: ly } = lastPosRef.current;
 
           movePageAttribute(lx, ly, position.x, position.y, scale);
