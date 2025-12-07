@@ -4,7 +4,7 @@ import ResumeAttribute from "./ResumeAttribute";
 import ResumeOperation from "./ResumeOperation";
 
 export default function RightInfo() {
-  const pageId = usePublicStore((state) => state.pageId);
+  const chooseId = usePublicStore((state) => state.chooseId);
 
   return (
     <div className="flex h-full w-full flex-col bg-gray-200 p-[0px]">
@@ -21,7 +21,7 @@ export default function RightInfo() {
       <div className="flex w-full flex-1 flex-col bg-white p-[20px]">
         <div className="mb-[10px] font-bold text-[20px]">基本属性</div>
         <div className="w-full flex-1 overflow-auto">
-          {!pageId ? (
+          {!chooseId ? (
             <div className="flex h-full w-full items-center justify-center">
               <Empty
                 className="mt-[20px]"

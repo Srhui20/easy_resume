@@ -11,10 +11,10 @@ import type { BaseInfoFontStyleType, PAGE_ATTRIBUTE } from "@/types/resume";
 
 const EditorWrapper = memo(
   function EditorWrapper({
-    pageId,
+    chooseId,
     attributeIndex,
   }: {
-    pageId: number;
+    chooseId: string;
     attributeIndex: number;
   }) {
     const MyEditor = dynamic(() => import("./MyEditor"), { ssr: false });
@@ -22,52 +22,40 @@ const EditorWrapper = memo(
     const updateResumeData = usePublicStore((state) => state.updateResumeData);
 
     const resumeDataRef = useRef(usePublicStore.getState().resumeData);
-    const pageIdRef = useRef(pageId);
+    const chooseIdRef = useRef(chooseId);
     const attributeIndexRef = useRef(attributeIndex);
 
     const getInitialPageLabel = () => {
       const state = usePublicStore.getState();
-      if (
-        !state.pageId ||
-        state.pageId !== pageId ||
-        state.attributeIndex !== attributeIndex
-      ) {
+      if (chooseId || state.attributeIndex !== attributeIndex) {
         return "";
       }
-      const page = state.resumeData.find((item) => item.page === state.pageId);
-      return page?.pageAttributes[state.attributeIndex]?.pageLabel ?? "";
+      return resumeDataRef.current[attributeIndexRef.current]?.pageLabel ?? "";
     };
 
     const [editValue, setEditValue] = useState(getInitialPageLabel());
 
-    const editorKeyRef = useRef(`${pageId}-${attributeIndex}`);
+    const editorKeyRef = useRef(`${chooseId}`);
 
     useEffect(() => {
       const state = usePublicStore.getState();
       resumeDataRef.current = state.resumeData;
-      pageIdRef.current = pageId;
+      chooseIdRef.current = chooseId;
       attributeIndexRef.current = attributeIndex;
 
       // 重新读取初始值并更新 key，强制 MyEditor 重新创建
-      if (state.pageId === pageId && state.attributeIndex === attributeIndex) {
-        const page = state.resumeData.find(
-          (item) => item.page === state.pageId,
-        );
-        setEditValue(
-          page?.pageAttributes[state.attributeIndex]?.pageLabel ?? "",
-        );
-        editorKeyRef.current = `${pageId}-${attributeIndex}`;
+      if (state.chooseId === chooseId) {
+        setEditValue(state.resumeData[state.attributeIndex]?.pageLabel ?? "");
+        editorKeyRef.current = `${chooseId}`;
       }
-    }, [pageId, attributeIndex]);
+    }, [chooseId, attributeIndex]);
 
     const editPageContent = useCallback(
       (val: string) => {
         const currentState = usePublicStore.getState();
         resumeDataRef.current = currentState.resumeData;
 
-        const cNode = resumeDataRef.current.find(
-          (item) => item.page === pageIdRef.current,
-        )?.pageAttributes[attributeIndexRef.current];
+        const cNode = resumeDataRef.current[attributeIndexRef.current];
         if (!cNode) return;
 
         updateResumeData({
@@ -100,16 +88,13 @@ const EditorWrapper = memo(
 
 export default function ResumeParagraphStyle() {
   // 使用 selector 只订阅需要的值
-  const pageId = usePublicStore((state) => state.pageId);
+  const chooseId = usePublicStore((state) => state.chooseId);
   const attributeIndex = usePublicStore((state) => state.attributeIndex);
 
   // 订阅 currentNode 的其他属性（用于样式等）
   const currentNode: PAGE_ATTRIBUTE | null = usePublicStore((state) => {
-    if (!state.pageId) return null;
-    return (
-      state.resumeData.find((item) => item.page === state.pageId)
-        ?.pageAttributes[state.attributeIndex] ?? null
-    );
+    if (!state.chooseId) return null;
+    return state.resumeData[state.attributeIndex];
   });
 
   const [activeKey, setActiveKey] = useState("text");
@@ -256,7 +241,7 @@ export default function ResumeParagraphStyle() {
           </div>
         </div>
       ) : (
-        <EditorWrapper attributeIndex={attributeIndex} pageId={pageId} />
+        <EditorWrapper attributeIndex={attributeIndex} chooseId={chooseId} />
       )}
     </div>
   );

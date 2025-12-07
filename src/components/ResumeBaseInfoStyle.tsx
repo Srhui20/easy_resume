@@ -9,16 +9,11 @@ import { useMemo } from "react";
 import { usePublicStore } from "@/lib/store/public";
 import type { BaseInfoFontStyleType, PAGE_ATTRIBUTE } from "@/types/resume";
 export default function ResumeBaseInfoStyle() {
-  const { resumeData, pageId, attributeIndex, updateResumeData } =
-    usePublicStore();
-  const currentNode: PAGE_ATTRIBUTE | null = useMemo(() => {
-    if (!pageId) return null;
-    return (
-      resumeData.find((item) => item.page === pageId)?.pageAttributes[
-        attributeIndex
-      ] ?? null
-    );
-  }, [pageId, attributeIndex, resumeData]);
+  const { updateResumeData } = usePublicStore();
+  const currentNode: PAGE_ATTRIBUTE | null = usePublicStore((state) => {
+    if (!state.chooseId) return null;
+    return state.resumeData[state.attributeIndex];
+  });
 
   const fontStylesList: BaseInfoFontStyleType[] = useMemo(
     () => [
@@ -51,63 +46,51 @@ export default function ResumeBaseInfoStyle() {
   );
 
   const editLabel = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const cNode = resumeData.find((item) => item.page === pageId)
-      ?.pageAttributes[attributeIndex];
-
-    if (!cNode) return;
+    if (!currentNode) return;
     updateResumeData({
-      ...cNode,
+      ...currentNode,
       pageLabel: e.target.value,
     });
   };
 
   const editFontSize = (val: number | null) => {
-    const cNode = resumeData.find((item) => item.page === pageId)
-      ?.pageAttributes[attributeIndex];
-
-    if (!cNode) return;
+    if (!currentNode) return;
     updateResumeData({
-      ...cNode,
+      ...currentNode,
       style: {
-        ...cNode.style,
+        ...currentNode.style,
         fontSize: val ? `${val}px` : "18px",
       },
     });
   };
 
   const editFontColor = (_: Color, css: string) => {
-    const cNode = resumeData.find((item) => item.page === pageId)
-      ?.pageAttributes[attributeIndex];
-    if (!cNode) return;
+    if (!currentNode) return;
     updateResumeData({
-      ...cNode,
+      ...currentNode,
       style: {
-        ...cNode.style,
+        ...currentNode.style,
         color: css,
       },
     });
   };
 
   const editLeft = (val: number | null) => {
-    const cNode = resumeData.find((item) => item.page === pageId)
-      ?.pageAttributes[attributeIndex];
-    if (!cNode) return;
+    if (!currentNode) return;
     updateResumeData({
-      ...cNode,
+      ...currentNode,
       style: {
-        ...cNode.style,
+        ...currentNode.style,
         left: val ? `${val}px` : "40px",
       },
     });
   };
   const editTop = (val: number | null) => {
-    const cNode = resumeData.find((item) => item.page === pageId)
-      ?.pageAttributes[attributeIndex];
-    if (!cNode) return;
+    if (!currentNode) return;
     updateResumeData({
-      ...cNode,
+      ...currentNode,
       style: {
-        ...cNode.style,
+        ...currentNode.style,
         top: val ? `${val}px` : "40px",
       },
     });
@@ -115,13 +98,12 @@ export default function ResumeBaseInfoStyle() {
 
   const editFontStyle = (editItem: BaseInfoFontStyleType) => {
     const { isChoose, defaultValue, key } = editItem;
-    const cNode = resumeData.find((item) => item.page === pageId)
-      ?.pageAttributes[attributeIndex];
-    if (!cNode) return;
+
+    if (!currentNode) return;
     updateResumeData({
-      ...cNode,
+      ...currentNode,
       style: {
-        ...cNode.style,
+        ...currentNode.style,
         [editItem.styleKey]: isChoose ? defaultValue : key,
       },
     });
