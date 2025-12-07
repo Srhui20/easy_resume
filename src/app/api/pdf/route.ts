@@ -1,3 +1,4 @@
+import path from "node:path";
 import { type NextRequest, NextResponse } from "next/server";
 import puppeteer from "puppeteer";
 
@@ -19,8 +20,6 @@ export async function POST(req: NextRequest) {
     await page.setContent(
       `<html>
         <head>
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
           <style>
           ul,
           ol {
@@ -43,10 +42,15 @@ export async function POST(req: NextRequest) {
       </html>`,
       { waitUntil: "networkidle0" },
     );
+
     await page.setViewport({
       deviceScaleFactor: 1,
       height: 1123,
       width: 794, // A4 width px
+    });
+
+    await page.addScriptTag({
+      path: path.join(process.cwd(), "/public/tailwind-browser.js"),
     });
 
     // 生成 PDF
