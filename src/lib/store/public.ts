@@ -128,10 +128,10 @@ export const usePublicStore = create<PublicState>((set) => ({
        */
       let left = (clientX - pageLeft - attrX + attrLeft) / scale;
       let top = (clientY - pageTop - attrY + attrTop) / scale;
-      const maxLeft = (pageWidth - attrWidth) / scale - 40;
-      const maxTop = (pageHeight - attrHeight) / scale - 40;
-      if (left <= 40) left = 40;
-      if (top <= 40) top = 40;
+      const maxLeft = (pageWidth - attrWidth) / scale - 0;
+      const maxTop = (pageHeight - attrHeight) / scale - 0;
+      if (left <= 0) left = 0;
+      if (top <= 0) top = 0;
 
       if (left >= maxLeft) left = maxLeft;
       if (top >= maxTop) top = maxTop;
