@@ -439,7 +439,7 @@ export default function ResumeParagraphStyle() {
                 <Form.Item label="职位" style={{ marginBottom: "10px" }}>
                   <Input
                     onChange={(val) => editPosition(item.id, val)}
-                    value={currentNode?.titleInfo?.label}
+                    value={item.position}
                   />
                 </Form.Item>
               </div>
