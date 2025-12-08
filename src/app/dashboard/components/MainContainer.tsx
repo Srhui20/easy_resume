@@ -1,5 +1,5 @@
 import { useUpdateEffect } from "ahooks";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import resumeStyle1 from "@/lib//resume_sytle/resume1";
 import { usePublicStore } from "@/lib/store/public";
 import { useMouseOpeartion } from "@/lib/userMouseHook";
@@ -25,25 +25,28 @@ export default function MainContainer() {
   const setChooseValue = usePublicStore((state) => state.setChooseValue);
   const clearChoose = usePublicStore((state) => state.clearChoose);
 
-  const pageLength = useMemo(() => {
-    let maxValue = 0;
-
-    for (const item of resumeData) {
-      const num = parseInt(item?.style?.top as string, 10);
-      const height = item?.ref?.offsetHeight ?? 0;
-      const mv = height + num;
-      if (mv > maxValue) {
-        maxValue = mv;
-      }
-    }
-
-    return Math.ceil(maxValue / (1123 - 41));
-  }, [resumeData]);
+  const [pageLength, setPageLength] = useState(1);
 
   useEffect(() => {
-    const localData = JSON.parse(
-      localStorage.getItem("resumeData") || JSON.stringify(resumeStyle1),
-    );
+    const raf = window.requestAnimationFrame(() => {
+      let maxValue = 0;
+      for (const item of resumeData) {
+        const num = parseInt(item?.style?.top as string, 10);
+        const height = item?.ref?.offsetHeight ?? 0;
+        const mv = height + num;
+        if (mv > maxValue) {
+          maxValue = mv;
+        }
+      }
+
+      setPageLength(Math.ceil((maxValue + 1) / 1123));
+    });
+    return () => {
+      window.cancelAnimationFrame(raf);
+    };
+  }, [resumeData]);
+  useEffect(() => {
+    const localData = JSON.parse(JSON.stringify(resumeStyle1));
     setResumeData(localData);
   }, [setResumeData]);
 
