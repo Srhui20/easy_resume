@@ -23,6 +23,7 @@ export default function MainContainer() {
   const clearAlignLabel = usePublicStore((state) => state.clearAlignLabel);
   const setIsMoving = usePublicStore((state) => state.setIsMoving);
   const setChooseValue = usePublicStore((state) => state.setChooseValue);
+  const clearChoose = usePublicStore((state) => state.clearChoose);
 
   const pageLength = useMemo(() => {
     let maxValue = 0;
@@ -65,11 +66,11 @@ export default function MainContainer() {
     attrId: string,
     ai: number,
   ) => {
+    $e.stopPropagation();
     if (attrId !== chooseId || ai !== attributeIndex) return;
     if ($e.ctrlKey || $e.metaKey) {
       return;
     }
-    $e.stopPropagation();
     setPosition({
       x: $e.nativeEvent.clientX,
       y: $e.nativeEvent.clientY,
@@ -132,9 +133,18 @@ export default function MainContainer() {
     }
   }, [isMoving, clearAlignLabel]);
 
+  const mouseClickAttribute = (
+    $e: React.MouseEvent<HTMLDivElement, MouseEvent>,
+    id: string,
+  ) => {
+    $e.stopPropagation();
+    setChooseResumeData(id);
+  };
+
   return (
     <div
       className="main-container flex h-full flex-col overflow-auto bg-gray-200"
+      onClick={clearChoose}
       onMouseUp={() => mouseUpAttribute()}
       ref={moveRef}
     >
@@ -168,7 +178,7 @@ export default function MainContainer() {
                   <div
                     className={`${attr.className} ${attr.pageLabel}`}
                     key={attr.id}
-                    onClick={() => setChooseResumeData(attr.id)}
+                    onClick={($e) => mouseClickAttribute($e, attr.id)}
                     onMouseDown={($e) => mouseDownAttribute($e, attr.id, index)}
                     ref={($el) => {
                       attr.ref = $el;
@@ -181,7 +191,7 @@ export default function MainContainer() {
                   <div
                     className={attr.className}
                     key={attr.id}
-                    onClick={() => setChooseResumeData(attr.id)}
+                    onClick={($el) => mouseClickAttribute($el, attr.id)}
                     onMouseDown={($e) => mouseDownAttribute($e, attr.id, index)}
                     ref={($el) => {
                       attr.ref = $el;

@@ -103,8 +103,19 @@ export const usePublicStore = create<PublicState>((set) => ({
     }),
 
   clearChoose: () =>
-    set({
-      chooseId: "",
+    set((state) => {
+      return {
+        chooseId: "",
+        resumeData: state.resumeData.map((item) => {
+          return {
+            ...item,
+            className: item.className
+              .replace(/\bchoose_label\b/g, "")
+              .replace(/\s+/g, " ")
+              .trim(),
+          };
+        }),
+      };
     }),
   isMoving: false,
   movePageAttribute: (clientX, clientY, attrX, attrY, scale) =>

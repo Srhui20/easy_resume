@@ -69,6 +69,7 @@ export default function Dashboard() {
     a.click();
     URL.revokeObjectURL(url);
   };
+
   return (
     <div className="flex h-screen flex-col">
       <div className="flex h-15 items-center justify-between border-gray-300 border-b pr-4 pl-4">
