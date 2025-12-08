@@ -5,7 +5,7 @@ export type PAGE_ATTRIBUTE = {
   className: string;
   id: string;
   pageLabel?: string;
-  style?: CSSProperties;
+  style: CSSProperties;
   ref?: HTMLDivElement | null;
   type: "baseInfo" | "paragraph";
   titleInfo?: {
