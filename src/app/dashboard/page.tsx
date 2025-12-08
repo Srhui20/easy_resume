@@ -2,12 +2,31 @@
 
 import { DownloadOutlined } from "@ant-design/icons";
 import { Button, message, Splitter } from "antd";
+import { useEffect } from "react";
+import { usePublicStore } from "@/lib/store/public";
 import type { OperationBtnType } from "@/types/resume";
 import MainContainer from "./components/MainContainer";
 import RightInfo from "./components/RightInfo";
 
 export default function Dashboard() {
   const [messageApi] = message.useMessage();
+
+  const resumeData = usePublicStore((state) => state.resumeData);
+
+  useEffect(() => {
+    localStorage.setItem(
+      "resumeData",
+      JSON.stringify(
+        resumeData.map((item) => {
+          return {
+            ...item,
+            ref: null,
+          };
+        }),
+      ),
+    );
+  }, [resumeData]);
+
   const btnList: OperationBtnType[] = [
     {
       handleFunc: () => handleDownload(),

@@ -40,7 +40,10 @@ export default function MainContainer() {
   }, [resumeData]);
 
   useEffect(() => {
-    setResumeData(resumeStyle1);
+    const localData = JSON.parse(
+      localStorage.getItem("resumeData") || JSON.stringify(resumeStyle1),
+    );
+    setResumeData(localData);
   }, [setResumeData]);
 
   const [position, setPosition] = useState({
