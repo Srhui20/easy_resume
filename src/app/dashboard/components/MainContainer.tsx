@@ -46,7 +46,9 @@ export default function MainContainer() {
     };
   }, [resumeData]);
   useEffect(() => {
-    const localData = JSON.parse(JSON.stringify(resumeStyle1));
+    const localData = JSON.parse(
+      localStorage.getItem("resumeData") || JSON.stringify(resumeStyle1),
+    );
     setResumeData(localData);
   }, [setResumeData]);
 
