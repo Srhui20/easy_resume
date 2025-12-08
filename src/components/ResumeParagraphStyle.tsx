@@ -427,7 +427,9 @@ export default function ResumeParagraphStyle() {
                   <DatePicker.RangePicker
                     allowEmpty={[true, true]}
                     defaultValue={[
-                      dayjs(item.startTime, "YYYY-MM-DD"),
+                      item.startTime
+                        ? dayjs(item.startTime, "YYYY-MM-DD")
+                        : null,
                       item.endTime ? dayjs(item.endTime, "YYYY-MM-DD") : null,
                     ]}
                     format="YYYY-MM-DD"
