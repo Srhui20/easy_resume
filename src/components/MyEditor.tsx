@@ -28,7 +28,22 @@ function MyEditor({ value, onChange }: Props) {
     onChangeRef.current(val);
   };
 
-  const toolbarConfig = {};
+  const toolbarConfig = {
+    toolbarKeys: [
+      "headerSelect",
+      "bold",
+      "italic",
+      "through",
+      "color",
+      "bgColor",
+      "fontSize",
+      "fontFamily",
+      "indent",
+      "delIndent",
+      "bulletedList",
+      "numberedList",
+    ],
+  };
   const editorConfig = {
     placeholder: "请输入内容...",
   };
@@ -67,8 +82,8 @@ function MyEditor({ value, onChange }: Props) {
         mode="default"
         onChange={(editor) => handleChange(editor.getHtml())}
         onCreated={setEditor}
-        style={{ height: "500px" }}
-        value={initialValueRef.current}
+        style={{ height: "250px" }}
+        value={initialValueRef?.current}
       />
     </div>
   );

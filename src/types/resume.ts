@@ -4,12 +4,28 @@ import type { CSSProperties } from "react";
 export type PAGE_ATTRIBUTE = {
   className: string;
   id: string;
-  pageLabel: string;
-  style: CSSProperties;
+  pageLabel?: string;
+  style?: CSSProperties;
   ref?: HTMLDivElement | null;
   type: "baseInfo" | "paragraph";
-  title?: string;
+  titleInfo?: {
+    label: string;
+    style: CSSProperties;
+  };
+  paragraphArr?: PARAGRAPH_TYPE[];
+  borderStyle?: CSSProperties;
 };
+
+type PARAGRAPH_TYPE = {
+  id: string;
+  label: string;
+  style: CSSProperties;
+  name: string;
+  startTime: string | null;
+  endTime: string | null;
+  position: string;
+};
+
 export type RESUME_TYPE = {
   page: number;
   ref?: HTMLDivElement | null;

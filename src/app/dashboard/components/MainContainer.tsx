@@ -186,15 +186,43 @@ export default function MainContainer() {
                     style={attr.style}
                   >
                     <div className="flex flex-col">
-                      <div className="w-[790px] font-bold">
-                        {attr.title || "空"}
-                      </div>
                       <div
-                        className="w-[790px]"
-                        dangerouslySetInnerHTML={{
-                          __html: attr.pageLabel || "空",
-                        }}
-                      />
+                        className="mb-[8px] w-[790px] font-bold"
+                        style={attr?.borderStyle}
+                      >
+                        <div
+                          className="w-[100px]"
+                          style={attr.titleInfo?.style}
+                        >
+                          {attr.titleInfo?.label || "空"}
+                        </div>
+                      </div>
+
+                      <div className="flex w-full flex-col gap-[10px]">
+                        {attr.paragraphArr?.map((paragraph) => (
+                          <div className="" key={paragraph.id}>
+                            <div className="flex w-full">
+                              <div className="w-1/3 font-bold">
+                                {paragraph.name}
+                              </div>
+                              <div className="w-1/3 text-center">
+                                {paragraph.position}
+                              </div>
+                              {paragraph.startTime && (
+                                <div className="w-1/3 text-right">
+                                  {paragraph.startTime} -{" "}
+                                  {paragraph.endTime || "至今"}
+                                </div>
+                              )}
+                            </div>
+                            <div
+                              dangerouslySetInnerHTML={{
+                                __html: paragraph.label || "空",
+                              }}
+                            />
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 );

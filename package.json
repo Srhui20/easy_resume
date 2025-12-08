@@ -18,6 +18,7 @@
     "@wangeditor-next/editor-for-react": "^1.0.11",
     "ahooks": "^3.9.6",
     "antd": "^6.0.0",
+    "dayjs": "^1.11.19",
     "next": "16.0.7",
     "puppeteer": "^24.31.0",
     "react": "19.2.1",
