@@ -38,7 +38,7 @@ export type OperationBtnType = {
   icon: React.ReactNode;
   label: string;
   handleFunc: () => void;
-  isTip: boolean;
+  isTip?: boolean;
   color?: ButtonColorType;
 };
 

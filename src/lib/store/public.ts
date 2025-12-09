@@ -81,6 +81,15 @@ interface PublicState {
    * @returns
    */
   updateResumeData: (data: PAGE_ATTRIBUTE) => void;
+
+  /**
+   * 新增数据
+   * @param data
+   * @returns
+   */
+  createData: (data: PAGE_ATTRIBUTE) => void;
+
+  delAttribute: () => void;
 }
 
 export const usePublicStore = create<PublicState>((set) => ({
@@ -113,8 +122,28 @@ export const usePublicStore = create<PublicState>((set) => ({
               .replace(/\bchoose_label\b/g, "")
               .replace(/\s+/g, " ")
               .trim(),
+            style: {
+              ...item.style,
+              zIndex: item.type === "baseInfo" ? 1 : 0,
+            },
           };
         }),
+      };
+    }),
+  createData: (val) =>
+    set((state) => {
+      const arr = [...state.resumeData];
+      arr.push(val);
+      return {
+        resumeData: arr,
+      };
+    }),
+  delAttribute: () =>
+    set((state) => {
+      const id = state.chooseId;
+      state.clearChoose();
+      return {
+        resumeData: state.resumeData.filter((item) => item.id !== id),
       };
     }),
   isMoving: false,
@@ -207,7 +236,7 @@ export const usePublicStore = create<PublicState>((set) => ({
           const style = { ...mapAttr.style };
 
           if (style?.zIndex) {
-            style.zIndex = 0;
+            style.zIndex = mapAttr.type === "baseInfo" ? 1 : 0;
           }
 
           if (className.includes(" choose_label")) {

@@ -9,7 +9,7 @@ import MainContainer from "./components/MainContainer";
 import RightInfo from "./components/RightInfo";
 
 export default function Dashboard() {
-  const [messageApi] = message.useMessage();
+  const [messageApi, contextHolder] = message.useMessage();
 
   const resumeData = usePublicStore((state) => state.resumeData);
 
@@ -56,7 +56,7 @@ export default function Dashboard() {
 
     if (!res.ok)
       return messageApi.open({
-        content: "This is an error message",
+        content: "下载出错，请稍后重试~",
         type: "error",
       });
 
@@ -72,6 +72,7 @@ export default function Dashboard() {
 
   return (
     <div className="flex h-screen flex-col">
+      {contextHolder}
       <div className="flex h-15 items-center justify-between border-gray-300 border-b pr-4 pl-4">
         <div className="font-bold">EASY_RESUME</div>
         <div className="flex gap-3">
