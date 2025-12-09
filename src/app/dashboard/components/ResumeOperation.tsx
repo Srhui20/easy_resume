@@ -275,7 +275,7 @@ export default function ResumeOperation() {
     (btn) => {
       btn.handleFunc();
     },
-    { wait: 2000 },
+    { wait: 500 },
   );
 
   return (
