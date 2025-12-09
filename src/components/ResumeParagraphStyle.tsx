@@ -17,6 +17,7 @@ import dayjs from "dayjs";
 import dynamic from "next/dynamic";
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { usePublicStore } from "@/lib/store/public";
+import { useUndoStore } from "@/lib/store/undo";
 import type { BaseInfoFontStyleType, PAGE_ATTRIBUTE } from "@/types/resume";
 
 const EditorWrapper = memo(
@@ -120,6 +121,9 @@ export default function ResumeParagraphStyle() {
   const chooseId = usePublicStore((state) => state.chooseId);
   const attributeIndex = usePublicStore((state) => state.attributeIndex);
   const updateResumeData = usePublicStore((state) => state.updateResumeData);
+  const resumeData = usePublicStore((state) => state.resumeData);
+
+  const setUndoList = useUndoStore.getState().setUndoList;
 
   // 订阅 currentNode 的其他属性（用于样式等）
   const currentNode: PAGE_ATTRIBUTE | null = usePublicStore((state) => {
@@ -166,6 +170,7 @@ export default function ResumeParagraphStyle() {
 
   const editLabel = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!currentNode) return;
+    setUndoList(resumeData);
     updateResumeData({
       ...currentNode,
       titleInfo: {
@@ -177,6 +182,7 @@ export default function ResumeParagraphStyle() {
 
   const editFontSize = (val: number | null) => {
     if (!currentNode) return;
+    setUndoList(resumeData);
     updateResumeData({
       ...currentNode,
       titleInfo: {
@@ -191,6 +197,7 @@ export default function ResumeParagraphStyle() {
 
   const editFontColor = (_: Color, css: string) => {
     if (!currentNode) return;
+    setUndoList(resumeData);
     updateResumeData({
       ...currentNode,
       titleInfo: {
@@ -205,6 +212,7 @@ export default function ResumeParagraphStyle() {
 
   const editBgColor = (_: Color, css: string) => {
     if (!currentNode) return;
+    setUndoList(resumeData);
     updateResumeData({
       ...currentNode,
       titleInfo: {
@@ -219,6 +227,7 @@ export default function ResumeParagraphStyle() {
 
   const editBorderBgColor = (_: Color, css: string) => {
     if (!currentNode) return;
+    setUndoList(resumeData);
     updateResumeData({
       ...currentNode,
       borderStyle: {
@@ -231,6 +240,7 @@ export default function ResumeParagraphStyle() {
   const editFontStyle = (editItem: BaseInfoFontStyleType) => {
     const { isChoose, defaultValue, key } = editItem;
     if (!currentNode) return;
+    setUndoList(resumeData);
     updateResumeData({
       ...currentNode,
       titleInfo: {
@@ -245,7 +255,7 @@ export default function ResumeParagraphStyle() {
 
   const editMainName = (id: string, e: React.ChangeEvent<HTMLInputElement>) => {
     if (!currentNode) return;
-
+    setUndoList(resumeData);
     updateResumeData({
       ...currentNode,
       paragraphArr:
@@ -260,7 +270,7 @@ export default function ResumeParagraphStyle() {
 
   const editDate = (id: string, val: null | string[]) => {
     if (!currentNode) return;
-
+    setUndoList(resumeData);
     updateResumeData({
       ...currentNode,
       paragraphArr:
@@ -276,7 +286,7 @@ export default function ResumeParagraphStyle() {
 
   const editPosition = (id: string, e: React.ChangeEvent<HTMLInputElement>) => {
     if (!currentNode) return;
-
+    setUndoList(resumeData);
     updateResumeData({
       ...currentNode,
       paragraphArr:

@@ -33,7 +33,7 @@ interface UndoState {
   toSetRedo: () => void;
 }
 
-export const undoStore = create<UndoState>((set) => ({
+export const useUndoStore = create<UndoState>((set) => ({
   redoList: [],
   setUndoList: (val) =>
     set((state) => {
@@ -47,7 +47,7 @@ export const undoStore = create<UndoState>((set) => ({
     set((state) => {
       const uList = state.undoList;
       const rList = state.redoList;
-      uList.push(rList[0]);
+      uList.push(rList[rList.length - 1]);
       rList.pop();
       return {
         redoList: rList,
@@ -58,8 +58,10 @@ export const undoStore = create<UndoState>((set) => ({
     set((state) => {
       const uList = state.undoList;
       const rList = state.redoList;
-      rList.push(uList[0]);
-      uList.pop();
+      rList.push(uList[uList.length - 1]);
+      if (uList.length > 1) {
+        uList.pop();
+      }
       return {
         redoList: rList,
         undoList: uList,

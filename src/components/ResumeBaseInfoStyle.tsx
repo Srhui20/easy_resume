@@ -7,9 +7,12 @@ import { ColorPicker, Input, InputNumber, Tooltip } from "antd";
 import type { Color } from "antd/es/color-picker";
 import { useMemo } from "react";
 import { usePublicStore } from "@/lib/store/public";
+import { useUndoStore } from "@/lib/store/undo";
 import type { BaseInfoFontStyleType, PAGE_ATTRIBUTE } from "@/types/resume";
 export default function ResumeBaseInfoStyle() {
-  const { updateResumeData } = usePublicStore();
+  const { updateResumeData, resumeData } = usePublicStore();
+  const setUndoList = useUndoStore.getState().setUndoList;
+
   const currentNode: PAGE_ATTRIBUTE | null = usePublicStore((state) => {
     if (!state.chooseId) return null;
     return state.resumeData[state.attributeIndex];
@@ -47,6 +50,7 @@ export default function ResumeBaseInfoStyle() {
 
   const editLabel = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!currentNode) return;
+    setUndoList(resumeData);
     updateResumeData({
       ...currentNode,
       pageLabel: e.target.value,
@@ -55,6 +59,7 @@ export default function ResumeBaseInfoStyle() {
 
   const editFontSize = (val: number | null) => {
     if (!currentNode) return;
+    setUndoList(resumeData);
     updateResumeData({
       ...currentNode,
       style: {
@@ -66,6 +71,7 @@ export default function ResumeBaseInfoStyle() {
 
   const editFontColor = (_: Color, css: string) => {
     if (!currentNode) return;
+    setUndoList(resumeData);
     updateResumeData({
       ...currentNode,
       style: {
@@ -77,6 +83,7 @@ export default function ResumeBaseInfoStyle() {
 
   const editLeft = (val: number | null) => {
     if (!currentNode) return;
+    setUndoList(resumeData);
     updateResumeData({
       ...currentNode,
       style: {
@@ -87,6 +94,7 @@ export default function ResumeBaseInfoStyle() {
   };
   const editTop = (val: number | null) => {
     if (!currentNode) return;
+    setUndoList(resumeData);
     updateResumeData({
       ...currentNode,
       style: {
@@ -100,6 +108,7 @@ export default function ResumeBaseInfoStyle() {
     const { isChoose, defaultValue, key } = editItem;
 
     if (!currentNode) return;
+    setUndoList(resumeData);
     updateResumeData({
       ...currentNode,
       style: {

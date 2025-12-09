@@ -2,6 +2,7 @@ import { useUpdateEffect } from "ahooks";
 import { useCallback, useEffect, useRef, useState } from "react";
 import resumeStyle1 from "@/lib//resume_sytle/resume1";
 import { usePublicStore } from "@/lib/store/public";
+import { useUndoStore } from "@/lib/store/undo";
 import { useMouseOpeartion } from "@/lib/userMouseHook";
 import styles from "./index.module.scss";
 
@@ -25,6 +26,8 @@ export default function MainContainer() {
   const setChooseValue = usePublicStore((state) => state.setChooseValue);
   const clearChoose = usePublicStore((state) => state.clearChoose);
 
+  const setUndoList = useUndoStore.getState().setUndoList;
+
   const [pageLength, setPageLength] = useState(1);
 
   useEffect(() => {
@@ -45,12 +48,15 @@ export default function MainContainer() {
       window.cancelAnimationFrame(raf);
     };
   }, [resumeData]);
+
   useEffect(() => {
     const localData = JSON.parse(
       localStorage.getItem("resumeData") || JSON.stringify(resumeStyle1),
     );
+
+    setUndoList(localData);
     setResumeData(localData);
-  }, [setResumeData]);
+  }, [setResumeData, setUndoList]);
 
   const [position, setPosition] = useState({
     x: 0,
@@ -121,6 +127,7 @@ export default function MainContainer() {
       x: 0,
       y: 0,
     });
+    setUndoList(resumeData);
   };
 
   // 组件卸载时清理未完成的动画帧

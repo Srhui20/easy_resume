@@ -11,7 +11,7 @@ import { useThrottleFn } from "ahooks";
 import { Col, Modal, message, Row, Tooltip } from "antd";
 import { v4 as uuidv4 } from "uuid";
 import { usePublicStore } from "@/lib/store/public";
-import { undoStore } from "@/lib/store/undo";
+import { useUndoStore } from "@/lib/store/undo";
 import type { OperationBtnType, PAGE_ATTRIBUTE } from "@/types/resume";
 export default function ResumeOperation() {
   const [messageApi, contextHolder] = message.useMessage();
@@ -26,10 +26,8 @@ export default function ResumeOperation() {
   const setResumeData = usePublicStore((state) => state.setResumeData);
   const clearChoose = usePublicStore((state) => state.clearChoose);
 
-  const undoList = undoStore((state) => state.undoList);
-  const redoList = undoStore((state) => state.redoList);
-  const toSetUndo = undoStore((state) => state.toSetUndo);
-  const toSetRedo = undoStore((state) => state.toSetRedo);
+  const { undoList, redoList, toSetUndo, toSetRedo, setUndoList } =
+    useUndoStore();
 
   const btnList: OperationBtnType[] = [
     {
@@ -260,15 +258,18 @@ export default function ResumeOperation() {
   };
 
   const toUndo = () => {
-    if (!undoList.length) return;
-    setResumeData(undoList[0]);
+    if (undoList.length <= 1) return;
     toSetUndo();
+    setResumeData(undoList[undoList.length - 1]);
+    if (undoList.length === 0) {
+      setUndoList(resumeData);
+    }
   };
 
   const toRedo = () => {
     if (!redoList.length) return;
-    setResumeData(redoList[0]);
     toSetRedo();
+    setResumeData(undoList[undoList.length - 1]);
   };
 
   const { run: handleClick } = useThrottleFn(
