@@ -51,7 +51,7 @@ function MyEditor({ value, onChange }: Props) {
   // 只在编辑器创建时设置初始值，之后完全不受控
   useEffect(() => {
     if (editor && !isInitializedRef.current) {
-      editor.setHtml(initialValueRef.current);
+      editor?.setHtml(initialValueRef.current);
       isInitializedRef.current = true;
       setTimeout(() => {
         editor.focus(true);
