@@ -50,16 +50,15 @@ export default function ResumeBaseInfoStyle() {
 
   const editLabel = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!currentNode) return;
-    setUndoList(resumeData);
     updateResumeData({
       ...currentNode,
       pageLabel: e.target.value,
     });
+    setUndoList(resumeData);
   };
 
   const editFontSize = (val: number | null) => {
     if (!currentNode) return;
-    setUndoList(resumeData);
     updateResumeData({
       ...currentNode,
       style: {
@@ -67,11 +66,11 @@ export default function ResumeBaseInfoStyle() {
         fontSize: val ? `${val}px` : "18px",
       },
     });
+    setUndoList(resumeData);
   };
 
   const editFontColor = (_: Color, css: string) => {
     if (!currentNode) return;
-    setUndoList(resumeData);
     updateResumeData({
       ...currentNode,
       style: {
@@ -79,11 +78,11 @@ export default function ResumeBaseInfoStyle() {
         color: css,
       },
     });
+    setUndoList(resumeData);
   };
 
   const editLeft = (val: number | null) => {
     if (!currentNode) return;
-    setUndoList(resumeData);
     updateResumeData({
       ...currentNode,
       style: {
@@ -91,10 +90,10 @@ export default function ResumeBaseInfoStyle() {
         left: val ? `${val}px` : "40px",
       },
     });
+    setUndoList(resumeData);
   };
   const editTop = (val: number | null) => {
     if (!currentNode) return;
-    setUndoList(resumeData);
     updateResumeData({
       ...currentNode,
       style: {
@@ -102,13 +101,13 @@ export default function ResumeBaseInfoStyle() {
         top: val ? `${val}px` : "40px",
       },
     });
+    setUndoList(resumeData);
   };
 
   const editFontStyle = (editItem: BaseInfoFontStyleType) => {
     const { isChoose, defaultValue, key } = editItem;
 
     if (!currentNode) return;
-    setUndoList(resumeData);
     updateResumeData({
       ...currentNode,
       style: {
@@ -116,6 +115,7 @@ export default function ResumeBaseInfoStyle() {
         [editItem.styleKey]: isChoose ? defaultValue : key,
       },
     });
+    setUndoList(resumeData);
   };
 
   return (

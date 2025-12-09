@@ -120,6 +120,7 @@ export default function ResumeOperation() {
       },
       type: "baseInfo",
     });
+    setUndoList(resumeData);
     setChooseResumeData(uuid);
   };
 
@@ -149,7 +150,6 @@ export default function ResumeOperation() {
       (maxItem.ref?.offsetHeight ?? 0);
     const dataId = uuidv4();
     const paraId = uuidv4();
-
     createData({
       borderStyle: {
         borderBottomColor: "pink",
@@ -184,6 +184,7 @@ export default function ResumeOperation() {
       },
       type: "paragraph",
     });
+    setUndoList(resumeData);
   };
 
   const delData = () => {
@@ -194,6 +195,7 @@ export default function ResumeOperation() {
       });
     }
     delAttribute();
+    setUndoList(resumeData);
   };
 
   const exportFile = () => {
@@ -238,6 +240,7 @@ export default function ResumeOperation() {
             .then(
               () => {
                 setResumeData(arr);
+                setUndoList(resumeData);
                 clearChoose();
               },
               () => {

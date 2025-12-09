@@ -170,7 +170,6 @@ export default function ResumeParagraphStyle() {
 
   const editLabel = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!currentNode) return;
-    setUndoList(resumeData);
     updateResumeData({
       ...currentNode,
       titleInfo: {
@@ -178,11 +177,11 @@ export default function ResumeParagraphStyle() {
         style: currentNode.titleInfo?.style ?? {},
       },
     });
+    setUndoList(resumeData);
   };
 
   const editFontSize = (val: number | null) => {
     if (!currentNode) return;
-    setUndoList(resumeData);
     updateResumeData({
       ...currentNode,
       titleInfo: {
@@ -193,11 +192,11 @@ export default function ResumeParagraphStyle() {
         },
       },
     });
+    setUndoList(resumeData);
   };
 
   const editFontColor = (_: Color, css: string) => {
     if (!currentNode) return;
-    setUndoList(resumeData);
     updateResumeData({
       ...currentNode,
       titleInfo: {
@@ -208,11 +207,11 @@ export default function ResumeParagraphStyle() {
         },
       },
     });
+    setUndoList(resumeData);
   };
 
   const editBgColor = (_: Color, css: string) => {
     if (!currentNode) return;
-    setUndoList(resumeData);
     updateResumeData({
       ...currentNode,
       titleInfo: {
@@ -223,11 +222,11 @@ export default function ResumeParagraphStyle() {
         },
       },
     });
+    setUndoList(resumeData);
   };
 
   const editBorderBgColor = (_: Color, css: string) => {
     if (!currentNode) return;
-    setUndoList(resumeData);
     updateResumeData({
       ...currentNode,
       borderStyle: {
@@ -235,12 +234,12 @@ export default function ResumeParagraphStyle() {
         borderBottomColor: css,
       },
     });
+    setUndoList(resumeData);
   };
 
   const editFontStyle = (editItem: BaseInfoFontStyleType) => {
     const { isChoose, defaultValue, key } = editItem;
     if (!currentNode) return;
-    setUndoList(resumeData);
     updateResumeData({
       ...currentNode,
       titleInfo: {
@@ -251,11 +250,11 @@ export default function ResumeParagraphStyle() {
         },
       },
     });
+    setUndoList(resumeData);
   };
 
   const editMainName = (id: string, e: React.ChangeEvent<HTMLInputElement>) => {
     if (!currentNode) return;
-    setUndoList(resumeData);
     updateResumeData({
       ...currentNode,
       paragraphArr:
@@ -266,11 +265,11 @@ export default function ResumeParagraphStyle() {
           };
         }) ?? [],
     });
+    setUndoList(resumeData);
   };
 
   const editDate = (id: string, val: null | string[]) => {
     if (!currentNode) return;
-    setUndoList(resumeData);
     updateResumeData({
       ...currentNode,
       paragraphArr:
@@ -282,11 +281,11 @@ export default function ResumeParagraphStyle() {
           };
         }) ?? [],
     });
+    setUndoList(resumeData);
   };
 
   const editPosition = (id: string, e: React.ChangeEvent<HTMLInputElement>) => {
     if (!currentNode) return;
-    setUndoList(resumeData);
     updateResumeData({
       ...currentNode,
       paragraphArr:
@@ -297,6 +296,7 @@ export default function ResumeParagraphStyle() {
           };
         }) ?? [],
     });
+    setUndoList(resumeData);
   };
 
   return (
