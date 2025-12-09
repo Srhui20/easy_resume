@@ -8,7 +8,7 @@ import {
   UndoOutlined,
 } from "@ant-design/icons";
 import { useThrottleFn } from "ahooks";
-import { Col, message, Row } from "antd";
+import { Col, Modal, message, Row, Tooltip } from "antd";
 import { v4 as uuidv4 } from "uuid";
 import { usePublicStore } from "@/lib/store/public";
 import type { OperationBtnType, PAGE_ATTRIBUTE } from "@/types/resume";
@@ -22,6 +22,7 @@ export default function ResumeOperation() {
   const resumeData = usePublicStore((state) => state.resumeData);
   const delAttribute = usePublicStore((state) => state.delAttribute);
   const chooseId = usePublicStore((state) => state.chooseId);
+  const setResumeData = usePublicStore((state) => state.setResumeData);
 
   const btnList: OperationBtnType[] = [
     {
@@ -70,7 +71,7 @@ export default function ResumeOperation() {
       type: "default",
     },
     {
-      handleFunc: () => {},
+      handleFunc: () => exportFile(),
       icon: <ExportOutlined />,
       key: "export",
       label: "导出文件",
@@ -190,6 +191,66 @@ export default function ResumeOperation() {
     delAttribute();
   };
 
+  const exportFile = () => {
+    const fileContent = `${JSON.stringify(
+      resumeData.map((item) => {
+        return {
+          ...item,
+          ref: null,
+        };
+      }),
+      null,
+      2,
+    )};`;
+    const blob = new Blob([fileContent], { type: "text/javascript" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "easy_resume.js";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const [modal, PageModel] = Modal.useModal();
+
+  const importFile = ($e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = $e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        let text = reader.result as string;
+        text = text.replace(/;\s*$/, "");
+        const arr = JSON.parse(text);
+        if (Array.isArray(arr)) {
+          modal
+            .warning({
+              centered: true,
+              content: "导入文件后将覆盖原本的简历，是否确定？",
+              title: "导入文件",
+            })
+            .then(
+              () => {
+                setResumeData(arr);
+              },
+              () => {
+                messageApi.error("导入失败~");
+              },
+            );
+        } else {
+          messageApi.error("格式错误");
+        }
+      } catch {
+        messageApi.error("解析失败~");
+      } finally {
+        $e.target.value = "";
+      }
+    };
+
+    reader.readAsText(file);
+  };
+
   const { run: handleClick } = useThrottleFn(
     (btn) => {
       btn.handleFunc();
@@ -200,16 +261,29 @@ export default function ResumeOperation() {
   return (
     <div className="">
       {contextHolder}
+      {PageModel}
       <Row gutter={[16, 20]}>
         {btnList.map((btn) => (
           <Col className="gutter-row" key={btn.key} span={6}>
-            <div
-              className="flex cursor-pointer flex-col items-center justify-center rounded-lg p-[5] hover:bg-gray-200"
-              onClick={() => handleClick(btn)}
+            <Tooltip
+              title={btn.key === "import" ? "仅支持导入 本站导出的文件" : ""}
             >
-              <div style={{ fontSize: "18px" }}>{btn.icon}</div>
-              <div>{btn.label}</div>
-            </div>
+              <div
+                className="relative flex cursor-pointer flex-col items-center justify-center rounded-lg p-[5] hover:bg-gray-200"
+                onClick={() => handleClick(btn)}
+              >
+                <div style={{ fontSize: "18px" }}>{btn.icon}</div>
+                <div>{btn.label}</div>
+
+                {btn.key === "import" && (
+                  <input
+                    className="absolute z-[10] h-full w-full cursor-pointer opacity-[0] outline-none"
+                    onChange={importFile}
+                    type="file"
+                  />
+                )}
+              </div>
+            </Tooltip>
           </Col>
         ))}
       </Row>
