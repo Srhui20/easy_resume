@@ -39,7 +39,7 @@ export default function MainContainer() {
         }
       }
 
-      setPageLength(Math.ceil((maxValue + 1) / 1123));
+      setPageLength(Math.min(Math.ceil((maxValue + 1) / 1123), 5));
     });
     return () => {
       window.cancelAnimationFrame(raf);
