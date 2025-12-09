@@ -23,6 +23,7 @@ export default function ResumeOperation() {
   const delAttribute = usePublicStore((state) => state.delAttribute);
   const chooseId = usePublicStore((state) => state.chooseId);
   const setResumeData = usePublicStore((state) => state.setResumeData);
+  const clearChoose = usePublicStore((state) => state.clearChoose);
 
   const btnList: OperationBtnType[] = [
     {
@@ -233,6 +234,7 @@ export default function ResumeOperation() {
             .then(
               () => {
                 setResumeData(arr);
+                clearChoose();
               },
               () => {
                 messageApi.error("导入失败~");
