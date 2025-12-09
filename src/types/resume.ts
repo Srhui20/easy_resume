@@ -50,3 +50,5 @@ export type BaseInfoFontStyleType = {
   label: string;
   styleKey: string;
 };
+
+export type UNDO_TYPE = PAGE_ATTRIBUTE[][];

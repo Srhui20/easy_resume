@@ -11,6 +11,7 @@ import { useThrottleFn } from "ahooks";
 import { Col, Modal, message, Row, Tooltip } from "antd";
 import { v4 as uuidv4 } from "uuid";
 import { usePublicStore } from "@/lib/store/public";
+import { undoStore } from "@/lib/store/undo";
 import type { OperationBtnType, PAGE_ATTRIBUTE } from "@/types/resume";
 export default function ResumeOperation() {
   const [messageApi, contextHolder] = message.useMessage();
@@ -24,6 +25,11 @@ export default function ResumeOperation() {
   const chooseId = usePublicStore((state) => state.chooseId);
   const setResumeData = usePublicStore((state) => state.setResumeData);
   const clearChoose = usePublicStore((state) => state.clearChoose);
+
+  const undoList = undoStore((state) => state.undoList);
+  const redoList = undoStore((state) => state.redoList);
+  const toSetUndo = undoStore((state) => state.toSetUndo);
+  const toSetRedo = undoStore((state) => state.toSetRedo);
 
   const btnList: OperationBtnType[] = [
     {
@@ -49,7 +55,7 @@ export default function ResumeOperation() {
       type: "default",
     },
     {
-      handleFunc: () => {},
+      handleFunc: () => toUndo(),
       icon: <UndoOutlined />,
       isTip: true,
       key: "undo",
@@ -57,7 +63,7 @@ export default function ResumeOperation() {
       type: "default",
     },
     {
-      handleFunc: () => {},
+      handleFunc: () => toRedo(),
       icon: <RedoOutlined />,
       key: "redo",
       label: "重做",
@@ -251,6 +257,18 @@ export default function ResumeOperation() {
     };
 
     reader.readAsText(file);
+  };
+
+  const toUndo = () => {
+    if (!undoList.length) return;
+    setResumeData(undoList[0]);
+    toSetUndo();
+  };
+
+  const toRedo = () => {
+    if (!redoList.length) return;
+    setResumeData(redoList[0]);
+    toSetRedo();
   };
 
   const { run: handleClick } = useThrottleFn(
