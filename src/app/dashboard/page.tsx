@@ -1,7 +1,7 @@
 "use client";
 
-import { DownloadOutlined } from "@ant-design/icons";
-import { Button, message, Splitter } from "antd";
+import { DownloadOutlined, GithubOutlined } from "@ant-design/icons";
+import { Button, message, Splitter, Tooltip } from "antd";
 import { useEffect } from "react";
 import { usePublicStore } from "@/lib/store/public";
 import type { OperationBtnType } from "@/types/resume";
@@ -73,7 +73,7 @@ export default function Dashboard() {
   return (
     <div className="flex h-screen flex-col">
       {contextHolder}
-      <div className="flex h-15 items-center justify-between border-gray-300 border-b pr-4 pl-4">
+      <div className="flex h-15 items-center justify-between border-gray-300 border-b pr-8 pl-8">
         <div className="font-bold">EASY_RESUME</div>
         <div className="flex gap-3">
           {btnList.map((btn) => (
@@ -86,6 +86,14 @@ export default function Dashboard() {
               {btn.label}
             </Button>
           ))}
+          <Tooltip title="Github">
+            <Button
+              href="https://github.com/Srhui20/easy_resume"
+              icon={<GithubOutlined />}
+              style={{ fontSize: "16px" }}
+              type="text"
+            />
+          </Tooltip>
         </div>
       </div>
       <div className="flex min-h-0 flex-1">
