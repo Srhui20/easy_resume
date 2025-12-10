@@ -82,13 +82,13 @@ export default function ResumeOperation() {
       label: "导出文件",
       type: "default",
     },
-    {
-      handleFunc: () => {},
-      icon: <ExportOutlined />,
-      key: "print",
-      label: "打印",
-      type: "default",
-    },
+    // {
+    //   handleFunc: () => {},
+    //   icon: <ExportOutlined />,
+    //   key: "print",
+    //   label: "打印",
+    //   type: "default",
+    // },
   ];
 
   const createText = () => {
