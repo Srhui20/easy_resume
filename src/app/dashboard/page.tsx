@@ -22,12 +22,14 @@ export default function Dashboard() {
     localStorage.setItem(
       "resumeData",
       JSON.stringify(
-        resumeData.map((item) => {
-          return {
-            ...item,
-            ref: null,
-          };
-        }),
+        resumeData
+          .filter((item) => item.type !== "baseInfo")
+          .map((item) => {
+            return {
+              ...item,
+              ref: null,
+            };
+          }),
       ),
     );
   }, [resumeData]);
