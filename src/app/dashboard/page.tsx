@@ -5,9 +5,10 @@ import {
   GithubOutlined,
   OpenAIOutlined,
 } from "@ant-design/icons";
+import { useMount } from "ahooks";
 import { Button, FloatButton, Modal, message, Splitter, Tooltip } from "antd";
 import { marked } from "marked";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePublicStore } from "@/lib/store/public";
 import type { OperationBtnType } from "@/types/resume";
 import MainContainer from "./components/MainContainer";
@@ -15,9 +16,17 @@ import RightInfo from "./components/RightInfo";
 
 export default function Dashboard() {
   const [messageApi, contextHolder] = message.useMessage();
-  const [aiMessages, setAiMessages] = useState("sadf");
+  const [aiMessages, setAiMessages] = useState("");
   const resumeData = usePublicStore((state) => state.resumeData);
 
+  const bottomRef = useRef<HTMLDivElement>(null);
+
+  useMount(() => {
+    const local = localStorage.getItem("ai");
+    if (local) {
+      setAiMessages(local);
+    }
+  });
   useEffect(() => {
     localStorage.setItem(
       "resumeData",
@@ -113,6 +122,7 @@ export default function Dashboard() {
             );
           });
         }
+        bottomRef.current?.scrollIntoView({ behavior: "smooth" });
       }
 
       localStorage.setItem("ai", aiMessages);
@@ -121,9 +131,14 @@ export default function Dashboard() {
       console.error("ai error", e);
     }
   };
+
+  useEffect(() => {
+    if (!aiMessages) return;
+    localStorage.setItem("ai", aiMessages);
+  }, [aiMessages]);
+
   const [modalOpen, setOpen] = useState(false);
   const openAiDialog = () => {
-    setAiMessages(localStorage.getItem("ai") || "");
     setOpen(true);
   };
 
@@ -139,14 +154,14 @@ export default function Dashboard() {
           },
         }}
       >
-        Cancel
+        关闭
       </Button>
       <Button
         onClick={() => getAiEvaluate()}
         styles={{ root: { backgroundColor: "#171717" } }}
         type="primary"
       >
-        Submit
+        开始点评
       </Button>
     </>
   );
@@ -160,13 +175,16 @@ export default function Dashboard() {
         onOk={() => setOpen(false)}
         open={modalOpen}
         title="ai点评"
+        width={700}
       >
-        <div
-          className="h-[400px] overflow-auto bg-white"
-          dangerouslySetInnerHTML={{
-            __html: marked(aiMessages),
-          }}
-        />
+        <div className="h-[400px] overflow-auto bg-white">
+          <div
+            dangerouslySetInnerHTML={{
+              __html: marked(aiMessages),
+            }}
+          />
+          <div ref={bottomRef} />
+        </div>
       </Modal>
       <div className="flex h-screen flex-col">
         {contextHolder}
