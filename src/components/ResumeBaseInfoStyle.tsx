@@ -204,13 +204,13 @@ export default function ResumeBaseInfoStyle() {
         </div>
       </div>
       {/* 样式 */}
-      <div className="flex h-[50px] items-center justify-between">
-        <div className="flex-1 text-gray-600">样式</div>
-        <div className="flex h-full justify-center gap-[4px] rounded-lg bg-gray-100 p-[3px] pr-[8px] pl-[8px]">
+      <div className="flex h-[50px] items-center">
+        <div className="mr-[10px] text-gray-600">样式</div>
+        <div className="flex h-full w-[110px] justify-center gap-[4px] rounded-lg bg-gray-100 p-[3px] pr-[8px] pl-[8px]">
           {fontStylesList.map((item) => (
             <Tooltip key={item.key} title={item.label}>
               <div
-                className={`flex w-[36px] cursor-pointer items-center justify-center rounded-lg ${item.isChoose ? "bg-blue-200 text-blue-500" : "hover:bg-gray-300"}`}
+                className={`flex w-[30px] cursor-pointer items-center justify-center rounded-lg ${item.isChoose ? "bg-blue-200 text-blue-500" : "hover:bg-gray-300"}`}
                 onClick={() => editFontStyle(item)}
               >
                 {item.icon}
