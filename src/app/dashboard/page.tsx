@@ -196,6 +196,7 @@ export default function Dashboard() {
                 icon={btn.icon}
                 key={btn.key}
                 onClick={() => btn.handleFunc()}
+                style={{ background: "#171717" }}
                 type={btn.type}
               >
                 {btn.label}
@@ -205,7 +206,7 @@ export default function Dashboard() {
               <Button
                 href="https://github.com/Srhui20/easy_resume"
                 icon={<GithubOutlined />}
-                style={{ fontSize: "16px" }}
+                style={{ fontSize: "24px" }}
                 type="text"
               />
             </Tooltip>
@@ -226,6 +227,7 @@ export default function Dashboard() {
         <FloatButton
           icon={<OpenAIOutlined />}
           onClick={() => openAiDialog()}
+          style={{ background: "#171717" }}
           tooltip="ai点评"
           type="primary"
         />
