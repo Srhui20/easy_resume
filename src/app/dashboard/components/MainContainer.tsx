@@ -1,11 +1,5 @@
-import { useUpdateEffect } from "ahooks";
-import {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
+import { useMount, useUpdateEffect } from "ahooks";
+import { useCallback, useEffect, useRef, useState } from "react";
 import resumeStyle1 from "@/lib//resume_sytle/resume1";
 import { usePublicStore } from "@/lib/store/public";
 import { useUndoStore } from "@/lib/store/undo";
@@ -159,10 +153,9 @@ export default function MainContainer() {
     setChooseResumeData(id);
   };
 
-  useLayoutEffect(() => {
+  useMount(() => {
     const el = moveRef.current;
     if (!el) return;
-
     const targetScrollLeft = (el.scrollWidth - el.clientWidth) / 2;
     el.scrollTo({
       behavior: "smooth", // 关键属性：启用平滑滚动动画
