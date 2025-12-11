@@ -231,7 +231,6 @@ export default function Dashboard() {
           tooltip="ai点评"
           type="primary"
         />
-        ;
       </div>
     </>
   );
