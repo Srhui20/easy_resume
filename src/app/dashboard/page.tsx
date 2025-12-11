@@ -29,8 +29,10 @@ export default function Dashboard() {
   const [messageApi, contextHolder] = message.useMessage();
   const [aiMessages, setAiMessages] = useState("");
   const resumeData = usePublicStore((state) => state.resumeData);
+  const clearChoose = usePublicStore((state) => state.clearChoose);
 
-  const { setPrintData } = useTypesetting();
+  const { setPrintData, setRsData } = useTypesetting();
+  const printResumeData = usePrintStore((state) => state.printResumeData);
   const setPrintResumeData = usePrintStore((state) => state.setPrintResumeData);
 
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -55,6 +57,11 @@ export default function Dashboard() {
     );
   }, [resumeData]);
 
+  useEffect(() => {
+    if (!printResumeData.length) return;
+    setRsData();
+  }, [printResumeData, setRsData]);
+
   const btnList: OperationBtnType[] = [
     {
       handleFunc: () => handleDownload(),
@@ -70,6 +77,7 @@ export default function Dashboard() {
   const [spinning, setSpinning] = useState(false);
   const handleDownload = async () => {
     // 先将文件转成static
+    clearChoose();
     setPrintData();
 
     requestAnimationFrame(() => {
@@ -78,6 +86,7 @@ export default function Dashboard() {
         const html = document.getElementById("print-container");
         const cloneHtml = html?.cloneNode(true) as HTMLElement;
         const bgInClone = cloneHtml.querySelector("#print-page-bg");
+
         if (bgInClone) bgInClone.remove();
         try {
           setSpinning(true);
