@@ -7,7 +7,7 @@ export default function RightInfo() {
   const chooseId = usePublicStore((state) => state.chooseId);
 
   return (
-    <div className="flex h-full w-full flex-col bg-gray-200 p-[0px]">
+    <div className="flex h-full w-full flex-col overflow-scroll bg-gray-200 p-[0px]">
       {/* <Splitter
         style={{ boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)", height: "100%" }}
         vertical
