@@ -222,7 +222,7 @@ export default function Dashboard() {
         width={700}
       >
         <div className="mb-[10px] text-gray-400">
-          已自动过滤基础文本信息，仅显示关键点评
+          已自动过滤基础文本信息，仅点评段落信息
         </div>
         <div className="h-[400px] overflow-auto bg-white">
           <div
