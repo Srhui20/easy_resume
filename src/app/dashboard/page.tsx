@@ -219,7 +219,7 @@ export default function Dashboard() {
             <Splitter.Panel defaultSize="70%" max="70%" min="50%">
               <MainContainer />
             </Splitter.Panel>
-            <Splitter.Panel>
+            <Splitter.Panel defaultSize="30%">
               <RightInfo />
             </Splitter.Panel>
           </Splitter>

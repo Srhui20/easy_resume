@@ -14,7 +14,7 @@ export default function RightInfo() {
       >
         <Splitter.Panel defaultSize="30%" max="50%" min="30%"> */}
 
-      <div className="flex w-full flex-col border-gray-200 border-b border-solid bg-white p-[20px]">
+      <div className="flex h-[230px] w-full flex-col border-gray-200 border-b border-solid bg-white p-[20px]">
         <div className="mb-[10px] font-bold text-[20px]">文件操作</div>
         <ResumeOperation />
       </div>

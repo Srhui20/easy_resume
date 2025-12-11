@@ -296,7 +296,17 @@ export default function ResumeOperation() {
                 className="relative flex cursor-pointer flex-col items-center justify-center rounded-lg p-[5] hover:bg-gray-200"
                 onClick={() => handleClick(btn)}
               >
-                <div style={{ fontSize: "18px" }}>{btn.icon}</div>
+                <div
+                  style={{
+                    alignItems: "center",
+                    display: "flex",
+                    fontSize: "18px",
+                    height: "30px",
+                    justifyContent: "center",
+                  }}
+                >
+                  {btn.icon}
+                </div>
                 <div>{btn.label}</div>
 
                 {btn.key === "import" && (
