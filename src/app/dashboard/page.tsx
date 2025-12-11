@@ -3,10 +3,19 @@
 import {
   DownloadOutlined,
   GithubOutlined,
+  LoadingOutlined,
   OpenAIOutlined,
 } from "@ant-design/icons";
 import { useMount } from "ahooks";
-import { Button, FloatButton, Modal, message, Splitter, Tooltip } from "antd";
+import {
+  Button,
+  FloatButton,
+  Modal,
+  message,
+  Spin,
+  Splitter,
+  Tooltip,
+} from "antd";
 import { marked } from "marked";
 import { useEffect, useRef, useState } from "react";
 import { usePublicStore } from "@/lib/store/public";
@@ -53,35 +62,41 @@ export default function Dashboard() {
   ];
 
   // const [html] = useState("<h1 style='color:red;'>Hello PDF</h1>");
-
+  const [spinning, setSpinning] = useState(false);
   const handleDownload = async () => {
     const html = document.getElementById("print-container");
     const cloneHtml = html?.cloneNode(true) as HTMLElement;
     const bgInClone = cloneHtml.querySelector("#print-page-bg");
     if (bgInClone) bgInClone.remove();
-
-    const res = await fetch("/api/pdf", {
-      body: JSON.stringify({
-        html: `${cloneHtml.innerHTML}`,
-      }),
-      headers: { "Content-Type": "application/json" },
-      method: "POST",
-    });
-
-    if (!res.ok)
-      return messageApi.open({
-        content: "下载出错，请稍后重试~",
-        type: "error",
+    try {
+      setSpinning(true);
+      const res = await fetch("/api/pdf", {
+        body: JSON.stringify({
+          html: `${cloneHtml.innerHTML}`,
+        }),
+        headers: { "Content-Type": "application/json" },
+        method: "POST",
       });
 
-    const blob = await res.blob();
-    const url = URL.createObjectURL(blob);
+      if (!res.ok)
+        return messageApi.open({
+          content: "下载出错，请稍后重试~",
+          type: "error",
+        });
 
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "document.pdf";
-    a.click();
-    URL.revokeObjectURL(url);
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "document.pdf";
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      messageApi.error("下载出错，请稍后再试~");
+    } finally {
+      setSpinning(false);
+    }
   };
 
   const getAiEvaluate = async () => {
@@ -168,6 +183,12 @@ export default function Dashboard() {
 
   return (
     <>
+      <Spin
+        fullscreen
+        indicator={<LoadingOutlined spin style={{ fontSize: 48 }} />}
+        spinning={spinning}
+        tip="下载中~"
+      />
       <Modal
         centered={true}
         footer={footer}

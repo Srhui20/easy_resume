@@ -1,11 +1,5 @@
 @import "tailwindcss";
 
-/* 兼容 Firefox 的滚动条 */
-* {
-  scrollbar-color: #999999 transparent; /* thumb 轨道 */
-  scrollbar-width: thin; /* thumb 轨道 */
-}
-
 .choose_label {
   border: 1px dashed #2e73ff !important;
 }
@@ -31,6 +25,12 @@ ol {
 }
 
 /* ===== WebKit (Chrome/Edge/Safari) ===== */
+
+/* 兼容 Firefox 的滚动条 */
+* {
+  scrollbar-color: #999999 transparent; /* thumb 轨道 */
+  scrollbar-width: thin; /* thumb 轨道 */
+}
 
 /* 整个滚动条 */
 ::-webkit-scrollbar {
