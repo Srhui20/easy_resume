@@ -1,6 +1,7 @@
 import { useMount, useUpdateEffect } from "ahooks";
 import { useCallback, useEffect, useRef, useState } from "react";
 import resumeStyle1 from "@/lib//resume_sytle/resume1";
+import { usePrintStore } from "@/lib/store/print";
 import { usePublicStore } from "@/lib/store/public";
 import { useUndoStore } from "@/lib/store/undo";
 import { useMouseOpeartion } from "@/lib/userMouseHook";
@@ -27,10 +28,17 @@ export default function MainContainer() {
   const clearChoose = usePublicStore((state) => state.clearChoose);
 
   const setUndoList = useUndoStore.getState().setUndoList;
+  const printResumeData = usePrintStore.getState().printResumeData;
 
   const [pageLength, setPageLength] = useState(1);
 
   useEffect(() => {
+    if (printResumeData.length) {
+      const el = printResumeData[printResumeData.length - 1].ref;
+      const maxValue = (el?.offsetHeight || 0) + (el?.offsetTop || 0);
+      setPageLength(Math.ceil(maxValue / 1123));
+      return;
+    }
     const raf = window.requestAnimationFrame(() => {
       let maxValue = 0;
       for (const item of resumeData) {
@@ -47,7 +55,7 @@ export default function MainContainer() {
     return () => {
       window.cancelAnimationFrame(raf);
     };
-  }, [resumeData]);
+  }, [resumeData, printResumeData]);
 
   useEffect(() => {
     const localData = JSON.parse(
@@ -191,78 +199,84 @@ export default function MainContainer() {
             />
 
             <div
-              className={`relative flex w-[794px] flex-col justify-between overflow-hidden bg-white ${styles.page_container}`}
+              className={`relative flex w-[794px] flex-col justify-start justify-between overflow-hidden bg-white ${styles.page_container}`}
               onMouseMove={($e) => moveChooseAttribute($e)}
               ref={($el: HTMLDivElement) => setPageRef($el)}
               style={{ fontSize: "20px", height: `${1123 * pageLength}px` }}
             >
-              {resumeData.map((attr, index) => {
-                return attr.type === "baseInfo" ? (
-                  <div
-                    className={`${attr.className} ${chooseId === attr.id ? "choose_label" : ""}`}
-                    key={attr.id}
-                    onClick={($e) => mouseClickAttribute($e, attr.id)}
-                    onMouseDown={($e) => mouseDownAttribute($e, attr.id, index)}
-                    ref={($el) => {
-                      attr.ref = $el;
-                    }}
-                    style={attr.style}
-                  >
-                    {attr.pageLabel || "空"}
-                  </div>
-                ) : (
-                  <div
-                    className={`${attr.className} ${chooseId === attr.id ? "choose_label" : ""}`}
-                    key={attr.id}
-                    onClick={($el) => mouseClickAttribute($el, attr.id)}
-                    onMouseDown={($e) => mouseDownAttribute($e, attr.id, index)}
-                    ref={($el) => {
-                      attr.ref = $el;
-                    }}
-                    style={attr.style}
-                  >
-                    <div className="flex flex-col">
-                      <div
-                        className="mb-[8px] w-[790px] font-bold"
-                        style={attr?.borderStyle}
-                      >
+              {(printResumeData.length ? printResumeData : resumeData).map(
+                (attr, index) => {
+                  return attr.type === "baseInfo" ? (
+                    <div
+                      className={`${attr.className} ${chooseId === attr.id ? "choose_label" : ""}`}
+                      key={attr.id}
+                      onClick={($e) => mouseClickAttribute($e, attr.id)}
+                      onMouseDown={($e) =>
+                        mouseDownAttribute($e, attr.id, index)
+                      }
+                      ref={($el) => {
+                        attr.ref = $el;
+                      }}
+                      style={attr.style}
+                    >
+                      {attr.pageLabel || "空"}
+                    </div>
+                  ) : (
+                    <div
+                      className={`${attr.className} ${chooseId === attr.id ? "choose_label" : ""}`}
+                      key={attr.id}
+                      onClick={($el) => mouseClickAttribute($el, attr.id)}
+                      onMouseDown={($e) =>
+                        mouseDownAttribute($e, attr.id, index)
+                      }
+                      ref={($el) => {
+                        attr.ref = $el;
+                      }}
+                      style={attr.style}
+                    >
+                      <div className="flex flex-col">
                         <div
-                          className="w-[100px]"
-                          style={attr.titleInfo?.style}
+                          className="mb-[8px] w-[790px] font-bold"
+                          style={attr?.borderStyle}
                         >
-                          {attr.titleInfo?.label || "空"}
+                          <div
+                            className="w-[100px]"
+                            style={attr.titleInfo?.style}
+                          >
+                            {attr.titleInfo?.label || "空"}
+                          </div>
+                        </div>
+
+                        <div className="flex w-full flex-col gap-[10px]">
+                          {attr.paragraphArr?.map((paragraph) => (
+                            <div className="" key={paragraph.id}>
+                              <div className="flex w-full">
+                                <div className="w-1/3 font-bold">
+                                  {paragraph.name}
+                                </div>
+                                <div className="w-1/3 text-center">
+                                  {paragraph.position}
+                                </div>
+                                {paragraph.startTime && (
+                                  <div className="w-1/3 text-right">
+                                    {paragraph.startTime} -{" "}
+                                    {paragraph.endTime || "至今"}
+                                  </div>
+                                )}
+                              </div>
+                              <div
+                                dangerouslySetInnerHTML={{
+                                  __html: paragraph.label || "空",
+                                }}
+                              />
+                            </div>
+                          ))}
                         </div>
                       </div>
-
-                      <div className="flex w-full flex-col gap-[10px]">
-                        {attr.paragraphArr?.map((paragraph) => (
-                          <div className="" key={paragraph.id}>
-                            <div className="flex w-full">
-                              <div className="w-1/3 font-bold">
-                                {paragraph.name}
-                              </div>
-                              <div className="w-1/3 text-center">
-                                {paragraph.position}
-                              </div>
-                              {paragraph.startTime && (
-                                <div className="w-1/3 text-right">
-                                  {paragraph.startTime} -{" "}
-                                  {paragraph.endTime || "至今"}
-                                </div>
-                              )}
-                            </div>
-                            <div
-                              dangerouslySetInnerHTML={{
-                                __html: paragraph.label || "空",
-                              }}
-                            />
-                          </div>
-                        ))}
-                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                },
+              )}
             </div>
           </div>
         </div>

@@ -18,6 +18,8 @@ import {
 } from "antd";
 import { marked } from "marked";
 import { useEffect, useRef, useState } from "react";
+import { useTypesetting } from "@/lib/hooks/useTypesetting";
+import { usePrintStore } from "@/lib/store/print";
 import { usePublicStore } from "@/lib/store/public";
 import type { OperationBtnType } from "@/types/resume";
 import MainContainer from "./components/MainContainer";
@@ -27,6 +29,9 @@ export default function Dashboard() {
   const [messageApi, contextHolder] = message.useMessage();
   const [aiMessages, setAiMessages] = useState("");
   const resumeData = usePublicStore((state) => state.resumeData);
+
+  const { setPrintData } = useTypesetting();
+  const setPrintResumeData = usePrintStore((state) => state.setPrintResumeData);
 
   const bottomRef = useRef<HTMLDivElement>(null);
 
@@ -64,39 +69,48 @@ export default function Dashboard() {
   // const [html] = useState("<h1 style='color:red;'>Hello PDF</h1>");
   const [spinning, setSpinning] = useState(false);
   const handleDownload = async () => {
-    const html = document.getElementById("print-container");
-    const cloneHtml = html?.cloneNode(true) as HTMLElement;
-    const bgInClone = cloneHtml.querySelector("#print-page-bg");
-    if (bgInClone) bgInClone.remove();
-    try {
-      setSpinning(true);
-      const res = await fetch("/api/pdf", {
-        body: JSON.stringify({
-          html: `${cloneHtml.innerHTML}`,
-        }),
-        headers: { "Content-Type": "application/json" },
-        method: "POST",
+    // 先将文件转成static
+    setPrintData();
+
+    requestAnimationFrame(() => {
+      // 第二次 rAF: 等待浏览器完成重绘
+      requestAnimationFrame(async () => {
+        const html = document.getElementById("print-container");
+        const cloneHtml = html?.cloneNode(true) as HTMLElement;
+        const bgInClone = cloneHtml.querySelector("#print-page-bg");
+        if (bgInClone) bgInClone.remove();
+        try {
+          setSpinning(true);
+          const res = await fetch("/api/pdf", {
+            body: JSON.stringify({
+              html: `${cloneHtml.innerHTML}`,
+            }),
+            headers: { "Content-Type": "application/json" },
+            method: "POST",
+          });
+
+          if (!res.ok)
+            return messageApi.open({
+              content: "下载出错，请稍后重试~",
+              type: "error",
+            });
+
+          const blob = await res.blob();
+          const url = URL.createObjectURL(blob);
+
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "document.pdf";
+          a.click();
+          URL.revokeObjectURL(url);
+        } catch {
+          messageApi.error("下载出错，请稍后再试~");
+        } finally {
+          setSpinning(false);
+          setPrintResumeData([]);
+        }
       });
-
-      if (!res.ok)
-        return messageApi.open({
-          content: "下载出错，请稍后重试~",
-          type: "error",
-        });
-
-      const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
-
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "document.pdf";
-      a.click();
-      URL.revokeObjectURL(url);
-    } catch {
-      messageApi.error("下载出错，请稍后再试~");
-    } finally {
-      setSpinning(false);
-    }
+    });
   };
 
   const getAiEvaluate = async () => {
