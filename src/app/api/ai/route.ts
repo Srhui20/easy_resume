@@ -4,21 +4,6 @@ import OpenAI from "openai";
 // const DEEPSEEK_API_ENDPOINT = "https://api.deepseek.com/v1/chat/completions";
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
 
-// PAGE_ATTRIBUTE = {
-//   className: string;
-//   id: string;
-//   pageLabel?: string;
-//   style: CSSProperties;
-//   ref?: HTMLDivElement | null;
-//   type: "baseInfo" | "paragraph";
-//   titleInfo?: {
-//     label: string;
-//     style: CSSProperties;
-//   };
-//   paragraphArr?: PARAGRAPH_TYPE[];
-//   borderStyle?: CSSProperties;
-// };
-
 const systemPrompt = `
       输入数据是一个对象数组，主要包含两种类型元素：
       普通文本 (type: 'label')**: 包含 pageLabel (文本内容) 和className(样式信息，需忽略)。
@@ -33,9 +18,10 @@ const systemPrompt = `
       2. 个人亮点和成就。
       3. 经验描述。
       4. 改进建议（提供具体、可操作的修改建议）。
-      最重要的是输出文本要加入小图标，
-      输出的markdown不能超过550px(很重要)
-      请使用中文，并以 Markdown 格式清晰地输出结果。
+      不需要点评页面上的style及className,点评实际显示效果即可。
+      输出文本要多加入小图标，
+      请使用中文，并以 Markdown 格式清晰地输出结果，
+      输出的markdown不能超过550px(最重要)
     `;
 
 const openai = new OpenAI({
