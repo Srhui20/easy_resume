@@ -188,7 +188,7 @@ export default function MainContainer() {
               {resumeData.map((attr, index) => {
                 return attr.type === "baseInfo" ? (
                   <div
-                    className={`${attr.className} ${attr.pageLabel}`}
+                    className={`${attr.className} ${chooseId === attr.id ? "choose_label" : ""}`}
                     key={attr.id}
                     onClick={($e) => mouseClickAttribute($e, attr.id)}
                     onMouseDown={($e) => mouseDownAttribute($e, attr.id, index)}
@@ -201,7 +201,7 @@ export default function MainContainer() {
                   </div>
                 ) : (
                   <div
-                    className={attr.className}
+                    className={`${attr.className} ${chooseId === attr.id ? "choose_label" : ""}`}
                     key={attr.id}
                     onClick={($el) => mouseClickAttribute($el, attr.id)}
                     onMouseDown={($e) => mouseDownAttribute($e, attr.id, index)}

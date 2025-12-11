@@ -118,10 +118,6 @@ export const usePublicStore = create<PublicState>((set) => ({
         resumeData: state.resumeData.map((item) => {
           return {
             ...item,
-            className: item.className
-              .replace(/\bchoose_label\b/g, "")
-              .replace(/\s+/g, " ")
-              .trim(),
             style: {
               ...item.style,
               zIndex: item.type === "baseInfo" ? 1 : 0,
@@ -232,26 +228,19 @@ export const usePublicStore = create<PublicState>((set) => ({
       return {
         isChooseAttributes: true,
         resumeData: state.resumeData.map((mapAttr, index) => {
-          let className = mapAttr.className;
           const style = { ...mapAttr.style };
 
           if (style?.zIndex) {
             style.zIndex = mapAttr.type === "baseInfo" ? 1 : 0;
           }
-
-          if (className.includes(" choose_label")) {
-            className = className.replace(/ choose_label/g, "");
-          }
           if (id === mapAttr.id) {
             state.attributeIndex = index;
             state.chooseId = id;
-            className += " choose_label";
             style.zIndex = 99;
           }
 
           return {
             ...mapAttr,
-            className,
             style,
           };
         }),

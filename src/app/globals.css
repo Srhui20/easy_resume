@@ -1,11 +1,11 @@
 @import "tailwindcss";
 
 .choose_label {
-  border: 1px dashed red !important;
+  border: 1px dashed #2e73ff !important;
 }
 
 .align_label {
-  border: 1px dashed red !important;
+  border: 1px dashed rgb(125, 253, 125) !important;
 }
 
 ul,
