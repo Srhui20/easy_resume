@@ -5,11 +5,14 @@ import {
   ImportOutlined,
   RedoOutlined,
   SignatureOutlined,
+  SwapOutlined,
   UndoOutlined,
 } from "@ant-design/icons";
 import { useThrottleFn } from "ahooks";
 import { Col, Modal, message, Row, Tooltip } from "antd";
 import { v4 as uuidv4 } from "uuid";
+import { useTypesetting } from "@/lib/hooks/useTypesetting";
+import { usePrintStore } from "@/lib/store/print";
 import { usePublicStore } from "@/lib/store/public";
 import { useUndoStore } from "@/lib/store/undo";
 import type { OperationBtnType, PAGE_ATTRIBUTE } from "@/types/resume";
@@ -28,6 +31,10 @@ export default function ResumeOperation() {
 
   const { undoList, redoList, toSetUndo, toSetRedo, setUndoList } =
     useUndoStore();
+
+  const setPrintResumeData = usePrintStore((state) => state.setPrintResumeData);
+
+  const { setPrintData } = useTypesetting();
 
   const btnList: OperationBtnType[] = [
     {
@@ -82,14 +89,22 @@ export default function ResumeOperation() {
       label: "导出文件",
       type: "default",
     },
-    // {
-    //   handleFunc: () => {},
-    //   icon: <ExportOutlined />,
-    //   key: "print",
-    //   label: "打印",
-    //   type: "default",
-    // },
+    {
+      handleFunc: () => toTypesetting(),
+      icon: <SwapOutlined />,
+      key: "print",
+      label: "段落排版",
+      type: "default",
+    },
   ];
+
+  const toTypesetting = () => {
+    clearChoose();
+    setPrintData();
+    requestAnimationFrame(() => {
+      setPrintResumeData([]);
+    });
+  };
 
   const createText = () => {
     if (resumeData.filter((item) => item.type === "baseInfo").length >= 20) {
