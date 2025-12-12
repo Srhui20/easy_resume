@@ -18,8 +18,8 @@ export default function SystemDilaog({ dialogOpen, onCancel }: SystemProps) {
   const [messageApi] = message.useMessage();
 
   const menuList: menuType[] = [
-    { fileName: "NOTICE.MD", key: "notice", title: "📢 系统公告" },
-    { fileName: "README.MD", key: "important", title: "📃 系统须知" },
+    { fileName: "NOTICE.md", key: "notice", title: "📢 系统公告" },
+    { fileName: "OPERATION.md", key: "important", title: "📃 系统须知" },
   ];
 
   const [systemKey, setSystemKey] = useState("notice");
@@ -80,7 +80,7 @@ export default function SystemDilaog({ dialogOpen, onCancel }: SystemProps) {
           ))}
         </div>
         <div className="h-full flex-1 overflow-y-auto">
-          <div className="markdown-box max-w-none p-[20px]">
+          <div className="markdown-box max-w-none px-[20px]">
             <Markdown>{pageValue}</Markdown>
           </div>
         </div>
