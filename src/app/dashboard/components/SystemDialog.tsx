@@ -2,6 +2,7 @@ import { useMount } from "ahooks";
 import { Modal, message } from "antd";
 import { useState } from "react";
 import Markdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
 
 interface SystemProps {
   dialogOpen: boolean;
@@ -81,7 +82,7 @@ export default function SystemDilaog({ dialogOpen, onCancel }: SystemProps) {
         </div>
         <div className="h-full flex-1 overflow-y-auto">
           <div className="markdown-box max-w-none px-[20px]">
-            <Markdown>{pageValue}</Markdown>
+            <Markdown rehypePlugins={[rehypeRaw]}>{pageValue}</Markdown>
           </div>
         </div>
       </div>

@@ -19,6 +19,7 @@ import {
 } from "antd";
 import { useEffect, useRef, useState } from "react";
 import Markdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
 import { useTypesetting } from "@/lib/hooks/useTypesetting";
 import { usePrintStore } from "@/lib/store/print";
 import { usePublicStore } from "@/lib/store/public";
@@ -245,7 +246,7 @@ export default function Dashboard() {
           已自动过滤基础文本信息，仅点评段落信息
         </div>
         <div className="markdown-box h-[400px] overflow-auto bg-white">
-          <Markdown>{aiMessages}</Markdown>
+          <Markdown rehypePlugins={[rehypeRaw]}>{aiMessages}</Markdown>
           <div ref={bottomRef} />
         </div>
       </Modal>
