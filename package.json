@@ -26,6 +26,7 @@
     "puppeteer": "^24.31.0",
     "react": "19.2.1",
     "react-dom": "19.2.1",
+    "react-markdown": "^10.1.0",
     "sass": "^1.94.2",
     "tailwindcss": "4.1.0",
     "uuid": "^13.0.0",

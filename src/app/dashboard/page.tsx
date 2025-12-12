@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  DesktopOutlined,
   DownloadOutlined,
   GithubOutlined,
   LoadingOutlined,
@@ -16,14 +17,15 @@ import {
   Splitter,
   Tooltip,
 } from "antd";
-import { marked } from "marked";
 import { useEffect, useRef, useState } from "react";
+import Markdown from "react-markdown";
 import { useTypesetting } from "@/lib/hooks/useTypesetting";
 import { usePrintStore } from "@/lib/store/print";
 import { usePublicStore } from "@/lib/store/public";
 import type { OperationBtnType } from "@/types/resume";
 import MainContainer from "./components/MainContainer";
 import RightInfo from "./components/RightInfo";
+import SystemDilaog from "./components/SystemDialog";
 
 export default function Dashboard() {
   const [messageApi, contextHolder] = message.useMessage();
@@ -69,7 +71,21 @@ export default function Dashboard() {
       isTip: false,
       key: "download",
       label: "下载为pdf",
+      style: {
+        backgroundColor: "#171717",
+      },
       type: "primary",
+    },
+    {
+      handleFunc: () => setSystemDialogOpen(true),
+      icon: <DesktopOutlined />,
+      isTip: false,
+      key: "system",
+      label: "系统",
+      style: {
+        color: "#171717",
+      },
+      type: "link",
     },
   ];
 
@@ -203,6 +219,7 @@ export default function Dashboard() {
     </>
   );
 
+  const [systemDialogOpen, setSystemDialogOpen] = useState(false);
   return (
     <>
       <Spin
@@ -210,6 +227,10 @@ export default function Dashboard() {
         indicator={<LoadingOutlined spin style={{ fontSize: 48 }} />}
         spinning={spinning}
         tip="下载中~"
+      />
+      <SystemDilaog
+        dialogOpen={systemDialogOpen}
+        onCancel={() => setSystemDialogOpen(false)}
       />
       <Modal
         centered={true}
@@ -223,12 +244,8 @@ export default function Dashboard() {
         <div className="mb-[10px] text-gray-400">
           已自动过滤基础文本信息，仅点评段落信息
         </div>
-        <div className="h-[400px] overflow-auto bg-white">
-          <div
-            dangerouslySetInnerHTML={{
-              __html: marked(aiMessages),
-            }}
-          />
+        <div className="markdown-box h-[400px] overflow-auto bg-white">
+          <Markdown>{aiMessages}</Markdown>
           <div ref={bottomRef} />
         </div>
       </Modal>
@@ -242,7 +259,7 @@ export default function Dashboard() {
                 icon={btn.icon}
                 key={btn.key}
                 onClick={() => btn.handleFunc()}
-                style={{ background: "#171717" }}
+                style={btn.style}
                 type={btn.type}
               >
                 {btn.label}

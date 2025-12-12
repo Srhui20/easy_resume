@@ -40,6 +40,7 @@ export type OperationBtnType = {
   handleFunc: () => void;
   isTip?: boolean;
   color?: ButtonColorType;
+  style?: CSSProperties;
 };
 
 export type BaseInfoFontStyleType = {

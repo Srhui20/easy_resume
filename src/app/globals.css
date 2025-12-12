@@ -8,6 +8,10 @@
   border: 1px dashed #10b888 !important;
 }
 
+.markdown-box * {
+  all: revert;
+}
+
 ul,
 ol {
   padding-left: 20px;
