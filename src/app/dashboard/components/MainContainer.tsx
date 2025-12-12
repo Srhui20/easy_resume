@@ -1,10 +1,10 @@
 import { useMount, useUpdateEffect } from "ahooks";
 import { useCallback, useEffect, useRef, useState } from "react";
 import resumeStyle1 from "@/lib//resume_sytle/resume1";
+import { useMouseOpeartion } from "@/lib/hooks/userMouseHook";
 import { usePrintStore } from "@/lib/store/print";
 import { usePublicStore } from "@/lib/store/public";
 import { useUndoStore } from "@/lib/store/undo";
-import { useMouseOpeartion } from "@/lib/userMouseHook";
 import styles from "./index.module.scss";
 
 export default function MainContainer() {
