@@ -1,4 +1,4 @@
-#### <a style="cursor:pointer"> 🐞 点击此处提交issue</a>
+#### <a style="cursor:pointer;fontWeigth:blod;textDecoration:none;color:#000" href="https://github.com/Srhui20/easy_resume/issues"> 🐞 点击此处提交issue</a>
 
 #### 🚀 视图拖动方式
 
