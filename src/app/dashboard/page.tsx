@@ -7,30 +7,19 @@ import {
   LoadingOutlined,
   OpenAIOutlined,
 } from "@ant-design/icons";
-import { useMount } from "ahooks";
-import {
-  Button,
-  FloatButton,
-  Modal,
-  message,
-  Spin,
-  Splitter,
-  Tooltip,
-} from "antd";
-import { useEffect, useRef, useState } from "react";
-import Markdown from "react-markdown";
-import rehypeRaw from "rehype-raw";
+import { Button, FloatButton, message, Spin, Splitter, Tooltip } from "antd";
+import { useEffect, useState } from "react";
 import { useTypesetting } from "@/lib/hooks/useTypesetting";
 import { usePrintStore } from "@/lib/store/print";
 import { usePublicStore } from "@/lib/store/public";
 import type { OperationBtnType } from "@/types/resume";
+import AiMessageDialog from "./components/AiMessageDialog";
 import MainContainer from "./components/MainContainer";
 import RightInfo from "./components/RightInfo";
 import SystemDilaog from "./components/SystemDialog";
 
 export default function Dashboard() {
   const [messageApi, contextHolder] = message.useMessage();
-  const [aiMessages, setAiMessages] = useState("");
   const resumeData = usePublicStore((state) => state.resumeData);
   const clearChoose = usePublicStore((state) => state.clearChoose);
 
@@ -38,14 +27,6 @@ export default function Dashboard() {
   const printResumeData = usePrintStore((state) => state.printResumeData);
   const setPrintResumeData = usePrintStore((state) => state.setPrintResumeData);
 
-  const bottomRef = useRef<HTMLDivElement>(null);
-
-  useMount(() => {
-    const local = localStorage.getItem("ai");
-    if (local) {
-      setAiMessages(local);
-    }
-  });
   useEffect(() => {
     localStorage.setItem(
       "resumeData",
@@ -138,89 +119,8 @@ export default function Dashboard() {
     });
   };
 
-  const getAiEvaluate = async () => {
-    try {
-      const res = await fetch("/api/ai", {
-        body: JSON.stringify({
-          dataString: JSON.stringify(
-            resumeData
-              .filter((item) => item.type !== "baseInfo")
-              .map((item) => {
-                return {
-                  ...item,
-                  ref: null,
-                };
-              }),
-          ),
-        }),
-        headers: { "Content-Type": "application/json" },
-        method: "POST",
-      });
-      const reader = res.body?.getReader();
-      if (!reader) return;
-
-      setAiMessages("");
-      const decoder = new TextDecoder();
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        const chunk = decoder.decode(value);
-        const lines = chunk.split("\n");
-        for (const line of lines) {
-          if (!line) continue;
-          const data = JSON.parse(line || "{}");
-          data?.choices?.forEach((item: { delta: { content: string } }) => {
-            setAiMessages(
-              (prevMessages) => prevMessages + (item?.delta?.content ?? ""),
-            );
-          });
-        }
-        bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-      }
-
-      localStorage.setItem("ai", aiMessages);
-    } catch (e) {
-      // biome-ignore lint/suspicious/noConsole: <explanation>
-      console.error("ai error", e);
-    }
-  };
-
-  useEffect(() => {
-    if (!aiMessages) return;
-    localStorage.setItem("ai", aiMessages);
-  }, [aiMessages]);
-
-  const [modalOpen, setOpen] = useState(false);
-  const openAiDialog = () => {
-    setOpen(true);
-  };
-
-  const footer: React.ReactNode = (
-    <>
-      <Button
-        onClick={() => setOpen(false)}
-        styles={{
-          root: {
-            backgroundColor: "#fff",
-            borderColor: "#ccc",
-            color: "#171717",
-          },
-        }}
-      >
-        关闭
-      </Button>
-      <Button
-        onClick={() => getAiEvaluate()}
-        styles={{ root: { backgroundColor: "#171717" } }}
-        type="primary"
-      >
-        开始点评
-      </Button>
-    </>
-  );
-
   const [systemDialogOpen, setSystemDialogOpen] = useState(false);
+  const [aiMessageOpen, setAiMessageOpen] = useState(false);
   return (
     <>
       <Spin
@@ -229,27 +129,20 @@ export default function Dashboard() {
         spinning={spinning}
         tip="下载中~"
       />
-      <SystemDilaog
-        dialogOpen={systemDialogOpen}
-        onCancel={() => setSystemDialogOpen(false)}
-      />
-      <Modal
-        centered={true}
-        footer={footer}
-        onCancel={() => setOpen(false)}
-        onOk={() => setOpen(false)}
-        open={modalOpen}
-        title="ai点评"
-        width={700}
-      >
-        <div className="mb-[10px] text-gray-400">
-          已自动过滤基础文本信息，仅点评段落信息
-        </div>
-        <div className="markdown-box h-[400px] overflow-auto bg-white">
-          <Markdown rehypePlugins={[rehypeRaw]}>{aiMessages}</Markdown>
-          <div ref={bottomRef} />
-        </div>
-      </Modal>
+      {/* 系统弹框 */}
+      {systemDialogOpen && (
+        <SystemDilaog
+          dialogOpen={systemDialogOpen}
+          onCancel={() => setSystemDialogOpen(false)}
+        />
+      )}
+      {/* ai弹框 */}
+      {aiMessageOpen ?? (
+        <AiMessageDialog
+          dialogOpen={aiMessageOpen}
+          onCancel={() => setAiMessageOpen(false)}
+        />
+      )}
       <div className="flex h-screen flex-col">
         {contextHolder}
         <div className="flex h-15 items-center justify-between border-gray-300 border-b pr-8 pl-8">
@@ -290,7 +183,7 @@ export default function Dashboard() {
         </div>
         <FloatButton
           icon={<OpenAIOutlined />}
-          onClick={() => openAiDialog()}
+          onClick={() => setAiMessageOpen(true)}
           style={{ background: "#171717" }}
           tooltip="ai点评"
           type="primary"

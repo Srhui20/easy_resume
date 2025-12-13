@@ -62,6 +62,7 @@ export default function SystemDilaog({ dialogOpen, onCancel }: SystemProps) {
   return (
     <Modal
       centered={true}
+      destroyOnHidden={true}
       footer
       onCancel={onCancel}
       open={dialogOpen}
