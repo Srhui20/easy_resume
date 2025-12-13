@@ -1,4 +1,5 @@
 import { useMount, useUpdateEffect } from "ahooks";
+import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import resumeStyle1 from "@/lib//resume_sytle/resume1";
 import { useMouseOpeartion } from "@/lib/hooks/userMouseHook";
@@ -204,79 +205,108 @@ export default function MainContainer() {
               ref={($el: HTMLDivElement) => setPageRef($el)}
               style={{ fontSize: "20px", height: `${1123 * pageLength}px` }}
             >
-              {(printResumeData.length ? printResumeData : resumeData).map(
-                (attr, index) => {
-                  return attr.type === "baseInfo" ? (
-                    <div
-                      className={`${attr.className} ${chooseId === attr.id ? "choose_label" : ""}`}
-                      key={attr.id}
-                      onClick={($e) => mouseClickAttribute($e, attr.id)}
-                      onMouseDown={($e) =>
-                        mouseDownAttribute($e, attr.id, index)
-                      }
-                      ref={($el) => {
-                        attr.ref = $el;
-                      }}
-                      style={attr.style}
-                    >
-                      {attr.pageLabel || "空"}
-                    </div>
-                  ) : (
-                    <div
-                      className={`${attr.className} ${chooseId === attr.id ? "choose_label" : ""}`}
-                      key={attr.id}
-                      onClick={($el) => mouseClickAttribute($el, attr.id)}
-                      onMouseDown={($e) =>
-                        mouseDownAttribute($e, attr.id, index)
-                      }
-                      ref={($el) => {
-                        attr.ref = $el;
-                      }}
-                      style={attr.style}
-                    >
-                      <div className="flex flex-col">
-                        <div
-                          className="mb-[8px] w-[790px] font-bold"
-                          style={attr?.borderStyle}
+              <AnimatePresence>
+                {(printResumeData.length ? printResumeData : resumeData).map(
+                  (attr, index) => {
+                    return attr.type === "baseInfo" ? (
+                      <motion.div
+                        animate={{
+                          opacity: 1,
+                          transition: { duration: 0.8 },
+                          y: 0,
+                        }}
+                        className={`${attr.className} ${chooseId === attr.id ? "choose_label" : ""}`}
+                        exit={{
+                          opacity: 0,
+                          transition: { duration: 0.1 },
+                        }}
+                        initial={{ opacity: 0, y: 24 }}
+                        key={attr.id}
+                        onClick={($e) => mouseClickAttribute($e, attr.id)}
+                        onMouseDown={($e) =>
+                          mouseDownAttribute($e, attr.id, index)
+                        }
+                        ref={($el) => {
+                          attr.ref = $el;
+                        }}
+                        style={attr.style}
+                      >
+                        {attr.pageLabel || "空"}
+                      </motion.div>
+                    ) : (
+                      <div
+                        className={`${attr.className} ${chooseId === attr.id ? "choose_label" : ""}`}
+                        key={attr.id}
+                        onClick={($el) => mouseClickAttribute($el, attr.id)}
+                        onMouseDown={($e) =>
+                          mouseDownAttribute($e, attr.id, index)
+                        }
+                        ref={($el) => {
+                          attr.ref = $el;
+                        }}
+                        style={attr.style}
+                      >
+                        <motion.div
+                          animate={{
+                            opacity: 1,
+                            transition: { duration: 0.8 },
+                            y: 0,
+                          }}
+                          className="flex flex-col"
+                          exit={{
+                            opacity: 0,
+                            transition: { duration: 0.1 },
+                          }} // 👈 从下
+                          initial={{
+                            animationDuration: 1,
+                            opacity: 0,
+                            transitionDuration: 1,
+                            y: 24,
+                          }}
                         >
                           <div
-                            className="w-[100px]"
-                            style={attr.titleInfo?.style}
+                            className="mb-[8px] w-[790px] font-bold"
+                            style={attr?.borderStyle}
                           >
-                            {attr.titleInfo?.label || "空"}
-                          </div>
-                        </div>
-
-                        <div className="flex w-full flex-col gap-[10px]">
-                          {attr.paragraphArr?.map((paragraph) => (
-                            <div className="" key={paragraph.id}>
-                              <div className="flex w-full">
-                                <div className="w-1/3 font-bold">
-                                  {paragraph.name}
-                                </div>
-                                <div className="w-1/3 text-center">
-                                  {paragraph.position}
-                                </div>
-                                {paragraph.startTime && (
-                                  <div className="w-1/3 text-right">
-                                    {paragraph.startTime} -{" "}
-                                    {paragraph.endTime || "至今"}
-                                  </div>
-                                )}
-                              </div>
-                              <div
-                                dangerouslySetInnerHTML={{
-                                  __html: paragraph.label || "空",
-                                }}
-                              />
+                            <div
+                              className="w-[100px]"
+                              style={attr.titleInfo?.style}
+                            >
+                              {attr.titleInfo?.label || "空"}
                             </div>
-                          ))}
-                        </div>
+                          </div>
+
+                          <div className="flex w-full flex-col gap-[10px]">
+                            {attr.paragraphArr?.map((paragraph) => (
+                              <div className="" key={paragraph.id}>
+                                <div className="flex w-full">
+                                  <div className="w-1/3 font-bold">
+                                    {paragraph.name}
+                                  </div>
+                                  <div className="w-1/3 text-center">
+                                    {paragraph.position}
+                                  </div>
+                                  {paragraph.startTime && (
+                                    <div className="w-1/3 text-right">
+                                      {paragraph.startTime} -{" "}
+                                      {paragraph.endTime || "至今"}
+                                    </div>
+                                  )}
+                                </div>
+                                <div
+                                  dangerouslySetInnerHTML={{
+                                    __html: paragraph.label || "空",
+                                  }}
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        </motion.div>
                       </div>
-                    </div>
-                  );
-                },
-              )}
+                    );
+                  },
+                )}
+              </AnimatePresence>
             </div>
           </div>
         </div>
