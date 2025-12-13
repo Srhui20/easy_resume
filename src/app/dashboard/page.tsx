@@ -60,7 +60,7 @@ export default function Dashboard() {
     },
     {
       handleFunc: () => setAiMessageOpen(true),
-      icon: <OpenAIOutlined className="text-[18px]" />,
+      icon: <OpenAIOutlined />,
       isTip: false,
       key: "ai",
       label: "ai点评",

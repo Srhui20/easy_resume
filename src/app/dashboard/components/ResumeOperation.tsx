@@ -10,6 +10,7 @@ import {
 } from "@ant-design/icons";
 import { useThrottleFn } from "ahooks";
 import { Col, Modal, message, Row, Tooltip } from "antd";
+import { motion } from "motion/react";
 import { v4 as uuidv4 } from "uuid";
 import { useTypesetting } from "@/lib/hooks/useTypesetting";
 import { usePrintStore } from "@/lib/store/print";
@@ -307,9 +308,14 @@ export default function ResumeOperation() {
             <Tooltip
               title={btn.key === "import" ? "仅支持导入 本站导出的文件" : ""}
             >
-              <div
+              <motion.div
                 className="relative flex cursor-pointer flex-col items-center justify-center rounded-lg p-[5] hover:bg-gray-200"
                 onClick={() => handleClick(btn)}
+                whileHover={{
+                  scale: 1.08,
+                  transition: { duration: 0.1 },
+                }}
+                whileTap={{ scale: 0.9 }}
               >
                 <div
                   style={{
@@ -331,7 +337,7 @@ export default function ResumeOperation() {
                     type="file"
                   />
                 )}
-              </div>
+              </motion.div>
             </Tooltip>
           </Col>
         ))}
