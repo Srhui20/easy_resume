@@ -225,25 +225,28 @@ export const usePublicStore = create<PublicState>((set) => ({
   resumeData: [],
   setChooseResumeData: (id: string) =>
     set((state) => {
+      let cindex = 0;
+      let cId = "";
+      const resData = state.resumeData.map((mapAttr, index) => {
+        const style = { ...mapAttr.style };
+
+        if (style?.zIndex) {
+          style.zIndex = mapAttr.type === "baseInfo" ? 1 : 0;
+        }
+        if (id === mapAttr.id) {
+          cindex = index;
+          cId = id;
+          style.zIndex = 99;
+        }
+        return {
+          ...mapAttr,
+          style,
+        };
+      });
       return {
-        isChooseAttributes: true,
-        resumeData: state.resumeData.map((mapAttr, index) => {
-          const style = { ...mapAttr.style };
-
-          if (style?.zIndex) {
-            style.zIndex = mapAttr.type === "baseInfo" ? 1 : 0;
-          }
-          if (id === mapAttr.id) {
-            state.attributeIndex = index;
-            state.chooseId = id;
-            style.zIndex = 99;
-          }
-
-          return {
-            ...mapAttr,
-            style,
-          };
-        }),
+        attributeIndex: cindex,
+        chooseId: cId,
+        resumeData: resData,
       };
     }),
   setChooseValue: (chooseId, ai) =>
