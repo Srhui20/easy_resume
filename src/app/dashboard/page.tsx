@@ -7,7 +7,7 @@ import {
   LoadingOutlined,
   OpenAIOutlined,
 } from "@ant-design/icons";
-import { Button, FloatButton, message, Spin, Splitter, Tooltip } from "antd";
+import { Button, message, Spin, Splitter, Tooltip } from "antd";
 import { useEffect, useState } from "react";
 import { useTypesetting } from "@/lib/hooks/useTypesetting";
 import { usePrintStore } from "@/lib/store/print";
@@ -57,6 +57,17 @@ export default function Dashboard() {
         backgroundColor: "#171717",
       },
       type: "primary",
+    },
+    {
+      handleFunc: () => setAiMessageOpen(true),
+      icon: <OpenAIOutlined className="text-[18px]" />,
+      isTip: false,
+      key: "ai",
+      label: "ai点评",
+      style: {
+        color: "#171717",
+      },
+      type: "link",
     },
     {
       handleFunc: () => setSystemDialogOpen(true),
@@ -137,7 +148,7 @@ export default function Dashboard() {
         />
       )}
       {/* ai弹框 */}
-      {aiMessageOpen ?? (
+      {aiMessageOpen && (
         <AiMessageDialog
           dialogOpen={aiMessageOpen}
           onCancel={() => setAiMessageOpen(false)}
@@ -181,13 +192,6 @@ export default function Dashboard() {
             </Splitter.Panel>
           </Splitter>
         </div>
-        <FloatButton
-          icon={<OpenAIOutlined />}
-          onClick={() => setAiMessageOpen(true)}
-          style={{ background: "#171717" }}
-          tooltip="ai点评"
-          type="primary"
-        />
       </div>
     </>
   );
