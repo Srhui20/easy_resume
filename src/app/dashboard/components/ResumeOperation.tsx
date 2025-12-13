@@ -246,22 +246,22 @@ export default function ResumeOperation() {
         text = text.replace(/;\s*$/, "");
         const arr = JSON.parse(text);
         if (Array.isArray(arr)) {
-          modal
-            .warning({
-              centered: true,
-              content: "导入文件后将覆盖原本的简历，是否确定？",
-              title: "导入文件",
-            })
-            .then(
-              () => {
-                setResumeData(arr);
-                setUndoList(resumeData);
-                clearChoose();
-              },
-              () => {
-                messageApi.error("导入失败~");
-              },
-            );
+          modal.warning({
+            cancelText: "取消",
+            centered: true,
+            closable: true,
+            content: "导入文件后将覆盖原本的简历，是否确定？",
+            okText: "确定",
+            onCancel() {
+              messageApi.info("已取消导入");
+            },
+            onOk() {
+              setResumeData(arr);
+              setUndoList(resumeData);
+              clearChoose();
+            },
+            title: "导入文件",
+          });
         } else {
           messageApi.error("格式错误");
         }
