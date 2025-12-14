@@ -350,18 +350,17 @@ export default function ResumeParagraphStyle() {
               </motion.div>
               <div className="flex h-full flex-col gap-[5px]">
                 {arrBtnList.map((btn) => (
-                  <>
-                    <motion.span
-                      className="cursor-pointer"
-                      whileHover={{
-                        scale: 1.2,
-                        transition: { duration: 0.2 },
-                      }}
-                      whileTap={{ scale: 0.8 }}
-                    >
-                      {paragraphArrIconMap[btn.key]}
-                    </motion.span>
-                  </>
+                  <motion.span
+                    className="cursor-pointer"
+                    key={btn.key}
+                    whileHover={{
+                      scale: 1.2,
+                      transition: { duration: 0.2 },
+                    }}
+                    whileTap={{ scale: 0.8 }}
+                  >
+                    {paragraphArrIconMap[btn.key]}
+                  </motion.span>
                 ))}
               </div>
             </div>
