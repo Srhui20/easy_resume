@@ -49,7 +49,6 @@ export default function Dashboard() {
   const btnList: OperationBtnType[] = [
     {
       handleFunc: () => handleDownload(),
-      icon: <DownloadOutlined />,
       isTip: false,
       key: "download",
       label: "下载为pdf",
@@ -60,7 +59,6 @@ export default function Dashboard() {
     },
     {
       handleFunc: () => setAiMessageOpen(true),
-      icon: <OpenAIOutlined />,
       isTip: false,
       key: "ai",
       label: "ai点评",
@@ -71,7 +69,6 @@ export default function Dashboard() {
     },
     {
       handleFunc: () => setSystemDialogOpen(true),
-      icon: <DesktopOutlined />,
       isTip: false,
       key: "system",
       label: "系统",
@@ -81,6 +78,12 @@ export default function Dashboard() {
       type: "link",
     },
   ];
+
+  const iconMap: { [key: string]: React.ReactNode } = {
+    ai: <OpenAIOutlined />,
+    download: <DownloadOutlined />,
+    system: <DesktopOutlined />,
+  };
 
   // const [html] = useState("<h1 style='color:red;'>Hello PDF</h1>");
   const [spinning, setSpinning] = useState(false);
@@ -161,7 +164,7 @@ export default function Dashboard() {
           <div className="flex gap-3">
             {btnList.map((btn) => (
               <Button
-                icon={btn.icon}
+                icon={iconMap[btn.key]}
                 key={btn.key}
                 onClick={() => btn.handleFunc()}
                 style={btn.style}
