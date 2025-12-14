@@ -1,5 +1,5 @@
-import ResumeBaseInfoStyle from "@/components/ResumeBaseInfoStyle";
-import ResumeParagraphStyle from "@/components/ResumeParagraphStyle";
+import ResumeBaseInfoStyle from "@/components/baseInfo/ResumeBaseInfoStyle";
+import ResumeParagraphStyle from "@/components/paragraph/ResumeParagraphStyle";
 import { usePublicStore } from "@/lib/store/public";
 import type { PAGE_ATTRIBUTE } from "@/types/resume";
 

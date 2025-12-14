@@ -12,13 +12,12 @@ import {
   Tabs,
   Tooltip,
 } from "antd";
-import type { Color } from "antd/es/color-picker";
 import dayjs from "dayjs";
 import dynamic from "next/dynamic";
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { usePublicStore } from "@/lib/store/public";
-import { useUndoStore } from "@/lib/store/undo";
-import type { BaseInfoFontStyleType, PAGE_ATTRIBUTE } from "@/types/resume";
+import type { PAGE_ATTRIBUTE } from "@/types/resume";
+import { useParagraph } from "./useParagraphStyle";
 
 const EditorWrapper = memo(
   function EditorWrapper({
@@ -32,7 +31,7 @@ const EditorWrapper = memo(
     paragraphId: string;
     paragraphIndex: number;
   }) {
-    const MyEditor = dynamic(() => import("./MyEditor"), { ssr: false });
+    const MyEditor = dynamic(() => import("../MyEditor"), { ssr: false });
 
     const updateResumeData = usePublicStore((state) => state.updateResumeData);
 
@@ -120,10 +119,19 @@ export default function ResumeParagraphStyle() {
   // 使用 selector 只订阅需要的值
   const chooseId = usePublicStore((state) => state.chooseId);
   const attributeIndex = usePublicStore((state) => state.attributeIndex);
-  const updateResumeData = usePublicStore((state) => state.updateResumeData);
-  const resumeData = usePublicStore((state) => state.resumeData);
 
-  const setUndoList = useUndoStore.getState().setUndoList;
+  const {
+    fontStylesList,
+    editBgColor,
+    editBorderBgColor,
+    editDate,
+    editFontColor,
+    editFontSize,
+    editFontStyle,
+    editLabel,
+    editMainName,
+    editPosition,
+  } = useParagraph();
 
   // 订阅 currentNode 的其他属性（用于样式等）
   const currentNode: PAGE_ATTRIBUTE | null = usePublicStore((state) => {
@@ -133,170 +141,10 @@ export default function ResumeParagraphStyle() {
 
   const [activeKey, setActiveKey] = useState("text");
 
-  // 使用 useMemo 稳定 fontStylesList，只在 style 相关属性变化时更新
-  // const fontWeight = currentNode?.style?.fontWeight;
-  // const fontStyle = currentNode?.style?.fontStyle;
-  // const textDecoration = currentNode?.style?.textDecoration;
-
-  const fontStylesList: BaseInfoFontStyleType[] = useMemo(
-    () => [
-      {
-        defaultValue: "normal",
-        icon: <BoldOutlined />,
-        isChoose: currentNode?.titleInfo?.style?.fontWeight === "bold",
-        key: "bold",
-        label: "加粗",
-        styleKey: "fontWeight",
-      },
-      {
-        defaultValue: "normal",
-        icon: <ItalicOutlined />,
-        isChoose: currentNode?.titleInfo?.style?.fontStyle === "italic",
-        key: "italic",
-        label: "斜体",
-        styleKey: "fontStyle",
-      },
-      {
-        defaultValue: "none",
-        icon: <UnderlineOutlined />,
-        isChoose: currentNode?.titleInfo?.style?.textDecoration === "underline",
-        key: "underline",
-        label: "下划线",
-        styleKey: "textDecoration",
-      },
-    ],
-    [currentNode],
-  );
-
-  const editLabel = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!currentNode) return;
-    updateResumeData({
-      ...currentNode,
-      titleInfo: {
-        label: e.target.value,
-        style: currentNode.titleInfo?.style ?? {},
-      },
-    });
-    setUndoList(resumeData);
-  };
-
-  const editFontSize = (val: number | null) => {
-    if (!currentNode) return;
-    updateResumeData({
-      ...currentNode,
-      titleInfo: {
-        label: currentNode.titleInfo?.label ?? "",
-        style: {
-          ...currentNode.titleInfo?.style,
-          fontSize: val ? `${val}px` : "18px",
-        },
-      },
-    });
-    setUndoList(resumeData);
-  };
-
-  const editFontColor = (_: Color, css: string) => {
-    if (!currentNode) return;
-    updateResumeData({
-      ...currentNode,
-      titleInfo: {
-        label: currentNode.titleInfo?.label ?? "",
-        style: {
-          ...currentNode.titleInfo?.style,
-          color: css,
-        },
-      },
-    });
-    setUndoList(resumeData);
-  };
-
-  const editBgColor = (_: Color, css: string) => {
-    if (!currentNode) return;
-    updateResumeData({
-      ...currentNode,
-      titleInfo: {
-        label: currentNode.titleInfo?.label ?? "",
-        style: {
-          ...currentNode.titleInfo?.style,
-          backgroundColor: css,
-        },
-      },
-    });
-    setUndoList(resumeData);
-  };
-
-  const editBorderBgColor = (_: Color, css: string) => {
-    if (!currentNode) return;
-    updateResumeData({
-      ...currentNode,
-      borderStyle: {
-        ...currentNode.borderStyle,
-        borderBottomColor: css,
-      },
-    });
-    setUndoList(resumeData);
-  };
-
-  const editFontStyle = (editItem: BaseInfoFontStyleType) => {
-    const { isChoose, defaultValue, key } = editItem;
-    if (!currentNode) return;
-    updateResumeData({
-      ...currentNode,
-      titleInfo: {
-        label: currentNode.titleInfo?.label ?? "",
-        style: {
-          ...currentNode.titleInfo?.style,
-          [editItem.styleKey]: isChoose ? defaultValue : key,
-        },
-      },
-    });
-    setUndoList(resumeData);
-  };
-
-  const editMainName = (id: string, e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!currentNode) return;
-    updateResumeData({
-      ...currentNode,
-      paragraphArr:
-        currentNode?.paragraphArr?.map((item) => {
-          return {
-            ...item,
-            name: item.id === id ? e.target.value : item.name,
-          };
-        }) ?? [],
-    });
-    setUndoList(resumeData);
-  };
-
-  const editDate = (id: string, val: null | string[]) => {
-    if (!currentNode) return;
-    updateResumeData({
-      ...currentNode,
-      paragraphArr:
-        currentNode?.paragraphArr?.map((item) => {
-          return {
-            ...item,
-            endTime: item.id === id ? (val?.[1] ?? null) : item.endTime,
-            startTime: item.id === id ? (val?.[0] ?? null) : item.startTime,
-          };
-        }) ?? [],
-    });
-    setUndoList(resumeData);
-  };
-
-  const editPosition = (id: string, e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!currentNode) return;
-    updateResumeData({
-      ...currentNode,
-      paragraphArr:
-        currentNode?.paragraphArr?.map((item) => {
-          return {
-            ...item,
-            position: item.id === id ? e.target.value : item.position,
-          };
-        }) ?? [],
-    });
-    setUndoList(resumeData);
+  const iconMap = {
+    bold: <BoldOutlined />,
+    italic: <ItalicOutlined />,
+    underline: <UnderlineOutlined />,
   };
 
   return (
@@ -415,7 +263,7 @@ export default function ResumeParagraphStyle() {
                     className={`flex w-[30px] cursor-pointer items-center justify-center rounded-lg ${item.isChoose ? "bg-blue-200 text-blue-500" : "hover:bg-gray-300"}`}
                     onClick={() => editFontStyle(item)}
                   >
-                    {item.icon}
+                    {iconMap[item.icon]}
                   </div>
                 </Tooltip>
               ))}

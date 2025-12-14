@@ -45,7 +45,7 @@ export type OperationBtnType = {
 
 export type BaseInfoFontStyleType = {
   defaultValue: string;
-  icon: React.ReactNode;
+  icon: "bold" | "italic" | "underline";
   isChoose: boolean;
   key: string;
   label: string;
