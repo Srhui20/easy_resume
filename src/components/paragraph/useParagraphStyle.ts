@@ -7,7 +7,11 @@ import { useTypesetting } from "@/lib/hooks/useTypesetting";
 import { usePrintStore } from "@/lib/store/print";
 import { usePublicStore } from "@/lib/store/public";
 import { useUndoStore } from "@/lib/store/undo";
-import type { BaseInfoFontStyleType, PAGE_ATTRIBUTE } from "@/types/resume";
+import type {
+  BaseInfoFontStyleType,
+  PAGE_ATTRIBUTE,
+  PARAGRAPH_TYPE,
+} from "@/types/resume";
 
 export const useParagraph = () => {
   const updateResumeData = usePublicStore((state) => state.updateResumeData);
@@ -185,7 +189,7 @@ export const useParagraph = () => {
 
   const { run: createParagraphArr } = useThrottleFn(
     () => {
-      if (!currentNode) return;
+      if (!currentNode?.paragraphArr) return;
       if (currentNode.paragraphArr?.length >= 10)
         return message.error("不可添加更多~");
       updateResumeData({
@@ -242,48 +246,51 @@ export const useParagraphText = () => {
 
   const arrBtnList = [
     {
-      handleFunc: (id) => addText(id),
+      handleFunc: (id: string) => addText(id),
       key: "add",
       label: "下方添加",
     },
     {
-      handleFunc: (id) => deleteText(id),
+      handleFunc: (id: string) => deleteText(id),
       key: "delete",
       label: "删除",
     },
     {
-      handleFunc: (id) => {},
+      handleFunc: (id: string) => {},
       key: "down",
       label: "与下一个交换",
     },
     {
-      handleFunc: (id) => {},
+      handleFunc: (id: string) => {},
       key: "up",
       label: "与上一个交换",
     },
   ];
 
-  const addText = (id) => {
-    if (currentNode.paragraphArr?.length >= 10)
+  const addText = (id: string) => {
+    if (currentNode?.paragraphArr && currentNode.paragraphArr?.length >= 10)
       return message.error("不可添加更多~");
 
-    const newArr = currentNode.paragraphArr.reduce((res, item) => {
-      res.push(item);
-      if (item.id === id)
-        res.push({
-          endTime: null,
-          id: uuidv4(),
-          label: "新增内容",
-          name: "新增主体",
-          position: "新增职位",
-          startTime: null,
-          style: {},
-        });
-      return res;
-    }, []);
+    const newArr = (currentNode?.paragraphArr as PARAGRAPH_TYPE[]).reduce(
+      (res: PARAGRAPH_TYPE[], item: PARAGRAPH_TYPE) => {
+        res.push(item);
+        if (item.id === id)
+          res.push({
+            endTime: null,
+            id: uuidv4(),
+            label: "新增内容",
+            name: "新增主体",
+            position: "新增职位",
+            startTime: null,
+            style: {},
+          });
+        return res;
+      },
+      [],
+    );
 
     updateResumeData({
-      ...currentNode,
+      ...(currentNode as PAGE_ATTRIBUTE),
       paragraphArr: newArr,
     });
     setUndoList(usePublicStore.getState().resumeData);
@@ -294,10 +301,10 @@ export const useParagraphText = () => {
     });
   };
 
-  const deleteText = (id) => {
+  const deleteText = (id: string) => {
     updateResumeData({
-      ...currentNode,
-      paragraphArr: currentNode.paragraphArr.filter((item) => item.id !== id),
+      ...(currentNode as PAGE_ATTRIBUTE),
+      paragraphArr: currentNode?.paragraphArr?.filter((item) => item.id !== id),
     });
     setPrintData();
     requestAnimationFrame(() => {

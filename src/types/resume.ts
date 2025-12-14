@@ -16,7 +16,7 @@ export type PAGE_ATTRIBUTE = {
   borderStyle?: CSSProperties;
 };
 
-type PARAGRAPH_TYPE = {
+export type PARAGRAPH_TYPE = {
   id: string;
   label: string;
   style: CSSProperties;
