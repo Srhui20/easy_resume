@@ -1,3 +1,4 @@
+import { useThrottleFn } from "ahooks";
 import { message } from "antd";
 import type { Color } from "antd/es/color-picker";
 import { useMemo } from "react";
@@ -184,33 +185,35 @@ export const useParagraph = () => {
     setUndoList(resumeData);
   };
 
-  const createParagraphArr = async () => {
-    if (!currentNode) return;
-    if (currentNode.paragraphArr?.length === 10)
-      return messageApi.error("不可添加更多~");
+  const { run: createParagraphArr } = useThrottleFn(
+    () => {
+      if (!currentNode) return;
+      if (currentNode.paragraphArr?.length === 10)
+        return messageApi.error("不可添加更多~");
+      updateResumeData({
+        ...currentNode,
+        paragraphArr: [
+          ...(currentNode.paragraphArr || []),
+          {
+            endTime: null,
+            id: uuidv4(),
+            label: "新增内容",
+            name: "新增主体",
+            position: "新增职位",
+            startTime: null,
+            style: {},
+          },
+        ],
+      });
 
-    await updateResumeData({
-      ...currentNode,
-      paragraphArr: [
-        ...(currentNode.paragraphArr || []),
-        {
-          endTime: null,
-          id: uuidv4(),
-          label: "新增内容",
-          name: "新增主体",
-          position: "新增职位",
-          startTime: null,
-          style: {},
-        },
-      ],
-    });
-
-    setUndoList(usePublicStore.getState().resumeData);
-    setPrintData();
-    requestAnimationFrame(() => {
-      setPrintResumeData([]);
-    });
-  };
+      setUndoList(usePublicStore.getState().resumeData);
+      setPrintData();
+      requestAnimationFrame(() => {
+        setPrintResumeData([]);
+      });
+    },
+    { wait: 1000 },
+  );
 
   return {
     contextHolder,
