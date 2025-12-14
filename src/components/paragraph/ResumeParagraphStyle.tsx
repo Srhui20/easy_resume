@@ -285,13 +285,12 @@ export default function ResumeParagraphStyle() {
                   <DatePicker.RangePicker
                     allowEmpty={[true, true]}
                     defaultValue={[
-                      item.startTime
-                        ? dayjs(item.startTime, "YYYY-MM-DD")
-                        : null,
-                      item.endTime ? dayjs(item.endTime, "YYYY-MM-DD") : null,
+                      item.startTime ? dayjs(item.startTime, "YYYY-MM") : null,
+                      item.endTime ? dayjs(item.endTime, "YYYY-MM") : null,
                     ]}
-                    format="YYYY-MM-DD"
+                    format="YYYY-MM"
                     onChange={(_, val) => editDate(item.id, val)}
+                    picker="month"
                     placeholder={["开始日期", "至今"]}
                     style={{ width: "100%" }}
                   />

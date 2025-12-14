@@ -288,7 +288,7 @@ export default function MainContainer() {
                                   </div>
                                   {paragraph.startTime && (
                                     <div className="w-1/3 text-right">
-                                      {paragraph.startTime} -{" "}
+                                      {paragraph.startTime} ~{" "}
                                       {paragraph.endTime || "至今"}
                                     </div>
                                   )}
