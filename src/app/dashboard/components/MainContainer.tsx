@@ -256,7 +256,7 @@ export default function MainContainer() {
                           exit={{
                             opacity: 0,
                             transition: { duration: 0.1 },
-                          }} // 👈 从下
+                          }}
                           initial={{
                             animationDuration: 1,
                             opacity: 0,
@@ -276,7 +276,7 @@ export default function MainContainer() {
                             </div>
                           </div>
 
-                          <div className="flex w-full flex-col gap-[10px]">
+                          <div className="flex w-full flex-col gap-[15px]">
                             {attr.paragraphArr?.map((paragraph) => (
                               <div className="" key={paragraph.id}>
                                 <div className="flex w-full">

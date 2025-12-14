@@ -3,14 +3,14 @@ import { usePrintStore } from "../store/print";
 import { usePublicStore } from "../store/public";
 
 export const useTypesetting = () => {
-  const resumeData = usePublicStore((state) => state.resumeData);
+  // const resumeData = usePublicStore((state) => state.resumeData);
   const setResumeData = usePublicStore((state) => state.setResumeData);
 
   const printResumeData = usePrintStore((state) => state.printResumeData);
   const setPrintResumeData = usePrintStore((state) => state.setPrintResumeData);
 
   const setPrintData = () => {
-    const arr = [...resumeData];
+    const arr = [...usePublicStore.getState().resumeData];
     const baseinfoArr = arr.filter((item) => item.type === "baseInfo");
 
     const maxTop = baseinfoArr.reduce((max, currentItem) => {

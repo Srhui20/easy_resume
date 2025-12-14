@@ -1,9 +1,15 @@
 import {
+  AppstoreAddOutlined,
+  ArrowDownOutlined,
+  ArrowUpOutlined,
   BoldOutlined,
   ItalicOutlined,
+  MinusOutlined,
+  PlusOutlined,
   UnderlineOutlined,
 } from "@ant-design/icons";
 import {
+  Button,
   ColorPicker,
   DatePicker,
   Form,
@@ -13,11 +19,12 @@ import {
   Tooltip,
 } from "antd";
 import dayjs from "dayjs";
+import { motion } from "motion/react";
 import dynamic from "next/dynamic";
 import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { usePublicStore } from "@/lib/store/public";
 import type { PAGE_ATTRIBUTE } from "@/types/resume";
-import { useParagraph } from "./useParagraphStyle";
+import { useParagraph, useParagraphArr } from "./useParagraphStyle";
 
 const EditorWrapper = memo(
   function EditorWrapper({
@@ -68,7 +75,7 @@ const EditorWrapper = memo(
         setEditValue(
           resumeDataRef.current[attributeIndexRef.current].paragraphArr?.[
             paragraphIndexRef.current
-          ].label ?? "",
+          ]?.label ?? "",
         );
         editorKeyRef.current = `${chooseId}`;
       }
@@ -121,6 +128,7 @@ export default function ResumeParagraphStyle() {
   const attributeIndex = usePublicStore((state) => state.attributeIndex);
 
   const {
+    contextHolder,
     fontStylesList,
     editBgColor,
     editBorderBgColor,
@@ -131,6 +139,7 @@ export default function ResumeParagraphStyle() {
     editLabel,
     editMainName,
     editPosition,
+    createParagraphArr,
   } = useParagraph();
 
   // 订阅 currentNode 的其他属性（用于样式等）
@@ -147,8 +156,18 @@ export default function ResumeParagraphStyle() {
     underline: <UnderlineOutlined />,
   };
 
+  const { arrBtnList } = useParagraphArr();
+
+  const paragraphArrIconMap: { [key: string]: React.ReactNode } = {
+    add: <PlusOutlined />,
+    delete: <MinusOutlined />,
+    down: <ArrowDownOutlined />,
+    up: <ArrowUpOutlined />,
+  };
+
   return (
     <div className="flex flex-col">
+      {contextHolder}
       <Tabs
         activeKey={activeKey}
         centered
@@ -272,42 +291,79 @@ export default function ResumeParagraphStyle() {
         </div>
       ) : (
         <div className="flex flex-col gap-[20px]">
+          <div className="flex w-full justify-between">
+            <div className="font-bold text-[16px]">
+              {currentNode?.titleInfo?.label}
+            </div>
+            <Button
+              icon={<AppstoreAddOutlined />}
+              onClick={createParagraphArr}
+              style={{ color: "#171717" }}
+              type="link"
+            >
+              新增
+            </Button>
+          </div>
+
           {currentNode?.paragraphArr?.map((item, index) => (
-            <div key={item.id}>
-              <div className="flex flex-col">
-                <Form.Item label="主体" style={{ marginBottom: "10px" }}>
-                  <Input
-                    onChange={(val) => editMainName(item.id, val)}
-                    value={item.name}
-                  />
-                </Form.Item>
-                <Form.Item label="时间" style={{ marginBottom: "10px" }}>
-                  <DatePicker.RangePicker
-                    allowEmpty={[true, true]}
-                    defaultValue={[
-                      item.startTime ? dayjs(item.startTime, "YYYY-MM") : null,
-                      item.endTime ? dayjs(item.endTime, "YYYY-MM") : null,
-                    ]}
-                    format="YYYY-MM"
-                    onChange={(_, val) => editDate(item.id, val)}
-                    picker="month"
-                    placeholder={["开始日期", "至今"]}
-                    style={{ width: "100%" }}
-                  />
-                </Form.Item>
-                <Form.Item label="职位" style={{ marginBottom: "10px" }}>
-                  <Input
-                    onChange={(val) => editPosition(item.id, val)}
-                    value={item.position}
-                  />
-                </Form.Item>
+            <div
+              className="flex items-center bg-[#f7f7f7] p-[5px]"
+              key={item.id}
+            >
+              <motion.div className="flex-1 p-[5px]">
+                <div className="flex flex-col">
+                  <Form.Item label="主体" style={{ marginBottom: "10px" }}>
+                    <Input
+                      onChange={(val) => editMainName(item.id, val)}
+                      value={item.name}
+                    />
+                  </Form.Item>
+                  <Form.Item label="时间" style={{ marginBottom: "10px" }}>
+                    <DatePicker.RangePicker
+                      allowEmpty={[true, true]}
+                      defaultValue={[
+                        item.startTime
+                          ? dayjs(item.startTime, "YYYY-MM")
+                          : null,
+                        item.endTime ? dayjs(item.endTime, "YYYY-MM") : null,
+                      ]}
+                      format="YYYY-MM"
+                      onChange={(_, val) => editDate(item.id, val)}
+                      picker="month"
+                      placeholder={["开始日期", "至今"]}
+                      style={{ width: "100%" }}
+                    />
+                  </Form.Item>
+                  <Form.Item label="职位" style={{ marginBottom: "10px" }}>
+                    <Input
+                      onChange={(val) => editPosition(item.id, val)}
+                      value={item.position}
+                    />
+                  </Form.Item>
+                </div>
+                <EditorWrapper
+                  attributeIndex={attributeIndex}
+                  chooseId={chooseId}
+                  paragraphId={item.id}
+                  paragraphIndex={index}
+                />
+              </motion.div>
+              <div className="flex h-full flex-col gap-[5px]">
+                {arrBtnList.map((btn) => (
+                  <>
+                    <motion.span
+                      className="cursor-pointer"
+                      whileHover={{
+                        scale: 1.2,
+                        transition: { duration: 0.2 },
+                      }}
+                      whileTap={{ scale: 0.8 }}
+                    >
+                      {paragraphArrIconMap[btn.key]}
+                    </motion.span>
+                  </>
+                ))}
               </div>
-              <EditorWrapper
-                attributeIndex={attributeIndex}
-                chooseId={chooseId}
-                paragraphId={item.id}
-                paragraphIndex={index}
-              />
             </div>
           ))}
         </div>

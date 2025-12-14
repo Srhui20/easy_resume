@@ -1,5 +1,9 @@
+import { message } from "antd";
 import type { Color } from "antd/es/color-picker";
 import { useMemo } from "react";
+import { v4 as uuidv4 } from "uuid";
+import { useTypesetting } from "@/lib/hooks/useTypesetting";
+import { usePrintStore } from "@/lib/store/print";
 import { usePublicStore } from "@/lib/store/public";
 import { useUndoStore } from "@/lib/store/undo";
 import type { BaseInfoFontStyleType, PAGE_ATTRIBUTE } from "@/types/resume";
@@ -7,8 +11,12 @@ import type { BaseInfoFontStyleType, PAGE_ATTRIBUTE } from "@/types/resume";
 export const useParagraph = () => {
   const updateResumeData = usePublicStore((state) => state.updateResumeData);
   const resumeData = usePublicStore((state) => state.resumeData);
-
+  const setPrintResumeData = usePrintStore((state) => state.setPrintResumeData);
   const setUndoList = useUndoStore.getState().setUndoList;
+
+  const { setPrintData } = useTypesetting();
+
+  const [messageApi, contextHolder] = message.useMessage();
 
   const currentNode: PAGE_ATTRIBUTE | null = usePublicStore((state) => {
     if (!state.chooseId) return null;
@@ -175,7 +183,38 @@ export const useParagraph = () => {
     });
     setUndoList(resumeData);
   };
+
+  const createParagraphArr = async () => {
+    if (!currentNode) return;
+    if (currentNode.paragraphArr?.length === 10)
+      return messageApi.error("不可添加更多~");
+
+    await updateResumeData({
+      ...currentNode,
+      paragraphArr: [
+        ...(currentNode.paragraphArr || []),
+        {
+          endTime: null,
+          id: uuidv4(),
+          label: "新增内容",
+          name: "新增主体",
+          position: "新增职位",
+          startTime: null,
+          style: {},
+        },
+      ],
+    });
+
+    setUndoList(usePublicStore.getState().resumeData);
+    setPrintData();
+    requestAnimationFrame(() => {
+      setPrintResumeData([]);
+    });
+  };
+
   return {
+    contextHolder,
+    createParagraphArr,
     editBgColor,
     editBorderBgColor,
     editDate,
@@ -186,5 +225,34 @@ export const useParagraph = () => {
     editMainName,
     editPosition,
     fontStylesList,
+  };
+};
+
+export const useParagraphArr = () => {
+  const arrBtnList = [
+    {
+      handleFunc: () => {},
+      key: "add",
+      label: "下方添加",
+    },
+    {
+      handleFunc: () => {},
+      key: "delete",
+      label: "删除",
+    },
+    {
+      handleFunc: () => {},
+      key: "down",
+      label: "与下一个交换",
+    },
+    {
+      handleFunc: () => {},
+      key: "up",
+      label: "与上一个交换",
+    },
+  ];
+
+  return {
+    arrBtnList,
   };
 };
