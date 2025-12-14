@@ -7,11 +7,7 @@ import { useTypesetting } from "@/lib/hooks/useTypesetting";
 import { usePrintStore } from "@/lib/store/print";
 import { usePublicStore } from "@/lib/store/public";
 import { useUndoStore } from "@/lib/store/undo";
-import type {
-  BaseInfoFontStyleType,
-  PAGE_ATTRIBUTE,
-  PARAGRAPH_TYPE,
-} from "@/types/resume";
+import type { BaseInfoFontStyleType, PAGE_ATTRIBUTE } from "@/types/resume";
 
 export const useParagraph = () => {
   const updateResumeData = usePublicStore((state) => state.updateResumeData);
@@ -246,48 +242,49 @@ export const useParagraphText = () => {
 
   const arrBtnList = [
     {
-      handleFunc: (id: string) => addText(id),
+      disabled: () => false,
+      handleFunc: (index: number) => addText(index),
       key: "add",
       label: "下方添加",
     },
     {
-      handleFunc: (id: string) => deleteText(id),
+      disabled: () => false,
+      handleFunc: (index: number) => deleteText(index),
       key: "delete",
       label: "删除",
     },
     {
-      handleFunc: (id: string) => {},
+      disabled: (index: number) =>
+        index === (currentNode?.paragraphArr?.length || 1) - 1,
+      handleFunc: (index: number) => exchangeNext(index),
       key: "down",
       label: "与下一个交换",
     },
     {
-      handleFunc: (id: string) => {},
+      disabled: (index: number) => index === 0,
+      handleFunc: (index: number) => exchangePrev(index),
       key: "up",
       label: "与上一个交换",
     },
   ];
 
-  const addText = (id: string) => {
+  const addText = (index: number) => {
     if (currentNode?.paragraphArr && currentNode.paragraphArr?.length >= 10)
       return message.error("不可添加更多~");
 
-    const newArr = (currentNode?.paragraphArr as PARAGRAPH_TYPE[]).reduce(
-      (res: PARAGRAPH_TYPE[], item: PARAGRAPH_TYPE) => {
-        res.push(item);
-        if (item.id === id)
-          res.push({
-            endTime: null,
-            id: uuidv4(),
-            label: "新增内容",
-            name: "新增主体",
-            position: "新增职位",
-            startTime: null,
-            style: {},
-          });
-        return res;
+    const newArr = [
+      ...(currentNode?.paragraphArr?.slice(0, index + 1) || []),
+      {
+        endTime: null,
+        id: uuidv4(),
+        label: "新增内容",
+        name: "新增主体",
+        position: "新增职位",
+        startTime: null,
+        style: {},
       },
-      [],
-    );
+      ...(currentNode?.paragraphArr?.slice(index + 1) || []),
+    ];
 
     updateResumeData({
       ...(currentNode as PAGE_ATTRIBUTE),
@@ -301,10 +298,10 @@ export const useParagraphText = () => {
     });
   };
 
-  const deleteText = (id: string) => {
+  const deleteText = (index: number) => {
     updateResumeData({
       ...(currentNode as PAGE_ATTRIBUTE),
-      paragraphArr: currentNode?.paragraphArr?.filter((item) => item.id !== id),
+      paragraphArr: currentNode?.paragraphArr?.filter((_, i) => index !== i),
     });
     setPrintData();
     requestAnimationFrame(() => {
@@ -312,9 +309,51 @@ export const useParagraphText = () => {
     });
   };
 
+  const exchangeNext = (index: number) => {
+    if (index === (currentNode?.paragraphArr?.length || 1) - 1) return;
+    const arr = [...(currentNode?.paragraphArr ?? [])];
+    [arr[index], arr[index + 1]] = [arr[index + 1], arr[index]];
+    updateResumeData({
+      ...(currentNode as PAGE_ATTRIBUTE),
+      paragraphArr: [],
+    });
+    setTimeout(() => {
+      updateResumeData({
+        ...(currentNode as PAGE_ATTRIBUTE),
+        paragraphArr: arr,
+      });
+      setUndoList(usePublicStore.getState().resumeData);
+
+      setPrintData();
+      requestAnimationFrame(() => {
+        setPrintResumeData([]);
+      });
+    });
+  };
+
+  const exchangePrev = (index: number) => {
+    if (index === 0) return;
+    const arr = [...(currentNode?.paragraphArr ?? [])];
+    [arr[index], arr[index - 1]] = [arr[index - 1], arr[index]];
+    updateResumeData({
+      ...(currentNode as PAGE_ATTRIBUTE),
+      paragraphArr: [],
+    });
+    setTimeout(() => {
+      updateResumeData({
+        ...(currentNode as PAGE_ATTRIBUTE),
+        paragraphArr: arr,
+      });
+      setPrintData();
+      requestAnimationFrame(() => {
+        setPrintResumeData([]);
+      });
+    });
+  };
+
   const { run: handleTextFun } = useThrottleFn(
-    (btn, id) => {
-      btn.handleFunc(id);
+    (btn, index) => {
+      btn.handleFunc(index);
     },
     { trailing: false, wait: 1000 },
   );

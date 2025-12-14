@@ -356,13 +356,19 @@ export default function ResumeParagraphStyle() {
                 {arrBtnList.map((btn) => (
                   <Tooltip key={btn.key} placement="left" title={btn.label}>
                     <motion.span
-                      className="cursor-pointer"
-                      onClick={() => handleTextFun(btn, item.id)}
-                      whileHover={{
-                        scale: 1.2,
-                        transition: { duration: 0.2 },
-                      }}
-                      whileTap={{ scale: 0.8 }}
+                      className={`${btn.disabled(index) ? "cursor-not-allowed" : "cursor-pointer"}`}
+                      onClick={() => handleTextFun(btn, index)}
+                      whileHover={
+                        !btn.disabled(index)
+                          ? {
+                              scale: 1.2,
+                              transition: { duration: 0.2 },
+                            }
+                          : undefined
+                      }
+                      whileTap={
+                        !btn.disabled(index) ? { scale: 0.8 } : undefined
+                      }
                     >
                       {paragraphArrIconMap[btn.key]}
                     </motion.span>
