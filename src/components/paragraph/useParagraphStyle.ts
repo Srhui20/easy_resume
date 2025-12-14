@@ -17,8 +17,6 @@ export const useParagraph = () => {
 
   const { setPrintData } = useTypesetting();
 
-  const [messageApi, contextHolder] = message.useMessage();
-
   const currentNode: PAGE_ATTRIBUTE | null = usePublicStore((state) => {
     if (!state.chooseId) return null;
     return state.resumeData[state.attributeIndex];
@@ -188,8 +186,8 @@ export const useParagraph = () => {
   const { run: createParagraphArr } = useThrottleFn(
     () => {
       if (!currentNode) return;
-      if (currentNode.paragraphArr?.length === 10)
-        return messageApi.error("不可添加更多~");
+      if (currentNode.paragraphArr?.length >= 10)
+        return message.error("不可添加更多~");
       updateResumeData({
         ...currentNode,
         paragraphArr: [
@@ -212,11 +210,10 @@ export const useParagraph = () => {
         setPrintResumeData([]);
       });
     },
-    { wait: 1000 },
+    { trailing: false, wait: 1000 },
   );
 
   return {
-    contextHolder,
     createParagraphArr,
     editBgColor,
     editBorderBgColor,
@@ -231,31 +228,92 @@ export const useParagraph = () => {
   };
 };
 
-export const useParagraphArr = () => {
+export const useParagraphText = () => {
+  const currentNode: PAGE_ATTRIBUTE | null = usePublicStore((state) => {
+    if (!state.chooseId) return null;
+    return state.resumeData[state.attributeIndex];
+  });
+
+  const updateResumeData = usePublicStore((state) => state.updateResumeData);
+  const setPrintResumeData = usePrintStore((state) => state.setPrintResumeData);
+  const setUndoList = useUndoStore.getState().setUndoList;
+
+  const { setPrintData } = useTypesetting();
+
   const arrBtnList = [
     {
-      handleFunc: () => {},
+      handleFunc: (id) => addText(id),
       key: "add",
       label: "下方添加",
     },
     {
-      handleFunc: () => {},
+      handleFunc: (id) => deleteText(id),
       key: "delete",
       label: "删除",
     },
     {
-      handleFunc: () => {},
+      handleFunc: (id) => {},
       key: "down",
       label: "与下一个交换",
     },
     {
-      handleFunc: () => {},
+      handleFunc: (id) => {},
       key: "up",
       label: "与上一个交换",
     },
   ];
 
+  const addText = (id) => {
+    if (currentNode.paragraphArr?.length >= 10)
+      return message.error("不可添加更多~");
+
+    const newArr = currentNode.paragraphArr.reduce((res, item) => {
+      res.push(item);
+      if (item.id === id)
+        res.push({
+          endTime: null,
+          id: uuidv4(),
+          label: "新增内容",
+          name: "新增主体",
+          position: "新增职位",
+          startTime: null,
+          style: {},
+        });
+      return res;
+    }, []);
+
+    updateResumeData({
+      ...currentNode,
+      paragraphArr: newArr,
+    });
+    setUndoList(usePublicStore.getState().resumeData);
+
+    setPrintData();
+    requestAnimationFrame(() => {
+      setPrintResumeData([]);
+    });
+  };
+
+  const deleteText = (id) => {
+    updateResumeData({
+      ...currentNode,
+      paragraphArr: currentNode.paragraphArr.filter((item) => item.id !== id),
+    });
+    setPrintData();
+    requestAnimationFrame(() => {
+      setPrintResumeData([]);
+    });
+  };
+
+  const { run: handleTextFun } = useThrottleFn(
+    (btn, id) => {
+      btn.handleFunc(id);
+    },
+    { trailing: false, wait: 1000 },
+  );
+
   return {
     arrBtnList,
+    handleTextFun,
   };
 };

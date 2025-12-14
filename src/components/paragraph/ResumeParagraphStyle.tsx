@@ -3,8 +3,8 @@ import {
   ArrowDownOutlined,
   ArrowUpOutlined,
   BoldOutlined,
+  DeleteOutlined,
   ItalicOutlined,
-  MinusOutlined,
   PlusOutlined,
   UnderlineOutlined,
 } from "@ant-design/icons";
@@ -24,7 +24,7 @@ import dynamic from "next/dynamic";
 import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { usePublicStore } from "@/lib/store/public";
 import type { PAGE_ATTRIBUTE } from "@/types/resume";
-import { useParagraph, useParagraphArr } from "./useParagraphStyle";
+import { useParagraph, useParagraphText } from "./useParagraphStyle";
 
 const EditorWrapper = memo(
   function EditorWrapper({
@@ -128,7 +128,6 @@ export default function ResumeParagraphStyle() {
   const attributeIndex = usePublicStore((state) => state.attributeIndex);
 
   const {
-    contextHolder,
     fontStylesList,
     editBgColor,
     editBorderBgColor,
@@ -156,18 +155,17 @@ export default function ResumeParagraphStyle() {
     underline: <UnderlineOutlined />,
   };
 
-  const { arrBtnList } = useParagraphArr();
+  const { arrBtnList, handleTextFun } = useParagraphText();
 
   const paragraphArrIconMap: { [key: string]: React.ReactNode } = {
     add: <PlusOutlined />,
-    delete: <MinusOutlined />,
+    delete: <DeleteOutlined />,
     down: <ArrowDownOutlined />,
     up: <ArrowUpOutlined />,
   };
 
   return (
     <div className="flex flex-col">
-      {contextHolder}
       <Tabs
         activeKey={activeKey}
         centered
@@ -310,7 +308,13 @@ export default function ResumeParagraphStyle() {
               className="flex items-center bg-[#f7f7f7] p-[5px]"
               key={item.id}
             >
-              <motion.div className="flex-1 p-[5px]">
+              <motion.div
+                animate={{ opacity: 1, y: 0 }}
+                className="flex-1 p-[5px]"
+                exit={{ opacity: 0 }}
+                initial={{ opacity: 0, y: 10 }}
+                transition={{ duration: 0.3 }}
+              >
                 <div className="flex flex-col">
                   <Form.Item label="主体" style={{ marginBottom: "10px" }}>
                     <Input
@@ -350,17 +354,19 @@ export default function ResumeParagraphStyle() {
               </motion.div>
               <div className="flex h-full flex-col gap-[5px]">
                 {arrBtnList.map((btn) => (
-                  <motion.span
-                    className="cursor-pointer"
-                    key={btn.key}
-                    whileHover={{
-                      scale: 1.2,
-                      transition: { duration: 0.2 },
-                    }}
-                    whileTap={{ scale: 0.8 }}
-                  >
-                    {paragraphArrIconMap[btn.key]}
-                  </motion.span>
+                  <Tooltip key={btn.key} placement="left" title={btn.label}>
+                    <motion.span
+                      className="cursor-pointer"
+                      onClick={() => handleTextFun(btn, item.id)}
+                      whileHover={{
+                        scale: 1.2,
+                        transition: { duration: 0.2 },
+                      }}
+                      whileTap={{ scale: 0.8 }}
+                    >
+                      {paragraphArrIconMap[btn.key]}
+                    </motion.span>
+                  </Tooltip>
                 ))}
               </div>
             </div>

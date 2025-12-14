@@ -228,7 +228,7 @@ export const useOperation = () => {
     (btn) => {
       btn.handleFunc();
     },
-    { wait: 500 },
+    { trailing: false, wait: 500 },
   );
 
   const toTypesetting = () => {
