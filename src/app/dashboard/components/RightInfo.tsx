@@ -1,7 +1,7 @@
 import { Empty } from "antd";
 import { usePublicStore } from "@/lib/store/public";
+import ResumeOperation from "../../../components/operation/ResumeOperation";
 import ResumeAttribute from "./ResumeAttribute";
-import ResumeOperation from "./ResumeOperation";
 
 export default function RightInfo() {
   const chooseId = usePublicStore((state) => state.chooseId);

@@ -35,7 +35,6 @@ export type RESUME_TYPE = {
 export type OperationBtnType = {
   key: string;
   type?: "default" | "primary" | "dashed" | "text" | "link";
-  icon: React.ReactNode;
   label: string;
   handleFunc: () => void;
   isTip?: boolean;
