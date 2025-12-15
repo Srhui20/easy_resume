@@ -38,13 +38,13 @@ export default function MainContainer() {
   const setUndoList = useUndoStore.getState().setUndoList;
   const printResumeData = usePrintStore.getState().printResumeData;
 
-  const [pageLength, setPageLength] = useState(1);
+  const [pageHeight, setPageHeight] = useState(1123);
 
   useEffect(() => {
     if (printResumeData.length) {
       const el = printResumeData[printResumeData.length - 1].ref;
       const maxValue = (el?.offsetHeight || 0) + (el?.offsetTop || 0);
-      setPageLength(Math.ceil(maxValue / 1123));
+      setPageHeight(Math.ceil(maxValue));
       return;
     }
     const raf = window.requestAnimationFrame(() => {
@@ -57,8 +57,7 @@ export default function MainContainer() {
           maxValue = mv;
         }
       }
-
-      setPageLength(Math.min(Math.ceil((maxValue + 1) / 1123), 5));
+      setPageHeight(Math.ceil(maxValue));
     });
     return () => {
       window.cancelAnimationFrame(raf);
@@ -206,7 +205,7 @@ export default function MainContainer() {
       <div className="h-full w-full">
         <div
           className="relative flex w-[1688px] items-center justify-center bg-gray-200"
-          style={{ height: `${1123 * pageLength * scale + 500}px` }}
+          style={{ height: `${pageHeight + 500}px` }}
         >
           <div
             className={`relative flex flex-col gap-[10] ${styles.print_container}`}
@@ -219,14 +218,14 @@ export default function MainContainer() {
             <div
               className="absolute top-[-40px] right-[-40px] z-[-1] w-[874px] bg-white"
               id="print-page-bg"
-              style={{ height: `${1123 * pageLength + 80}px` }}
+              style={{ height: `${pageHeight + 80}px` }}
             />
 
             <div
               className={`relative flex w-[794px] flex-col justify-start justify-between bg-white ${styles.page_container}`}
               onMouseMove={($e) => moveChooseAttribute($e)}
               ref={($el: HTMLDivElement) => setPageRef($el)}
-              style={{ fontSize: "20px", height: `${1123 * pageLength}px` }}
+              style={{ fontSize: "20px", height: `${pageHeight}px` }}
             >
               <AnimatePresence>
                 {(printResumeData.length ? printResumeData : resumeData).map(
