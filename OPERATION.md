@@ -1,4 +1,4 @@
-#### <a style="cursor:pointer;fontWeigth:blod;textDecoration:none;color:#000" href="https://github.com/Srhui20/easy_resume/issues"> 🐞 点击此处提交 issue</a>
+#### <a style="cursor:pointer;fontWeigth:blod;textDecoration:none;color:#000" href="https://github.com/Srhui20/easy_resume/issues"> 🐞 点击此处提交问题及建议</a>
 
 #### 🚀 视图拖动方式
 
@@ -6,9 +6,15 @@
 - Ctrl + 左键拖动（Windows）
 - Command + 左键拖动（Mac）
 
-#### 🚀 文本 / 段落拖动方式
+#### 🚀 视图放大或缩小
 
-- 选中文本或段落后，可直接拖拽调整位置
+- 鼠标中键按下并拖动
+- Ctrl + 鼠标滚动滚轮（Windows）
+- Command + 鼠标滚动滚轮（Mac）
+
+#### 🚀 文本拖动方式
+
+- 选中文本后，可直接拖拽调整位置（段落不可拖动）
 
 #### 🚀 操作流程
 
