@@ -107,11 +107,11 @@ export default function MainContainer() {
 
   const moveChooseAttribute = useCallback(
     ($e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-      if (resumeData[attributeIndex].type === "paragraph") return;
       if (!isMoving) return;
       if ($e.ctrlKey || $e.metaKey) {
         return;
       }
+      if (resumeData[attributeIndex].type === "paragraph") return;
       $e.stopPropagation();
 
       const clientX = $e.nativeEvent.clientX;
