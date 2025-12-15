@@ -7,6 +7,7 @@ import { useMount, useUpdateEffect } from "ahooks";
 import { Button, Tooltip } from "antd";
 import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { DotBg } from "@/components/mainBg";
 import resumeStyle1 from "@/lib//resume_sytle/resume1";
 import { useMouseOpeartion } from "@/lib/hooks/userMouseHook";
 import { usePrintStore } from "@/lib/store/print";
@@ -196,177 +197,186 @@ export default function MainContainer() {
   };
 
   return (
-    <div
-      className="main-container flex h-full flex-col overflow-auto bg-gray-200"
-      onClick={clearChoose}
-      onMouseUp={() => mouseUpAttribute()}
-      ref={moveRef}
+    <DotBg
+      className="main-container flex h-full flex-col overflow-auto"
+      gradient={false}
+      gradientHeight="100%"
+      gradientWidth="100%"
     >
-      <div className="h-full w-full">
-        <div
-          className="relative flex w-[1688px] items-center justify-center bg-gray-200"
-          style={{ height: `${pageHeight + 500}px` }}
-        >
+      <div
+        className="main-container flex h-full flex-col overflow-auto"
+        onClick={clearChoose}
+        onMouseUp={() => mouseUpAttribute()}
+        ref={moveRef}
+      >
+        <div className="h-full w-full">
           <div
-            className={`relative flex flex-col gap-[10] ${styles.print_container}`}
-            id="print-container"
-            ref={printContainerRef}
-            style={{
-              transform: `scale(${scale})`,
-            }}
+            className="relative flex w-[1688px] items-center justify-center"
+            style={{ height: `${pageHeight + 500}px` }}
           >
             <div
-              className="absolute top-[-40px] right-[-40px] z-[-1] w-[874px] bg-white"
-              id="print-page-bg"
-              style={{ height: `${pageHeight + 80}px` }}
-            />
-
-            <div
-              className={`relative flex w-[794px] flex-col justify-start justify-between bg-white ${styles.page_container}`}
-              onMouseMove={($e) => moveChooseAttribute($e)}
-              ref={($el: HTMLDivElement) => setPageRef($el)}
-              style={{ fontSize: "20px", height: `${pageHeight}px` }}
+              className={`relative flex flex-col gap-[10] ${styles.print_container}`}
+              id="print-container"
+              ref={printContainerRef}
+              style={{
+                transform: `scale(${scale})`,
+              }}
             >
-              <AnimatePresence>
-                {(printResumeData.length ? printResumeData : resumeData).map(
-                  (attr, index) => {
-                    return attr.type === "baseInfo" ? (
-                      <motion.div
-                        animate={{
-                          opacity: 1,
-                          transition: { duration: 0.8 },
-                          y: 0,
-                        }}
-                        className={`${attr.className} ${chooseId === attr.id ? "choose_label" : ""}`}
-                        exit={{
-                          opacity: 0,
-                          transition: { duration: 0.1 },
-                        }}
-                        initial={{ opacity: 0, y: 24 }}
-                        key={attr.id}
-                        onClick={($e) => mouseClickAttribute($e, attr.id)}
-                        onMouseDown={($e) =>
-                          mouseDownAttribute($e, attr.id, index)
-                        }
-                        ref={($el) => {
-                          attr.ref = $el;
-                        }}
-                        style={attr.style}
-                      >
-                        {attr.pageLabel || "空"}
-                      </motion.div>
-                    ) : (
-                      <div
-                        className={` ${attr.className} ${chooseId === attr.id ? "choose_label" : ""}`}
-                        key={attr.id}
-                        onClick={($el) => mouseClickAttribute($el, attr.id)}
-                        onMouseDown={($e) =>
-                          mouseDownAttribute($e, attr.id, index)
-                        }
-                        ref={($el) => {
-                          attr.ref = $el;
-                        }}
-                        style={attr.style}
-                      >
-                        {attr.id === chooseId && (
-                          <div className="absolute right-[-38px] flex flex-col">
-                            {paragraphBtnList.map((paragraphBtn) => (
-                              <motion.div
-                                key={paragraphBtn.key}
-                                whileHover={{
-                                  scale: 1.08,
-                                  transition: { duration: 0.1 },
-                                }}
-                                whileTap={{ scale: 0.9 }}
-                              >
-                                <Tooltip
-                                  placement="right"
-                                  title={paragraphBtn.label}
-                                >
-                                  <Button
-                                    disabled={paragraphBtn.disabled(index)}
-                                    icon={paragraphBtnIconMap[paragraphBtn.key]}
-                                    onClick={() =>
-                                      btnHandleFun(paragraphBtn, index)
-                                    }
-                                    shape="circle"
-                                    size="small"
-                                    style={{
-                                      background: "#171717",
-                                      color: "#fff",
-                                    }}
-                                    type="primary"
-                                  />
-                                </Tooltip>
-                              </motion.div>
-                            ))}
-                          </div>
-                        )}
+              <div
+                className="absolute top-[-40px] right-[-40px] z-[-1] w-[874px] bg-white shadow-[0_0_15px_rgba(0,0,0,0.5)]"
+                id="print-page-bg"
+                style={{ height: `${pageHeight + 80}px` }}
+              />
+
+              <div
+                className={`relative flex w-[794px] flex-col justify-start justify-between bg-white ${styles.page_container}`}
+                onMouseMove={($e) => moveChooseAttribute($e)}
+                ref={($el: HTMLDivElement) => setPageRef($el)}
+                style={{ fontSize: "20px", height: `${pageHeight}px` }}
+              >
+                <AnimatePresence>
+                  {(printResumeData.length ? printResumeData : resumeData).map(
+                    (attr, index) => {
+                      return attr.type === "baseInfo" ? (
                         <motion.div
                           animate={{
                             opacity: 1,
                             transition: { duration: 0.8 },
                             y: 0,
                           }}
-                          className="flex flex-col"
+                          className={`${attr.className} ${chooseId === attr.id ? "choose_label" : ""}`}
                           exit={{
                             opacity: 0,
                             transition: { duration: 0.1 },
                           }}
-                          initial={{
-                            animationDuration: 1,
-                            opacity: 0,
-                            transitionDuration: 1,
-                            y: 24,
+                          initial={{ opacity: 0, y: 24 }}
+                          key={attr.id}
+                          onClick={($e) => mouseClickAttribute($e, attr.id)}
+                          onMouseDown={($e) =>
+                            mouseDownAttribute($e, attr.id, index)
+                          }
+                          ref={($el) => {
+                            attr.ref = $el;
                           }}
+                          style={attr.style}
                         >
-                          <div
-                            className="mb-[8px] w-[790px] font-bold"
-                            style={attr?.borderStyle}
+                          {attr.pageLabel || "空"}
+                        </motion.div>
+                      ) : (
+                        <div
+                          className={` ${attr.className} ${chooseId === attr.id ? "choose_label" : ""}`}
+                          key={attr.id}
+                          onClick={($el) => mouseClickAttribute($el, attr.id)}
+                          onMouseDown={($e) =>
+                            mouseDownAttribute($e, attr.id, index)
+                          }
+                          ref={($el) => {
+                            attr.ref = $el;
+                          }}
+                          style={attr.style}
+                        >
+                          {attr.id === chooseId && (
+                            <div className="absolute right-[-38px] flex flex-col">
+                              {paragraphBtnList.map((paragraphBtn) => (
+                                <motion.div
+                                  key={paragraphBtn.key}
+                                  whileHover={{
+                                    scale: 1.08,
+                                    transition: { duration: 0.1 },
+                                  }}
+                                  whileTap={{ scale: 0.9 }}
+                                >
+                                  <Tooltip
+                                    placement="right"
+                                    title={paragraphBtn.label}
+                                  >
+                                    <Button
+                                      disabled={paragraphBtn.disabled(index)}
+                                      icon={
+                                        paragraphBtnIconMap[paragraphBtn.key]
+                                      }
+                                      onClick={() =>
+                                        btnHandleFun(paragraphBtn, index)
+                                      }
+                                      shape="circle"
+                                      size="small"
+                                      style={{
+                                        background: "#171717",
+                                        color: "#fff",
+                                      }}
+                                      type="primary"
+                                    />
+                                  </Tooltip>
+                                </motion.div>
+                              ))}
+                            </div>
+                          )}
+                          <motion.div
+                            animate={{
+                              opacity: 1,
+                              transition: { duration: 0.8 },
+                              y: 0,
+                            }}
+                            className="flex flex-col"
+                            exit={{
+                              opacity: 0,
+                              transition: { duration: 0.1 },
+                            }}
+                            initial={{
+                              animationDuration: 1,
+                              opacity: 0,
+                              transitionDuration: 1,
+                              y: 24,
+                            }}
                           >
                             <div
-                              className="w-[100px]"
-                              style={attr.titleInfo?.style}
+                              className="mb-[8px] w-[790px] font-bold"
+                              style={attr?.borderStyle}
                             >
-                              {attr.titleInfo?.label || "空"}
-                            </div>
-                          </div>
-
-                          <div className="flex w-full flex-col gap-[15px]">
-                            {attr.paragraphArr?.map((paragraph) => (
-                              <div className="" key={paragraph.id}>
-                                <div className="flex w-full">
-                                  <div className="w-1/3 font-bold">
-                                    {paragraph.name}
-                                  </div>
-                                  <div className="w-1/3 text-center">
-                                    {paragraph.position}
-                                  </div>
-                                  {paragraph.startTime && (
-                                    <div className="w-1/3 text-right">
-                                      {paragraph.startTime} ~{" "}
-                                      {paragraph.endTime || "至今"}
-                                    </div>
-                                  )}
-                                </div>
-                                <div
-                                  dangerouslySetInnerHTML={{
-                                    __html: paragraph.label || "空",
-                                  }}
-                                />
+                              <div
+                                className="w-[100px]"
+                                style={attr.titleInfo?.style}
+                              >
+                                {attr.titleInfo?.label || "空"}
                               </div>
-                            ))}
-                          </div>
-                        </motion.div>
-                      </div>
-                    );
-                  },
-                )}
-              </AnimatePresence>
+                            </div>
+
+                            <div className="flex w-full flex-col gap-[15px]">
+                              {attr.paragraphArr?.map((paragraph) => (
+                                <div className="" key={paragraph.id}>
+                                  <div className="flex w-full">
+                                    <div className="w-1/3 font-bold">
+                                      {paragraph.name}
+                                    </div>
+                                    <div className="w-1/3 text-center">
+                                      {paragraph.position}
+                                    </div>
+                                    {paragraph.startTime && (
+                                      <div className="w-1/3 text-right">
+                                        {paragraph.startTime} ~{" "}
+                                        {paragraph.endTime || "至今"}
+                                      </div>
+                                    )}
+                                  </div>
+                                  <div
+                                    dangerouslySetInnerHTML={{
+                                      __html: paragraph.label || "空",
+                                    }}
+                                  />
+                                </div>
+                              ))}
+                            </div>
+                          </motion.div>
+                        </div>
+                      );
+                    },
+                  )}
+                </AnimatePresence>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </DotBg>
   );
 }
