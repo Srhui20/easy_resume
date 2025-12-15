@@ -6,7 +6,6 @@ export const useTypesetting = () => {
   // const resumeData = usePublicStore((state) => state.resumeData);
   const setResumeData = usePublicStore((state) => state.setResumeData);
 
-  const printResumeData = usePrintStore((state) => state.printResumeData);
   const setPrintResumeData = usePrintStore((state) => state.setPrintResumeData);
 
   const setPrintData = () => {
@@ -41,7 +40,7 @@ export const useTypesetting = () => {
   };
 
   const setRsData = () => {
-    const arr = [...printResumeData];
+    const arr = [...usePrintStore.getState().printResumeData];
     const baseinfoArr = arr.filter((item) => item.type === "baseInfo");
     let paragraphArr = arr.filter((item) => item.type !== "baseInfo");
     paragraphArr = paragraphArr.map((item) => {

@@ -1,15 +1,18 @@
-import { CopyOutlined } from "@ant-design/icons";
+import {
+  ArrowDownOutlined,
+  ArrowUpOutlined,
+  CopyOutlined,
+} from "@ant-design/icons";
 import { useMount, useUpdateEffect } from "ahooks";
 import { Button, Tooltip } from "antd";
 import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import resumeStyle1 from "@/lib//resume_sytle/resume1";
 import { useMouseOpeartion } from "@/lib/hooks/userMouseHook";
-import { useTypesetting } from "@/lib/hooks/useTypesetting";
 import { usePrintStore } from "@/lib/store/print";
 import { usePublicStore } from "@/lib/store/public";
 import { useUndoStore } from "@/lib/store/undo";
-import type { PAGE_ATTRIBUTE } from "@/types/resume";
+import { useParagraphBtnFun } from "../hooks/useMainContainer";
 import styles from "./index.module.scss";
 
 export default function MainContainer() {
@@ -177,28 +180,11 @@ export default function MainContainer() {
     });
   });
 
-  const { setPrintData } = useTypesetting();
-  const setPrintResumeData = usePrintStore((state) => state.setPrintResumeData);
-
-  const paragraphUniversal = (id: string) => {
-    const curNode = resumeData.find((item) => item.id === id);
-    const arr: PAGE_ATTRIBUTE[] = [...resumeData].map((item) => {
-      if (item.type === "baseInfo") return item;
-      return {
-        ...item,
-        borderStyle: curNode?.borderStyle ?? {},
-        titleInfo: {
-          label: item.titleInfo?.label ?? "",
-          style: curNode?.titleInfo?.style ?? {},
-        },
-      };
-    });
-    setResumeData(arr);
-    setUndoList(usePublicStore.getState().resumeData);
-    setPrintData();
-    requestAnimationFrame(() => {
-      setPrintResumeData([]);
-    });
+  const { paragraphBtnList, btnHandleFun } = useParagraphBtnFun();
+  const paragraphBtnIconMap: { [key: string]: React.ReactNode } = {
+    copy: <CopyOutlined />,
+    down: <ArrowDownOutlined />,
+    up: <ArrowUpOutlined />,
   };
 
   return (
@@ -275,24 +261,38 @@ export default function MainContainer() {
                         style={attr.style}
                       >
                         {attr.id === chooseId && (
-                          <motion.div
-                            className="absolute right-[-38px]"
-                            whileHover={{
-                              scale: 1.08,
-                              transition: { duration: 0.1 },
-                            }}
-                            whileTap={{ scale: 0.9 }}
-                          >
-                            <Tooltip title="样式一键通用">
-                              <Button
-                                icon={<CopyOutlined />}
-                                onClick={() => paragraphUniversal(attr.id)}
-                                shape="circle"
-                                style={{ background: "#171717" }}
-                                type="primary"
-                              />
-                            </Tooltip>
-                          </motion.div>
+                          <div className="absolute right-[-38px] flex flex-col">
+                            {paragraphBtnList.map((paragraphBtn) => (
+                              <motion.div
+                                key={paragraphBtn.key}
+                                whileHover={{
+                                  scale: 1.08,
+                                  transition: { duration: 0.1 },
+                                }}
+                                whileTap={{ scale: 0.9 }}
+                              >
+                                <Tooltip
+                                  placement="right"
+                                  title={paragraphBtn.label}
+                                >
+                                  <Button
+                                    disabled={paragraphBtn.disabled(index)}
+                                    icon={paragraphBtnIconMap[paragraphBtn.key]}
+                                    onClick={() =>
+                                      btnHandleFun(paragraphBtn, index)
+                                    }
+                                    shape="circle"
+                                    size="small"
+                                    style={{
+                                      background: "#171717",
+                                      color: "#fff",
+                                    }}
+                                    type="primary"
+                                  />
+                                </Tooltip>
+                              </motion.div>
+                            ))}
+                          </div>
                         )}
                         <motion.div
                           animate={{
