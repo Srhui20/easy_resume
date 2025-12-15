@@ -291,7 +291,6 @@ export const useParagraphText = () => {
       paragraphArr: newArr,
     });
     setUndoList(usePublicStore.getState().resumeData);
-
     setPrintData();
     requestAnimationFrame(() => {
       setPrintResumeData([]);
@@ -303,6 +302,7 @@ export const useParagraphText = () => {
       ...(currentNode as PAGE_ATTRIBUTE),
       paragraphArr: currentNode?.paragraphArr?.filter((_, i) => index !== i),
     });
+    setUndoList(usePublicStore.getState().resumeData);
     setPrintData();
     requestAnimationFrame(() => {
       setPrintResumeData([]);
