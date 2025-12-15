@@ -183,6 +183,7 @@ export default function MainContainer() {
   const paragraphUniversal = (id: string) => {
     const curNode = resumeData.find((item) => item.id === id);
     const arr: PAGE_ATTRIBUTE[] = [...resumeData].map((item) => {
+      if (item.type === "baseInfo") return item;
       return {
         ...item,
         borderStyle: curNode?.borderStyle ?? {},
