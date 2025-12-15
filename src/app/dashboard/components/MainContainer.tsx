@@ -108,6 +108,7 @@ export default function MainContainer() {
 
   const moveChooseAttribute = useCallback(
     ($e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      if (resumeData[attributeIndex].type === "paragraph") return;
       if (!isMoving) return;
       if ($e.ctrlKey || $e.metaKey) {
         return;
@@ -133,7 +134,15 @@ export default function MainContainer() {
         });
       }
     },
-    [isMoving, movePageAttribute, position.x, position.y, scale],
+    [
+      attributeIndex,
+      isMoving,
+      movePageAttribute,
+      position.x,
+      position.y,
+      resumeData,
+      scale,
+    ],
   );
 
   const mouseUpAttribute = () => {
