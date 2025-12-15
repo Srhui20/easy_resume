@@ -198,7 +198,7 @@ export default function MainContainer() {
 
   return (
     <DotBg
-      className="main-container flex h-full flex-col overflow-auto"
+      className="flex h-full flex-col"
       gradient={false}
       gradientHeight="100%"
       gradientWidth="100%"

@@ -4,23 +4,23 @@ export function useMouseOpeartion() {
   const moveRef = useRef<HTMLDivElement>(null);
   const isDragging = useRef(false);
 
-  const [scale, setScale] = useState(1);
+  const [scale] = useState(1);
 
-  useEffect(() => {
-    const handleWheel = (e: WheelEvent) => {
-      if (!e.ctrlKey && !e.metaKey) return;
-      e.preventDefault();
-      const delta = e.deltaY < 0 ? 0.1 : -0.1;
-      setScale((prev) => {
-        let newScale = +(prev + delta).toFixed(1);
-        if (newScale <= 0.3) newScale = 0.3; // 最小缩放
-        if (newScale > 2) newScale = 2; // 最大缩放
-        return newScale;
-      });
-    };
-    document.body.addEventListener("wheel", handleWheel, { passive: false });
-    return () => document.body.removeEventListener("wheel", handleWheel);
-  }, []);
+  // useEffect(() => {
+  //   const handleWheel = (e: WheelEvent) => {
+  //     if (!e.ctrlKey && !e.metaKey) return;
+  //     e.preventDefault();
+  //     const delta = e.deltaY < 0 ? 0.1 : -0.1;
+  //     setScale((prev) => {
+  //       let newScale = +(prev + delta).toFixed(1);
+  //       if (newScale <= 0.3) newScale = 0.3; // 最小缩放
+  //       if (newScale > 1.5) newScale = 1.5; // 最大缩放
+  //       return newScale;
+  //     });
+  //   };
+  //   document.body.addEventListener("wheel", handleWheel, { passive: false });
+  //   return () => document.body.removeEventListener("wheel", handleWheel);
+  // }, []);
 
   useEffect(() => {
     const moveElement = moveRef.current;
