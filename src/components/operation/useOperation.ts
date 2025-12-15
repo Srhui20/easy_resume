@@ -141,11 +141,10 @@ export const useOperation = () => {
       (maxItem.ref?.offsetHeight ?? 0);
     const dataId = uuidv4();
     const paraId = uuidv4();
+
     createData({
       borderStyle: {
-        borderBottomColor: "pink",
-        borderBottomStyle: "solid",
-        borderBottomWidth: "1px",
+        ...maxItem.borderStyle,
       },
       className: "absolute",
       id: dataId,
@@ -168,9 +167,7 @@ export const useOperation = () => {
       titleInfo: {
         label: "新增段落标题",
         style: {
-          backgroundColor: "pink",
-          fontSize: "16px",
-          fontWeight: "bold",
+          ...maxItem.titleInfo?.style,
         },
       },
       type: "paragraph",
