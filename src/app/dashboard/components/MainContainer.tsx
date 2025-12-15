@@ -1,11 +1,15 @@
+import { CopyOutlined } from "@ant-design/icons";
 import { useMount, useUpdateEffect } from "ahooks";
+import { Button, Tooltip } from "antd";
 import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import resumeStyle1 from "@/lib//resume_sytle/resume1";
 import { useMouseOpeartion } from "@/lib/hooks/userMouseHook";
+import { useTypesetting } from "@/lib/hooks/useTypesetting";
 import { usePrintStore } from "@/lib/store/print";
 import { usePublicStore } from "@/lib/store/public";
 import { useUndoStore } from "@/lib/store/undo";
+import type { PAGE_ATTRIBUTE } from "@/types/resume";
 import styles from "./index.module.scss";
 
 export default function MainContainer() {
@@ -173,6 +177,29 @@ export default function MainContainer() {
     });
   });
 
+  const { setPrintData } = useTypesetting();
+  const setPrintResumeData = usePrintStore((state) => state.setPrintResumeData);
+
+  const paragraphUniversal = (id: string) => {
+    const curNode = resumeData.find((item) => item.id === id);
+    const arr: PAGE_ATTRIBUTE[] = [...resumeData].map((item) => {
+      return {
+        ...item,
+        borderStyle: curNode?.borderStyle ?? {},
+        titleInfo: {
+          label: item.titleInfo?.label ?? "",
+          style: curNode?.titleInfo?.style ?? {},
+        },
+      };
+    });
+    setResumeData(arr);
+    setUndoList(usePublicStore.getState().resumeData);
+    setPrintData();
+    requestAnimationFrame(() => {
+      setPrintResumeData([]);
+    });
+  };
+
   return (
     <div
       className="main-container flex h-full flex-col overflow-auto bg-gray-200"
@@ -200,7 +227,7 @@ export default function MainContainer() {
             />
 
             <div
-              className={`relative flex w-[794px] flex-col justify-start justify-between overflow-hidden bg-white ${styles.page_container}`}
+              className={`relative flex w-[794px] flex-col justify-start justify-between bg-white ${styles.page_container}`}
               onMouseMove={($e) => moveChooseAttribute($e)}
               ref={($el: HTMLDivElement) => setPageRef($el)}
               style={{ fontSize: "20px", height: `${1123 * pageLength}px` }}
@@ -235,7 +262,7 @@ export default function MainContainer() {
                       </motion.div>
                     ) : (
                       <div
-                        className={`${attr.className} ${chooseId === attr.id ? "choose_label" : ""}`}
+                        className={` ${attr.className} ${chooseId === attr.id ? "choose_label" : ""}`}
                         key={attr.id}
                         onClick={($el) => mouseClickAttribute($el, attr.id)}
                         onMouseDown={($e) =>
@@ -246,6 +273,26 @@ export default function MainContainer() {
                         }}
                         style={attr.style}
                       >
+                        {attr.id === chooseId && (
+                          <motion.div
+                            className="absolute right-[-38px]"
+                            whileHover={{
+                              scale: 1.08,
+                              transition: { duration: 0.1 },
+                            }}
+                            whileTap={{ scale: 0.9 }}
+                          >
+                            <Tooltip title="样式一键通用">
+                              <Button
+                                icon={<CopyOutlined />}
+                                onClick={() => paragraphUniversal(attr.id)}
+                                shape="circle"
+                                style={{ background: "#171717" }}
+                                type="primary"
+                              />
+                            </Tooltip>
+                          </motion.div>
+                        )}
                         <motion.div
                           animate={{
                             opacity: 1,
