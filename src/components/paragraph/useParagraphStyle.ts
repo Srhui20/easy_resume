@@ -115,7 +115,7 @@ export const useParagraph = () => {
       ...currentNode,
       borderStyle: {
         ...currentNode.borderStyle,
-        borderBottomColor: css,
+        backgroundColor: css,
       },
     });
     setUndoList(resumeData);

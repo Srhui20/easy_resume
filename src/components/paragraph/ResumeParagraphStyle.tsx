@@ -255,7 +255,7 @@ export default function ResumeParagraphStyle() {
               <div className="mb-[10px] text-gray-600">下边框颜色</div>
               <ColorPicker
                 defaultValue={
-                  currentNode?.borderStyle?.borderBottomColor ?? "#000"
+                  currentNode?.borderStyle?.backgroundColor ?? "#000"
                 }
                 onChange={editBorderBgColor}
                 showText

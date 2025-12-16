@@ -329,16 +329,17 @@ export default function MainContainer() {
                               y: 24,
                             }}
                           >
-                            <div
-                              className="mb-[8px] w-[790px] font-bold"
-                              style={attr?.borderStyle}
-                            >
+                            <div className="mb-[8px] w-[790px] font-bold">
                               <div
                                 className="w-[100px]"
                                 style={attr.titleInfo?.style}
                               >
                                 {attr.titleInfo?.label || "空"}
                               </div>
+                              <div
+                                className="transform-[scaleY(0.5)] mt-[-1px] h-[1px] w-full origin-bottom"
+                                style={attr.borderStyle}
+                              />
                             </div>
 
                             <div className="flex w-full flex-col gap-[15px]">
