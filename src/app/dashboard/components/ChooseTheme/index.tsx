@@ -97,7 +97,11 @@ export function ChooseTheme({ dialogOpen, onCancel }: ThemeProps) {
         >
           {themeList.map((item) => (
             <div key={item.key}>
-              <Image alt="" src={item.img} style={{ height: "200px" }} />
+              <Image
+                alt={`简历模板示例-${item.key}`}
+                src={item.img}
+                style={{ height: "200px" }}
+              />
             </div>
           ))}
         </Carousel>
