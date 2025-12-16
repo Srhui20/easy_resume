@@ -1,5 +1,5 @@
 import { useMount } from "ahooks";
-import { Button, Modal } from "antd";
+import { Button, Modal, message } from "antd";
 import { useEffect, useRef, useState } from "react";
 import Markdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
@@ -45,6 +45,16 @@ export default function AiMessageDialog({
         headers: { "Content-Type": "application/json" },
         method: "POST",
       });
+
+      const contentType = res.headers.get("content-type") || "";
+
+      // 👇 1️⃣ 先处理错误
+      if (!res.ok) {
+        const errorData = await res.json();
+        return message.error(errorData.message);
+      }
+
+      if (!contentType.includes("text/event-stream")) return;
       const reader = res.body?.getReader();
       if (!reader) return;
 
@@ -111,7 +121,7 @@ export default function AiMessageDialog({
       width={700}
     >
       <div className="mb-[10px] text-gray-400">
-        已自动过滤基础文本信息，仅点评段落信息
+        已自动过滤基础文本信息，一台设备一天可测评五次!
       </div>
       <div className="markdown-box h-[400px] overflow-auto bg-white">
         <Markdown rehypePlugins={[rehypeRaw]}>{aiMessages}</Markdown>
