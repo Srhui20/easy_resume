@@ -16,10 +16,12 @@ export default function AiMessageDialog({
 }: AiMessageProps) {
   const resumeData = usePublicStore.getState().resumeData;
 
+  const isAiMessaging = useRef(false);
+
   const [aiMessages, setAiMessages] = useState("");
 
   const bottomRef = useRef<HTMLDivElement>(null);
-
+  const abortRef = useRef<AbortController | null>(null);
   useMount(() => {
     const local = localStorage.getItem("ai");
     if (local) {
@@ -28,7 +30,11 @@ export default function AiMessageDialog({
   });
 
   const getAiEvaluate = async () => {
+    abortRef.current?.abort();
     try {
+      const controller = new AbortController();
+      abortRef.current = controller;
+      isAiMessaging.current = true;
       const res = await fetch("/api/ai", {
         body: JSON.stringify({
           dataString: JSON.stringify(
@@ -44,6 +50,7 @@ export default function AiMessageDialog({
         }),
         headers: { "Content-Type": "application/json" },
         method: "POST",
+        signal: controller.signal,
       });
 
       const contentType = res.headers.get("content-type") || "";
@@ -80,6 +87,8 @@ export default function AiMessageDialog({
     } catch (e) {
       // biome-ignore lint/suspicious/noConsole: <explanation>
       console.error("ai error", e);
+    } finally {
+      isAiMessaging.current = false;
     }
   };
 
@@ -103,8 +112,9 @@ export default function AiMessageDialog({
         关闭
       </Button>
       <Button
+        disabled={isAiMessaging.current}
         onClick={() => getAiEvaluate()}
-        styles={{ root: { backgroundColor: "#171717" } }}
+        styles={{ root: { backgroundColor: "#171717", color: "#fff" } }}
         type="primary"
       >
         开始点评
