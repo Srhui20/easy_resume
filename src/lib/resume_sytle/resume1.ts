@@ -58,9 +58,7 @@ const resumeStyle1: PAGE_ATTRIBUTE[] = [
   },
   {
     borderStyle: {
-      borderBottomColor: "pink",
-      borderBottomStyle: "solid",
-      borderBottomWidth: "1px",
+      backgroundColor: "#000",
     },
     className: "absolute",
     id: uuidv4(),
@@ -83,15 +81,19 @@ const resumeStyle1: PAGE_ATTRIBUTE[] = [
     },
     titleInfo: {
       label: "技术栈",
-      style: { backgroundColor: "pink", fontSize: "16px", fontWeight: "bold" },
+      style: {
+        backgroundColor: "#000",
+        color: "#fff",
+        fontSize: "16px",
+        fontWeight: "bold",
+        padding: "0 5px",
+      },
     },
     type: "paragraph",
   },
   {
     borderStyle: {
-      borderBottomColor: "pink",
-      borderBottomStyle: "solid",
-      borderBottomWidth: "1px",
+      backgroundColor: "#000",
     },
     className: "absolute ",
     id: uuidv4(),
@@ -131,18 +133,18 @@ const resumeStyle1: PAGE_ATTRIBUTE[] = [
     titleInfo: {
       label: "项目经验",
       style: {
-        backgroundColor: "pink",
+        backgroundColor: "#000",
+        color: "#fff",
         fontSize: "16px",
         fontWeight: "bold",
+        padding: "0 5px",
       },
     },
     type: "paragraph",
   },
   {
     borderStyle: {
-      borderBottomColor: "pink",
-      borderBottomStyle: "solid",
-      borderBottomWidth: "1px",
+      backgroundColor: "#000",
     },
     className: "absolute",
     id: uuidv4(),
@@ -182,9 +184,11 @@ const resumeStyle1: PAGE_ATTRIBUTE[] = [
     titleInfo: {
       label: "工作经验",
       style: {
-        backgroundColor: "pink",
+        backgroundColor: "#000",
+        color: "#fff",
         fontSize: "16px",
         fontWeight: "bold",
+        padding: "0 5px",
       },
     },
     type: "paragraph",

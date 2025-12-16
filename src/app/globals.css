@@ -12,6 +12,11 @@
   all: revert;
 }
 
+.ant-carousel .slick-arrow {
+  font-size: 12px;
+  color: #757575 !important;
+}
+
 ul,
 ol {
   padding-left: 20px;

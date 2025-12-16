@@ -331,7 +331,7 @@ export default function MainContainer() {
                           >
                             <div className="mb-[8px] w-[790px] font-bold">
                               <div
-                                className="w-[100px]"
+                                className="w-[110px]"
                                 style={attr.titleInfo?.style}
                               >
                                 {attr.titleInfo?.label || "空"}

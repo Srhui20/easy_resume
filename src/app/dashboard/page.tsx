@@ -6,6 +6,7 @@ import {
   GithubOutlined,
   LoadingOutlined,
   OpenAIOutlined,
+  SketchOutlined,
 } from "@ant-design/icons";
 import { Button, message, Spin, Splitter, Tooltip } from "antd";
 import { useEffect, useState } from "react";
@@ -14,6 +15,7 @@ import { usePrintStore } from "@/lib/store/print";
 import { usePublicStore } from "@/lib/store/public";
 import type { OperationBtnType } from "@/types/resume";
 import AiMessageDialog from "./components/AiMessageDialog";
+import { ChooseTheme } from "./components/ChooseTheme";
 import MainContainer from "./components/MainContainer";
 import RightInfo from "./components/RightInfo";
 import SystemDilaog from "./components/SystemDialog";
@@ -58,6 +60,16 @@ export default function Dashboard() {
       type: "primary",
     },
     {
+      handleFunc: () => setThemeOpen(true),
+      isTip: false,
+      key: "theme",
+      label: "主题",
+      style: {
+        color: "#171717",
+      },
+      type: "link",
+    },
+    {
       handleFunc: () => setAiMessageOpen(true),
       isTip: false,
       key: "ai",
@@ -83,6 +95,7 @@ export default function Dashboard() {
     ai: <OpenAIOutlined />,
     download: <DownloadOutlined />,
     system: <DesktopOutlined />,
+    theme: <SketchOutlined />,
   };
 
   // const [html] = useState("<h1 style='color:red;'>Hello PDF</h1>");
@@ -135,6 +148,7 @@ export default function Dashboard() {
 
   const [systemDialogOpen, setSystemDialogOpen] = useState(false);
   const [aiMessageOpen, setAiMessageOpen] = useState(false);
+  const [themeOpen, setThemeOpen] = useState(false);
   return (
     <>
       <Spin
@@ -155,6 +169,12 @@ export default function Dashboard() {
         <AiMessageDialog
           dialogOpen={aiMessageOpen}
           onCancel={() => setAiMessageOpen(false)}
+        />
+      )}
+      {themeOpen && (
+        <ChooseTheme
+          dialogOpen={themeOpen}
+          onCancel={() => setThemeOpen(false)}
         />
       )}
       <div className="flex h-screen flex-col">
