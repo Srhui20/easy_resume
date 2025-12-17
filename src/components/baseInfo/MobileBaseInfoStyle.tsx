@@ -76,7 +76,7 @@ export default function MobileBaseInfoStyle() {
         value={
           currentNode?.style?.left
             ? parseInt(currentNode.style.left as string, 10)
-            : 40
+            : 0
         }
       />
       <Input
@@ -89,7 +89,7 @@ export default function MobileBaseInfoStyle() {
         value={
           currentNode?.style?.top
             ? parseInt(currentNode.style.top as string, 10)
-            : 40
+            : 0
         }
       />
 

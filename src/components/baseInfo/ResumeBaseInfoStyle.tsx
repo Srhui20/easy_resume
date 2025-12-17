@@ -91,7 +91,7 @@ export default function ResumeBaseInfoStyle() {
               value={
                 currentNode?.style?.left
                   ? parseInt(currentNode.style.left as string, 10)
-                  : 40
+                  : 0
               }
             />
           </div>
@@ -108,7 +108,7 @@ export default function ResumeBaseInfoStyle() {
               value={
                 currentNode?.style?.top
                   ? parseInt(currentNode.style.top as string, 10)
-                  : 40
+                  : 0
               }
             />
           </div>
