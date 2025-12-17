@@ -95,7 +95,7 @@ export default function MobileBaseInfoStyle() {
 
       <div className="t-input--border flex items-center p-[16px]">
         <div className="w-[80px]">样式</div>
-        <div className="flex h-full w-[110px] justify-center gap-[4px] rounded-lg bg-gray-100 p-[3px] pr-[8px] pl-[8px]">
+        <div className="flex h-[40px] w-[110px] justify-center gap-[4px] rounded-lg bg-gray-100 p-[3px] pr-[8px] pl-[8px]">
           {fontStylesList.map((item) => (
             <div
               className={`flex w-[30px] cursor-pointer items-center justify-center rounded-lg ${item.isChoose ? "bg-blue-200 text-blue-500" : "hover:bg-gray-300"}`}
