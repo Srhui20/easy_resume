@@ -214,7 +214,7 @@ export default function Dashboard() {
       )}
       <div className="flex h-screen flex-col">
         {contextHolder}
-        <div className="flex h-15 items-center justify-between border-gray-300 border-b pr-8 pl-8">
+        <div className="flex items-center justify-between border-gray-300 border-b pt-[10px] pr-8 pb-[10px] pl-8">
           <div className="font-bold">EASY_RESUME</div>
           <div className="flex hidden gap-3 md:block">
             {btnList.map((btn) => (
@@ -297,6 +297,7 @@ export default function Dashboard() {
           onClose={() => setFileOperationShow(false)}
           open={fileOperationShow}
           placement="bottom"
+          size={300}
         >
           <ResumeOperation />
         </Drawer>
