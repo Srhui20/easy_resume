@@ -281,7 +281,7 @@ export default function Dashboard() {
             </Splitter.Panel>
           </Splitter>
         </div>
-        <div className="block md:hidden">
+        <div className="block overflow-auto md:hidden">
           <MainContainer />
           <FloatButton
             icon={<SettingOutlined />}
