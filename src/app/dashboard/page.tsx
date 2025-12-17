@@ -23,7 +23,8 @@ import {
 import { useEffect, useState } from "react";
 import MobileBaseInfoStyle from "@/components/baseInfo/MobileBaseInfoStyle";
 import ResumeOperation from "@/components/operation/ResumeOperation";
-import ResumeParagraphStyle from "@/components/paragraph/ResumeParagraphStyle";
+import MobileParagraphStyle from "@/components/paragraph/MobileParagraphStyle";
+import { useIsMobile } from "@/lib/hooks/useIsMobile";
 import { useTypesetting } from "@/lib/hooks/useTypesetting";
 import { usePrintStore } from "@/lib/store/print";
 import { usePublicStore } from "@/lib/store/public";
@@ -186,6 +187,7 @@ export default function Dashboard() {
   });
 
   const isBaseInfo = currentNode?.type === "baseInfo";
+  const { isMobile } = useIsMobile();
   return (
     <>
       <Spin
@@ -293,26 +295,53 @@ export default function Dashboard() {
           />
         </div>
 
-        <Drawer
-          closable={{ "aria-label": "Close Button" }}
-          mask={false}
-          onClose={() => setFileOperationShow(false)}
-          open={fileOperationShow}
-          placement="bottom"
-          size={300}
-        >
-          <ResumeOperation />
-        </Drawer>
-
-        <Drawer
-          closable={{ "aria-label": "Close Button" }}
-          mask={false}
-          onClose={() => setAttributeShow(false)}
-          open={attributeShow}
-          placement="bottom"
-        >
-          {isBaseInfo ? <MobileBaseInfoStyle /> : <ResumeParagraphStyle />}
-        </Drawer>
+        <div className="block md:hidden">
+          {isMobile ? (
+            <>
+              {" "}
+              <Drawer
+                closable={{ "aria-label": "Close Button" }}
+                mask={false}
+                onClose={() => setFileOperationShow(false)}
+                open={fileOperationShow}
+                placement="bottom"
+                size={300}
+                styles={{
+                  body: {
+                    padding: "10px 24px",
+                  },
+                  header: {
+                    padding: "10px 24px",
+                  },
+                }}
+              >
+                <ResumeOperation />
+              </Drawer>
+              <Drawer
+                className="block md:hidden"
+                closable={{ "aria-label": "Close Button" }}
+                mask={false}
+                onClose={() => setAttributeShow(false)}
+                open={attributeShow}
+                placement="bottom"
+                styles={{
+                  body: {
+                    padding: "10px 24px",
+                  },
+                  header: {
+                    padding: "10px 24px",
+                  },
+                }}
+              >
+                {isBaseInfo ? (
+                  <MobileBaseInfoStyle />
+                ) : (
+                  <MobileParagraphStyle />
+                )}
+              </Drawer>
+            </>
+          ) : null}
+        </div>
       </div>
     </>
   );

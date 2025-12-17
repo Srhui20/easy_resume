@@ -139,6 +139,9 @@ export default function ResumeParagraphStyle() {
     editMainName,
     editPosition,
     createParagraphArr,
+    activeKey,
+    setActiveKey,
+    colorPickerStyle,
   } = useParagraph();
 
   // 订阅 currentNode 的其他属性（用于样式等）
@@ -146,8 +149,6 @@ export default function ResumeParagraphStyle() {
     if (!state.chooseId) return null;
     return state.resumeData[state.attributeIndex];
   });
-
-  const [activeKey, setActiveKey] = useState("text");
 
   const iconMap = {
     bold: <BoldOutlined />,
@@ -184,7 +185,7 @@ export default function ResumeParagraphStyle() {
           <div className="mb-[20px] flex flex-col">
             <div className="mb-[10px] text-gray-600">文本</div>
             <Input
-              onChange={editLabel}
+              onChange={(e) => editLabel(e.target.value)}
               size="large"
               style={{ fontSize: "16px", height: "50px" }}
               value={currentNode?.titleInfo?.label}
@@ -218,14 +219,7 @@ export default function ResumeParagraphStyle() {
                 defaultValue={currentNode?.titleInfo?.style.color ?? "#000"}
                 onChange={editFontColor}
                 showText
-                style={{
-                  alignItems: "center",
-                  fontSize: "16px",
-                  height: "50px",
-                  justifyContent: "start",
-                  paddingLeft: "20px",
-                  width: "100%",
-                }}
+                style={colorPickerStyle}
               />
             </div>
           </div>
@@ -240,14 +234,7 @@ export default function ResumeParagraphStyle() {
                   }
                   onChange={editBgColor}
                   showText
-                  style={{
-                    alignItems: "center",
-                    fontSize: "16px",
-                    height: "50px",
-                    justifyContent: "start",
-                    paddingLeft: "20px",
-                    width: "100%",
-                  }}
+                  style={colorPickerStyle}
                 />
               </div>
             </div>
@@ -259,14 +246,7 @@ export default function ResumeParagraphStyle() {
                 }
                 onChange={editBorderBgColor}
                 showText
-                style={{
-                  alignItems: "center",
-                  fontSize: "16px",
-                  height: "50px",
-                  justifyContent: "start",
-                  paddingLeft: "20px",
-                  width: "100%",
-                }}
+                style={colorPickerStyle}
               />
             </div>
           </div>
@@ -318,7 +298,7 @@ export default function ResumeParagraphStyle() {
                 <div className="flex flex-col">
                   <Form.Item label="主体" style={{ marginBottom: "10px" }}>
                     <Input
-                      onChange={(val) => editMainName(item.id, val)}
+                      onChange={(e) => editMainName(item.id, e.target.value)}
                       value={item.name}
                     />
                   </Form.Item>
@@ -340,7 +320,7 @@ export default function ResumeParagraphStyle() {
                   </Form.Item>
                   <Form.Item label="职位" style={{ marginBottom: "10px" }}>
                     <Input
-                      onChange={(val) => editPosition(item.id, val)}
+                      onChange={(e) => editPosition(item.id, e.target.value)}
                       value={item.position}
                     />
                   </Form.Item>

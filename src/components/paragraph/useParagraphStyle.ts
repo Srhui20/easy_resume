@@ -1,7 +1,7 @@
 import { useThrottleFn } from "ahooks";
 import { message } from "antd";
 import type { Color } from "antd/es/color-picker";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { useTypesetting } from "@/lib/hooks/useTypesetting";
 import { usePrintStore } from "@/lib/store/print";
@@ -14,6 +14,8 @@ export const useParagraph = () => {
   const resumeData = usePublicStore((state) => state.resumeData);
   const setPrintResumeData = usePrintStore((state) => state.setPrintResumeData);
   const setUndoList = useUndoStore.getState().setUndoList;
+
+  const [activeKey, setActiveKey] = useState("text");
 
   const { setPrintData } = useTypesetting();
 
@@ -52,12 +54,12 @@ export const useParagraph = () => {
     [currentNode],
   );
 
-  const editLabel = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const editLabel = (value: string) => {
     if (!currentNode) return;
     updateResumeData({
       ...currentNode,
       titleInfo: {
-        label: e.target.value,
+        label: value,
         style: currentNode.titleInfo?.style ?? {},
       },
     });
@@ -137,7 +139,7 @@ export const useParagraph = () => {
     setUndoList(resumeData);
   };
 
-  const editMainName = (id: string, e: React.ChangeEvent<HTMLInputElement>) => {
+  const editMainName = (id: string, value: string) => {
     if (!currentNode) return;
     updateResumeData({
       ...currentNode,
@@ -145,7 +147,7 @@ export const useParagraph = () => {
         currentNode?.paragraphArr?.map((item) => {
           return {
             ...item,
-            name: item.id === id ? e.target.value : item.name,
+            name: item.id === id ? value : item.name,
           };
         }) ?? [],
     });
@@ -168,7 +170,7 @@ export const useParagraph = () => {
     setUndoList(resumeData);
   };
 
-  const editPosition = (id: string, e: React.ChangeEvent<HTMLInputElement>) => {
+  const editPosition = (id: string, value: string) => {
     if (!currentNode) return;
     updateResumeData({
       ...currentNode,
@@ -176,7 +178,7 @@ export const useParagraph = () => {
         currentNode?.paragraphArr?.map((item) => {
           return {
             ...item,
-            position: item.id === id ? e.target.value : item.position,
+            position: item.id === id ? value : item.position,
           };
         }) ?? [],
     });
@@ -213,7 +215,18 @@ export const useParagraph = () => {
     { trailing: false, wait: 1000 },
   );
 
+  const colorPickerStyle = {
+    alignItems: "center",
+    fontSize: "16px",
+    height: "50px",
+    justifyContent: "start",
+    paddingLeft: "20px",
+    width: "100%",
+  };
+
   return {
+    activeKey,
+    colorPickerStyle,
     createParagraphArr,
     editBgColor,
     editBorderBgColor,
@@ -225,6 +238,7 @@ export const useParagraph = () => {
     editMainName,
     editPosition,
     fontStylesList,
+    setActiveKey,
   };
 };
 
