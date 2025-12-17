@@ -71,3 +71,12 @@ ol {
 }
 
 /* ===== Firefox ===== */
+
+@media screen and (max-width: 768px) {
+  /* 针对所有输入控件 */
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}
