@@ -53,9 +53,11 @@ export default function Dashboard() {
   } = useMobilePage();
 
   useEffect(() => {
-    if (chooseId) setAttributeShow(true);
-    else setAttributeShow(false);
-  }, [chooseId, setAttributeShow]);
+    if (chooseId) {
+      setAttributeShow(true);
+      setFileOperationShow(false);
+    } else setAttributeShow(false);
+  }, [chooseId, setAttributeShow, setFileOperationShow]);
 
   useEffect(() => {
     localStorage.setItem(
