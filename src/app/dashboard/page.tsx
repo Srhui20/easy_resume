@@ -5,10 +5,11 @@ import {
   DownloadOutlined,
   GithubOutlined,
   LoadingOutlined,
+  MenuOutlined,
   OpenAIOutlined,
   SketchOutlined,
 } from "@ant-design/icons";
-import { Button, message, Spin, Splitter, Tooltip } from "antd";
+import { Button, Dropdown, message, Spin, Splitter, Tooltip } from "antd";
 import { useEffect, useState } from "react";
 import { useTypesetting } from "@/lib/hooks/useTypesetting";
 import { usePrintStore } from "@/lib/store/print";
@@ -181,7 +182,7 @@ export default function Dashboard() {
         {contextHolder}
         <div className="flex h-15 items-center justify-between border-gray-300 border-b pr-8 pl-8">
           <div className="font-bold">EASY_RESUME</div>
-          <div className="flex gap-3">
+          <div className="flex hidden gap-3 md:block">
             {btnList.map((btn) => (
               <Button
                 icon={iconMap[btn.key]}
@@ -201,6 +202,34 @@ export default function Dashboard() {
                 type="text"
               />
             </Tooltip>
+          </div>
+          <div className="block flex md:hidden">
+            <Button
+              className="mr-[10px]"
+              icon={iconMap.download}
+              onClick={() => handleDownload()}
+              style={{ backgroundColor: "#171717" }}
+              type="primary"
+            >
+              下载为pdf
+            </Button>
+            <Dropdown
+              menu={{
+                items: btnList
+                  .filter((item) => item.key !== "download")
+                  .map((item) => {
+                    return {
+                      icon: iconMap[item.key],
+                      key: item.key,
+                      label: item.label,
+                      onClick: item.handleFunc,
+                    };
+                  }),
+              }}
+              placement="bottomRight"
+            >
+              <MenuOutlined />
+            </Dropdown>
           </div>
         </div>
         <div className="flex min-h-0 flex-1">
