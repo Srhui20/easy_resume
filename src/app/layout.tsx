@@ -29,6 +29,12 @@ export const metadata: Metadata = {
     title: "在线简历编辑器 easy_resume",
   },
   title: "在线简历编辑器 easy_resume",
+  viewport: {
+    initialScale: 1.0, // 初始缩放比例为 1
+    width: "device-width", // 视口宽度等于设备宽度
+    // userScalable: 'no',    // 移除这行或将其设置为 no，默认是允许用户缩放
+    // 或者更直接地，不加 userScalable，并保证 initialScale 为 1
+  },
 };
 
 export default function RootLayout({
