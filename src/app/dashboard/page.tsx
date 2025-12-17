@@ -7,28 +7,55 @@ import {
   LoadingOutlined,
   MenuOutlined,
   OpenAIOutlined,
+  SettingOutlined,
   SketchOutlined,
 } from "@ant-design/icons";
-import { Button, Dropdown, message, Spin, Splitter, Tooltip } from "antd";
+import {
+  Button,
+  Drawer,
+  Dropdown,
+  FloatButton,
+  message,
+  Spin,
+  Splitter,
+  Tooltip,
+} from "antd";
 import { useEffect, useState } from "react";
+import ResumeBaseInfoStyle from "@/components/baseInfo/ResumeBaseInfoStyle";
+import ResumeOperation from "@/components/operation/ResumeOperation";
+import ResumeParagraphStyle from "@/components/paragraph/ResumeParagraphStyle";
 import { useTypesetting } from "@/lib/hooks/useTypesetting";
 import { usePrintStore } from "@/lib/store/print";
 import { usePublicStore } from "@/lib/store/public";
-import type { OperationBtnType } from "@/types/resume";
+import type { OperationBtnType, PAGE_ATTRIBUTE } from "@/types/resume";
 import AiMessageDialog from "./components/AiMessageDialog";
 import { ChooseTheme } from "./components/ChooseTheme";
 import MainContainer from "./components/MainContainer";
 import RightInfo from "./components/RightInfo";
 import SystemDilaog from "./components/SystemDialog";
+import { useMobilePage } from "./hooks/usePage";
 
 export default function Dashboard() {
   const [messageApi, contextHolder] = message.useMessage();
   const resumeData = usePublicStore((state) => state.resumeData);
   const clearChoose = usePublicStore((state) => state.clearChoose);
+  const chooseId = usePublicStore((state) => state.chooseId);
 
   const { setPrintData, setRsData } = useTypesetting();
   const printResumeData = usePrintStore((state) => state.printResumeData);
   const setPrintResumeData = usePrintStore((state) => state.setPrintResumeData);
+
+  const {
+    attributeShow,
+    fileOperationShow,
+    setFileOperationShow,
+    setAttributeShow,
+  } = useMobilePage();
+
+  useEffect(() => {
+    if (chooseId) setAttributeShow(true);
+    else setAttributeShow(false);
+  }, [chooseId, setAttributeShow]);
 
   useEffect(() => {
     localStorage.setItem(
@@ -150,6 +177,13 @@ export default function Dashboard() {
   const [systemDialogOpen, setSystemDialogOpen] = useState(false);
   const [aiMessageOpen, setAiMessageOpen] = useState(false);
   const [themeOpen, setThemeOpen] = useState(false);
+
+  const currentNode: PAGE_ATTRIBUTE | null = usePublicStore((state) => {
+    if (!state.chooseId) return null;
+    return state.resumeData[state.attributeIndex];
+  });
+
+  const isBaseInfo = currentNode?.type === "baseInfo";
   return (
     <>
       <Spin
@@ -234,7 +268,8 @@ export default function Dashboard() {
             </Dropdown>
           </div>
         </div>
-        <div className="flex min-h-0 flex-1">
+
+        <div className="flex hidden min-h-0 flex-1 md:block">
           <Splitter
             style={{ boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)", height: "100%" }}
           >
@@ -246,6 +281,35 @@ export default function Dashboard() {
             </Splitter.Panel>
           </Splitter>
         </div>
+        <div className="block md:hidden">
+          <MainContainer />
+          <FloatButton
+            icon={<SettingOutlined />}
+            onClick={() => setFileOperationShow(true)}
+            style={{ backgroundColor: "#171717", insetInlineEnd: 24 }}
+            type="primary"
+          />
+        </div>
+
+        <Drawer
+          closable={{ "aria-label": "Close Button" }}
+          mask={false}
+          onClose={() => setFileOperationShow(false)}
+          open={fileOperationShow}
+          placement="bottom"
+        >
+          <ResumeOperation />
+        </Drawer>
+
+        <Drawer
+          closable={{ "aria-label": "Close Button" }}
+          mask={false}
+          onClose={() => setAttributeShow(false)}
+          open={attributeShow}
+          placement="bottom"
+        >
+          {isBaseInfo ? <ResumeBaseInfoStyle /> : <ResumeParagraphStyle />}
+        </Drawer>
       </div>
     </>
   );
