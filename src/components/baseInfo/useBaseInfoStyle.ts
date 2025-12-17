@@ -43,11 +43,11 @@ export const useBaseInfoStyle = () => {
     [currentNode],
   );
 
-  const editLabel = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const editLabel = (value: string) => {
     if (!currentNode) return;
     updateResumeData({
       ...currentNode,
-      pageLabel: e.target.value,
+      pageLabel: value,
     });
     setUndoList(resumeData);
   };

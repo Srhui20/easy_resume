@@ -35,7 +35,7 @@ export default function ResumeBaseInfoStyle() {
       <div className="mb-[20px] flex flex-col">
         <div className="mb-[10px] text-gray-600">文本</div>
         <Input
-          onChange={editLabel}
+          onChange={(e) => editLabel(e.target.value)}
           size="large"
           style={{ fontSize: "16px", height: "50px" }}
           value={currentNode?.pageLabel}

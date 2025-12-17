@@ -35,6 +35,7 @@
     "sass": "^1.94.2",
     "tailwind-merge": "^3.4.0",
     "tailwindcss": "4.1.0",
+    "tdesign-mobile-react": "^0.21.0",
     "uuid": "^13.0.0",
     "zustand": "^5.0.9"
   },

@@ -21,7 +21,7 @@ import {
   Tooltip,
 } from "antd";
 import { useEffect, useState } from "react";
-import ResumeBaseInfoStyle from "@/components/baseInfo/ResumeBaseInfoStyle";
+import MobileBaseInfoStyle from "@/components/baseInfo/MobileBaseInfoStyle";
 import ResumeOperation from "@/components/operation/ResumeOperation";
 import ResumeParagraphStyle from "@/components/paragraph/ResumeParagraphStyle";
 import { useTypesetting } from "@/lib/hooks/useTypesetting";
@@ -309,7 +309,7 @@ export default function Dashboard() {
           open={attributeShow}
           placement="bottom"
         >
-          {isBaseInfo ? <ResumeBaseInfoStyle /> : <ResumeParagraphStyle />}
+          {isBaseInfo ? <MobileBaseInfoStyle /> : <ResumeParagraphStyle />}
         </Drawer>
       </div>
     </>
