@@ -1,5 +1,5 @@
 import { useMount } from "ahooks";
-import { Button, Modal } from "antd";
+import { Button, Modal, message } from "antd";
 import { useEffect, useRef, useState } from "react";
 import Markdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
@@ -16,10 +16,12 @@ export default function AiMessageDialog({
 }: AiMessageProps) {
   const resumeData = usePublicStore.getState().resumeData;
 
+  const isAiMessaging = useRef(false);
+
   const [aiMessages, setAiMessages] = useState("");
 
   const bottomRef = useRef<HTMLDivElement>(null);
-
+  const abortRef = useRef<AbortController | null>(null);
   useMount(() => {
     const local = localStorage.getItem("ai");
     if (local) {
@@ -28,7 +30,11 @@ export default function AiMessageDialog({
   });
 
   const getAiEvaluate = async () => {
+    abortRef.current?.abort();
     try {
+      const controller = new AbortController();
+      abortRef.current = controller;
+      isAiMessaging.current = true;
       const res = await fetch("/api/ai", {
         body: JSON.stringify({
           dataString: JSON.stringify(
@@ -44,7 +50,18 @@ export default function AiMessageDialog({
         }),
         headers: { "Content-Type": "application/json" },
         method: "POST",
+        signal: controller.signal,
       });
+
+      const contentType = res.headers.get("content-type") || "";
+
+      // 👇 1️⃣ 先处理错误
+      if (!res.ok) {
+        const errorData = await res.json();
+        return message.error(errorData.message);
+      }
+
+      if (!contentType.includes("text/event-stream")) return;
       const reader = res.body?.getReader();
       if (!reader) return;
 
@@ -70,6 +87,8 @@ export default function AiMessageDialog({
     } catch (e) {
       // biome-ignore lint/suspicious/noConsole: <explanation>
       console.error("ai error", e);
+    } finally {
+      isAiMessaging.current = false;
     }
   };
 
@@ -93,8 +112,9 @@ export default function AiMessageDialog({
         关闭
       </Button>
       <Button
+        disabled={isAiMessaging.current}
         onClick={() => getAiEvaluate()}
-        styles={{ root: { backgroundColor: "#171717" } }}
+        styles={{ root: { backgroundColor: "#171717", color: "#fff" } }}
         type="primary"
       >
         开始点评
@@ -111,7 +131,7 @@ export default function AiMessageDialog({
       width={700}
     >
       <div className="mb-[10px] text-gray-400">
-        已自动过滤基础文本信息，仅点评段落信息
+        已自动过滤基础文本信息，一台设备一天可测评五次!
       </div>
       <div className="markdown-box h-[400px] overflow-auto bg-white">
         <Markdown rehypePlugins={[rehypeRaw]}>{aiMessages}</Markdown>
