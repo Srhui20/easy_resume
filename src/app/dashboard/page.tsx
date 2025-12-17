@@ -228,7 +228,9 @@ export default function Dashboard() {
               }}
               placement="bottomRight"
             >
-              <MenuOutlined />
+              <div className="flex items-center justify-center">
+                <MenuOutlined />
+              </div>
             </Dropdown>
           </div>
         </div>
