@@ -281,13 +281,16 @@ export default function Dashboard() {
 
         {isMobile ? (
           <div className="block flex overflow-auto md:hidden">
-            {/* <MainContainer /> */}
+            <MainContainer />
             <FloatButton
               icon={<SettingOutlined />}
               onClick={() => setFileOperationShow(true)}
               style={{ backgroundColor: "#171717", insetInlineEnd: 24 }}
               type="primary"
             />
+            <div className="hidden md:block">
+              <RightInfo />
+            </div>
           </div>
         ) : (
           <div className="flex hidden min-h-0 flex-1 md:block">
