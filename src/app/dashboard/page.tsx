@@ -18,7 +18,6 @@ import {
   message,
   Slider,
   Spin,
-  Splitter,
   Tooltip,
 } from "antd";
 import { useEffect, useState } from "react";
@@ -279,36 +278,23 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {isMobile ? (
-          <div className="block flex overflow-auto md:hidden">
+        <div className="flex min-h-0 flex-1">
+          <div className="w-[100%] md:w-[70%]">
             <MainContainer />
+          </div>
+          <div className="hidden w-[0] md:block md:w-[30%]">
+            <RightInfo />
+          </div>
+
+          <div className="block md:hidden">
             <FloatButton
               icon={<SettingOutlined />}
               onClick={() => setFileOperationShow(true)}
               style={{ backgroundColor: "#171717", insetInlineEnd: 24 }}
               type="primary"
             />
-            <div className="hidden md:block">
-              <RightInfo />
-            </div>
           </div>
-        ) : (
-          <div className="flex hidden min-h-0 flex-1 md:block">
-            <Splitter
-              style={{
-                boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
-                height: "100%",
-              }}
-            >
-              <Splitter.Panel defaultSize="70%" max="70%" min="50%">
-                <MainContainer />
-              </Splitter.Panel>
-              <Splitter.Panel defaultSize="30%">
-                <RightInfo />
-              </Splitter.Panel>
-            </Splitter>
-          </div>
-        )}
+        </div>
 
         <Slider
           className="z-[100] block md:hidden"
