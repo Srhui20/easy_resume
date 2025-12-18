@@ -13,7 +13,9 @@ import { motion } from "motion/react";
 import { useState } from "react";
 import { Cell, DateTimePicker, Input, Popup } from "tdesign-mobile-react";
 import { usePublicStore } from "@/lib/store/public";
+import { useUndoStore } from "@/lib/store/undo";
 import type { PAGE_ATTRIBUTE } from "@/types/resume";
+import { EditorWrapper } from "./EditorWrapper";
 import { useParagraph, useParagraphText } from "./useParagraphStyle";
 
 export default function MobileParagraphStyle() {
@@ -21,6 +23,11 @@ export default function MobileParagraphStyle() {
     if (!state.chooseId) return null;
     return state.resumeData[state.attributeIndex];
   });
+  const updateResumeData = usePublicStore((state) => state.updateResumeData);
+  const setUndoList = useUndoStore.getState().setUndoList;
+
+  const chooseId = usePublicStore((state) => state.chooseId);
+  const attributeIndex = usePublicStore((state) => state.attributeIndex);
   const {
     fontStylesList,
     editBgColor,
@@ -52,9 +59,39 @@ export default function MobileParagraphStyle() {
     up: <ArrowUpOutlined />,
   };
 
-  // const dateVisible = useRef(false);
-
   const [dateVisible, setDateVisible] = useState(false);
+  const [dateTimeObj, setDateTimeObj] = useState({
+    dateTime: "",
+    id: "",
+    isStartTime: true,
+  });
+  const openDate = (id: string, dateTime: string, isStartTime: boolean) => {
+    setDateTimeObj({ dateTime, id, isStartTime });
+    setDateVisible(true);
+  };
+
+  const setDateTime = (val: string) => {
+    if (!currentNode) return;
+
+    updateResumeData({
+      ...currentNode,
+      paragraphArr:
+        currentNode?.paragraphArr?.map((item) => {
+          if (dateTimeObj.isStartTime)
+            return {
+              ...item,
+              startTime: item.id === dateTimeObj.id ? val : item.startTime,
+            };
+          else
+            return {
+              ...item,
+              endTime: item.id === dateTimeObj.id ? val : item.endTime,
+            };
+        }) ?? [],
+    });
+    setUndoList(usePublicStore.getState().resumeData);
+    setDateVisible(false);
+  };
 
   return (
     <div className="flex flex-col">
@@ -180,11 +217,26 @@ export default function MobileParagraphStyle() {
                   <Cell
                     note={item.startTime}
                     onClick={() => {
-                      setDateVisible(true);
+                      openDate(item.id, item.startTime as string, true);
                     }}
                     title="开始时间"
                   />
                 </div>
+                <div>
+                  <Cell
+                    note={item.endTime || "至今"}
+                    onClick={() => {
+                      openDate(item.id, item.endTime as string, false);
+                    }}
+                    title="结束时间"
+                  />
+                </div>
+                <EditorWrapper
+                  attributeIndex={attributeIndex}
+                  chooseId={chooseId}
+                  paragraphId={item.id}
+                  paragraphIndex={index}
+                />
               </motion.div>
               <div className="flex h-full flex-col gap-[5px]">
                 {arrBtnList.map((btn) => (
@@ -210,8 +262,21 @@ export default function MobileParagraphStyle() {
           ))}
         </div>
       )}
-      <Popup placement="bottom" visible={dateVisible}>
-        <DateTimePicker format="YYYY-MM" mode="month" title="选择时间" />
+      <Popup
+        onClose={() =>
+          setDateTimeObj({ dateTime: "", id: "", isStartTime: true })
+        }
+        placement="bottom"
+        visible={dateVisible}
+      >
+        <DateTimePicker
+          format="YYYY-MM"
+          mode="month"
+          onCancel={() => setDateVisible(false)}
+          onConfirm={(val) => setDateTime(val as string)}
+          title="选择时间"
+          value={dateTimeObj.dateTime}
+        />
       </Popup>
     </div>
   );
