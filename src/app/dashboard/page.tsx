@@ -273,27 +273,33 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="flex hidden min-h-0 flex-1 md:block">
-          <Splitter
-            style={{ boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)", height: "100%" }}
-          >
-            <Splitter.Panel defaultSize="70%" max="70%" min="50%">
-              <MainContainer />
-            </Splitter.Panel>
-            <Splitter.Panel defaultSize="30%">
-              <RightInfo />
-            </Splitter.Panel>
-          </Splitter>
-        </div>
-        <div className="block overflow-auto md:hidden">
-          <MainContainer />
-          <FloatButton
-            icon={<SettingOutlined />}
-            onClick={() => setFileOperationShow(true)}
-            style={{ backgroundColor: "#171717", insetInlineEnd: 24 }}
-            type="primary"
-          />
-        </div>
+        {isMobile ? (
+          <div className="overflow-auto">
+            <MainContainer />
+            <FloatButton
+              icon={<SettingOutlined />}
+              onClick={() => setFileOperationShow(true)}
+              style={{ backgroundColor: "#171717", insetInlineEnd: 24 }}
+              type="primary"
+            />
+          </div>
+        ) : (
+          <div className="flex min-h-0 flex-1">
+            <Splitter
+              style={{
+                boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
+                height: "100%",
+              }}
+            >
+              <Splitter.Panel defaultSize="70%" max="70%" min="50%">
+                <MainContainer />
+              </Splitter.Panel>
+              <Splitter.Panel defaultSize="30%">
+                <RightInfo />
+              </Splitter.Panel>
+            </Splitter>
+          </div>
+        )}
 
         <div className="block md:hidden">
           {isMobile ? (
