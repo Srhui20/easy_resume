@@ -70,6 +70,9 @@ export default function MainContainer() {
       localStorage.getItem("resumeData") || JSON.stringify(resumeStyle1),
     );
 
+    // biome-ignore lint/suspicious/noConsole: <explanation>
+    console.log(localData);
+
     setUndoList(localData);
     setResumeData(localData);
   }, [setResumeData, setUndoList]);
