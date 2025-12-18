@@ -16,6 +16,7 @@ import {
   Dropdown,
   FloatButton,
   message,
+  Slider,
   Spin,
   Splitter,
   Tooltip,
@@ -188,6 +189,11 @@ export default function Dashboard() {
 
   const isBaseInfo = currentNode?.type === "baseInfo";
   const { isMobile } = useIsMobile();
+  const setScale = usePublicStore((state) => state.setScale);
+  const changePageSize = (val: number) => {
+    setScale(0.5 + (val - 1) / 16);
+  };
+
   return (
     <>
       <Spin
@@ -274,7 +280,7 @@ export default function Dashboard() {
         </div>
 
         {isMobile ? (
-          <div className="overflow-auto">
+          <div className="block flex overflow-auto md:hidden">
             <MainContainer />
             <FloatButton
               icon={<SettingOutlined />}
@@ -284,7 +290,7 @@ export default function Dashboard() {
             />
           </div>
         ) : (
-          <div className="flex min-h-0 flex-1">
+          <div className="flex hidden min-h-0 flex-1 md:block">
             <Splitter
               style={{
                 boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
@@ -300,6 +306,22 @@ export default function Dashboard() {
             </Splitter>
           </div>
         )}
+
+        <Slider
+          className="z-[100] block md:hidden"
+          defaultValue={30}
+          max={10}
+          min={1}
+          onChange={changePageSize}
+          styles={{
+            root: {
+              bottom: "100px",
+              margin: "0 auto",
+              position: "sticky",
+              width: "300px",
+            },
+          }}
+        />
 
         <div className="block md:hidden">
           {isMobile ? (

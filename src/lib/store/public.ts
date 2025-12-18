@@ -90,6 +90,9 @@ interface PublicState {
   createData: (data: PAGE_ATTRIBUTE) => void;
 
   delAttribute: () => void;
+
+  scale: number;
+  setScale: (val: number) => void;
 }
 
 export const usePublicStore = create<PublicState>((set) => ({
@@ -223,6 +226,7 @@ export const usePublicStore = create<PublicState>((set) => ({
   pageId: 0,
   pageRef: null,
   resumeData: [],
+  scale: 1,
   setChooseResumeData: (id: string) =>
     set((state) => {
       let cindex = 0;
@@ -257,6 +261,10 @@ export const usePublicStore = create<PublicState>((set) => ({
   setIsMoving: (val) => set({ isMoving: val }),
   setPageRef: (val) => set({ pageRef: val }),
   setResumeData: (value) => set({ resumeData: value }),
+  setScale: (val) =>
+    set({
+      scale: val,
+    }),
   updateResumeData: (data) =>
     set((state) => ({
       resumeData: state.resumeData.map((item) => {

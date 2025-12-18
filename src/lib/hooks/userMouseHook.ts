@@ -1,10 +1,11 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
+import { usePublicStore } from "../store/public";
 
 export function useMouseOpeartion() {
   const moveRef = useRef<HTMLDivElement>(null);
   const isDragging = useRef(false);
 
-  const [scale] = useState(1);
+  const scale = usePublicStore((state) => state.scale);
 
   // useEffect(() => {
   //   const handleWheel = (e: WheelEvent) => {
