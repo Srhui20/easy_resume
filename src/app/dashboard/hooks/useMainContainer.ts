@@ -38,6 +38,12 @@ export const useParagraphBtnFun = () => {
       key: "up",
       label: "与上一个段落交换",
     },
+    {
+      disabled: () => false,
+      handleFun: (index: number) => delParagraph(index),
+      key: "delete",
+      label: "删除",
+    },
   ];
 
   const paragraphUniversal = (index: number) => {
@@ -125,6 +131,13 @@ export const useParagraphBtnFun = () => {
       setPrintResumeData([]);
       setChooseValue(arrIndexItem.id, index - 1);
     });
+  };
+
+  const delParagraph = (index: number) => {
+    clearChoose();
+    setResumeData(resumeData.filter((_, i) => i !== index));
+    setUndoList(usePublicStore.getState().resumeData);
+    setPrintData();
   };
 
   const { run: btnHandleFun } = useThrottleFn(

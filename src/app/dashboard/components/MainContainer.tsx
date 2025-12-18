@@ -2,6 +2,7 @@ import {
   ArrowDownOutlined,
   ArrowUpOutlined,
   CopyOutlined,
+  DeleteOutlined,
 } from "@ant-design/icons";
 import { useMount, useUpdateEffect } from "ahooks";
 import { Button, Tooltip } from "antd";
@@ -192,6 +193,7 @@ export default function MainContainer() {
   const { paragraphBtnList, btnHandleFun } = useParagraphBtnFun();
   const paragraphBtnIconMap: { [key: string]: React.ReactNode } = {
     copy: <CopyOutlined />,
+    delete: <DeleteOutlined />,
     down: <ArrowDownOutlined />,
     up: <ArrowUpOutlined />,
   };
