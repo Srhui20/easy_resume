@@ -2,13 +2,17 @@
 
 make it easier for you to create your resume
 
-![easy_resume](/src/assets/readme/image.png)
+<div style="display:flex;gap:10px">
+    <img src="./src/assets/readme/image.png" style="width:560px"/>
+    <img src="./src/assets/readme/mImage.png" style="width:200px"/>
+</div>
 
 ## 功能介绍
 - 🎉 基于 Next.js 构建，性能稳定，体验流畅
 - ✨ 简洁直观的用户界面，操作清晰，零门槛上手，开箱即用
-- 🔒 支持数据本地存储，充分保障用户隐私与数据安全
-- ✈ 接入 DeepSeek-Chat，智能过滤与辅助生成基础信息
+- 💻 多端响应式布局，完美适配 PC 与移动端，跨屏体验始终如一
+- 🔒  支持数据本地存储，充分保障用户隐私与数据安全
+- ✈  接入 DeepSeek-Chat，智能过滤与辅助生成ai测评
 - 🤝 支持可扩展的简历模板体系，编写与维护更加高效
 - 🧩 持续迭代与优化，功能与体验不断完善
 
