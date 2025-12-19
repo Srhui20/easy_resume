@@ -14,7 +14,10 @@ import { useMouseOpeartion } from "@/lib/hooks/userMouseHook";
 import { usePrintStore } from "@/lib/store/print";
 import { usePublicStore } from "@/lib/store/public";
 import { useUndoStore } from "@/lib/store/undo";
-import { useParagraphBtnFun } from "../hooks/useMainContainer";
+import {
+  useBaseInfoBtnFun,
+  useParagraphBtnFun,
+} from "../hooks/useMainContainer";
 import styles from "./index.module.scss";
 
 export default function MainContainer() {
@@ -190,7 +193,10 @@ export default function MainContainer() {
     });
   });
 
-  const { paragraphBtnList, btnHandleFun } = useParagraphBtnFun();
+  const { paragraphBtnList, paragraphBtnHandleFun } = useParagraphBtnFun();
+
+  const { baseInfoBtnList, baseInfoBtnHandleFun } = useBaseInfoBtnFun();
+
   const paragraphBtnIconMap: { [key: string]: React.ReactNode } = {
     copy: <CopyOutlined />,
     delete: <DeleteOutlined />,
@@ -263,6 +269,40 @@ export default function MainContainer() {
                           style={attr.style}
                         >
                           {attr.pageLabel || "空"}
+                          {attr.id === chooseId && (
+                            <div className="absolute top-[0] right-[-38px] flex flex-col">
+                              {baseInfoBtnList.map((baseBtn) => (
+                                <motion.div
+                                  key={baseBtn.key}
+                                  whileHover={{
+                                    scale: 1.08,
+                                    transition: { duration: 0.1 },
+                                  }}
+                                  whileTap={{ scale: 0.9 }}
+                                >
+                                  <Tooltip
+                                    placement="right"
+                                    title={baseBtn.label}
+                                  >
+                                    <Button
+                                      disabled={baseBtn.disabled()}
+                                      icon={paragraphBtnIconMap[baseBtn.key]}
+                                      onClick={() =>
+                                        baseInfoBtnHandleFun(baseBtn, index)
+                                      }
+                                      shape="circle"
+                                      size="small"
+                                      style={{
+                                        background: "#171717",
+                                        color: "#fff",
+                                      }}
+                                      type="primary"
+                                    />
+                                  </Tooltip>
+                                </motion.div>
+                              ))}
+                            </div>
+                          )}
                         </motion.div>
                       ) : (
                         <div
@@ -298,7 +338,10 @@ export default function MainContainer() {
                                         paragraphBtnIconMap[paragraphBtn.key]
                                       }
                                       onClick={() =>
-                                        btnHandleFun(paragraphBtn, index)
+                                        paragraphBtnHandleFun(
+                                          paragraphBtn,
+                                          index,
+                                        )
                                       }
                                       shape="circle"
                                       size="small"

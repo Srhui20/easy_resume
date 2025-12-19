@@ -138,9 +138,12 @@ export const useParagraphBtnFun = () => {
     setResumeData(resumeData.filter((_, i) => i !== index));
     setUndoList(usePublicStore.getState().resumeData);
     setPrintData();
+    requestAnimationFrame(() => {
+      setPrintResumeData([]);
+    });
   };
 
-  const { run: btnHandleFun } = useThrottleFn(
+  const { run: paragraphBtnHandleFun } = useThrottleFn(
     (btn, index) => {
       btn.handleFun(index);
     },
@@ -148,7 +151,45 @@ export const useParagraphBtnFun = () => {
   );
 
   return {
-    btnHandleFun,
+    paragraphBtnHandleFun,
     paragraphBtnList,
   };
+};
+
+export const useBaseInfoBtnFun = () => {
+  const resumeData = usePublicStore((state) => state.resumeData);
+  const setResumeData = usePublicStore((state) => state.setResumeData);
+  const clearChoose = usePublicStore((state) => state.clearChoose);
+  const setUndoList = useUndoStore.getState().setUndoList;
+  const setPrintResumeData = usePrintStore((state) => state.setPrintResumeData);
+
+  const { setPrintData } = useTypesetting();
+
+  const baseInfoBtnList = [
+    {
+      disabled: () => false,
+      handleFun: (index: number) => delBaseInfo(index),
+      key: "delete",
+      label: "删除",
+    },
+  ];
+
+  const delBaseInfo = (index: number) => {
+    clearChoose();
+    setResumeData(resumeData.filter((_, i) => i !== index));
+    setUndoList(usePublicStore.getState().resumeData);
+    setPrintData();
+    requestAnimationFrame(() => {
+      setPrintResumeData([]);
+    });
+  };
+
+  const { run: baseInfoBtnHandleFun } = useThrottleFn(
+    (btn, index) => {
+      btn.handleFun(index);
+    },
+    { trailing: false, wait: 1000 },
+  );
+
+  return { baseInfoBtnHandleFun, baseInfoBtnList };
 };
