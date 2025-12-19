@@ -2,10 +2,11 @@
 
 make it easier for you to create your resume
 
-<div style="display:flex;gap:10px">
-    <img src="./src/assets/readme/image.png" style="width:560px"/>
-    <img src="./src/assets/readme/mImage.png" style="width:200px"/>
+<div style="width:100%;display:flex;flex-direction:column;justify-content:center">
+    <img src="./src/assets/readme/image.png"/>
+    <img src="./src/assets/readme/mImage.png" />
 </div>
+
 
 ## 功能介绍
 - 🎉 基于 Next.js 构建，性能稳定，体验流畅
