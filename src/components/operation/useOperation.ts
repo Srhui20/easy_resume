@@ -128,14 +128,10 @@ export const useOperation = () => {
 
     let maxNum = 0;
     let maxItem = null;
-    const paragraphLength = resumeData.filter(
-      (item) => item.type === "paragraph",
-    ).length;
 
-    if (paragraphLength !== 0) {
-      maxItem = resumeData
-        .filter((item) => item.type === "paragraph")
-        .reduce((max: PAGE_ATTRIBUTE, item: PAGE_ATTRIBUTE) => {
+    if (resumeData.length !== 0) {
+      maxItem = resumeData.reduce(
+        (max: PAGE_ATTRIBUTE, item: PAGE_ATTRIBUTE) => {
           const h = item.ref?.offsetHeight ?? 0;
           const top = parseFloat((item?.style?.top as string) || "0");
           const ht = h + top;
@@ -145,7 +141,8 @@ export const useOperation = () => {
           const maxHt = maxH + maxTop;
 
           return maxHt > ht ? max : item;
-        });
+        },
+      );
       maxNum =
         parseFloat((maxItem?.style?.top as string) || "0") +
         (maxItem.ref?.offsetHeight ?? 0);
