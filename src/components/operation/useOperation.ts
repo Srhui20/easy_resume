@@ -126,28 +126,39 @@ export const useOperation = () => {
       });
     }
 
-    const maxItem = resumeData
-      .filter((item) => item.type === "paragraph")
-      .reduce((max: PAGE_ATTRIBUTE, item: PAGE_ATTRIBUTE) => {
-        const h = item.ref?.offsetHeight ?? 0;
-        const top = parseFloat((item?.style?.top as string) || "0");
-        const ht = h + top;
+    let maxNum = 0;
+    let maxItem = null;
+    const paragraphLength = resumeData.filter(
+      (item) => item.type === "paragraph",
+    ).length;
 
-        const maxH = max.ref?.offsetHeight ?? 0;
-        const maxTop = parseFloat((max?.style?.top as string) || "0");
-        const maxHt = maxH + maxTop;
+    if (paragraphLength !== 0) {
+      maxItem = resumeData
+        .filter((item) => item.type === "paragraph")
+        .reduce((max: PAGE_ATTRIBUTE, item: PAGE_ATTRIBUTE) => {
+          const h = item.ref?.offsetHeight ?? 0;
+          const top = parseFloat((item?.style?.top as string) || "0");
+          const ht = h + top;
 
-        return maxHt > ht ? max : item;
-      });
-    const maxNum =
-      parseFloat((maxItem?.style?.top as string) || "0") +
-      (maxItem.ref?.offsetHeight ?? 0);
+          const maxH = max.ref?.offsetHeight ?? 0;
+          const maxTop = parseFloat((max?.style?.top as string) || "0");
+          const maxHt = maxH + maxTop;
+
+          return maxHt > ht ? max : item;
+        });
+      maxNum =
+        parseFloat((maxItem?.style?.top as string) || "0") +
+        (maxItem.ref?.offsetHeight ?? 0);
+    }
+
     const dataId = uuidv4();
     const paraId = uuidv4();
 
     createData({
       borderStyle: {
-        ...maxItem.borderStyle,
+        ...(maxItem?.borderStyle ?? {
+          backgroundColor: "#000000",
+        }),
       },
       className: "absolute",
       id: dataId,
@@ -170,7 +181,13 @@ export const useOperation = () => {
       titleInfo: {
         label: "新增段落标题",
         style: {
-          ...maxItem.titleInfo?.style,
+          ...(maxItem?.titleInfo?.style ?? {
+            backgroundColor: "#000000",
+            color: "#fff",
+            fontSize: "16px",
+            fontWeight: "bold",
+            padding: "0 5px",
+          }),
         },
       },
       type: "paragraph",
