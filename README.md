@@ -4,7 +4,7 @@ make it easier for you to create your resume
 
 <div style="width:100%;display:flex;flex-direction:column;justify-content:center">
     <img src="./src/assets/readme/image.png"/>
-    <img src="./src/assets/readme/mImage.png" />
+    <!-- <img src="./src/assets/readme/mImage.png" /> -->
 </div>
 
 
