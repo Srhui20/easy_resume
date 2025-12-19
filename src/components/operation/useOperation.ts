@@ -89,17 +89,20 @@ export const useOperation = () => {
         type: "error",
       });
     }
-    const maxItem = resumeData
-      .filter((item) => item.type === "baseInfo")
-      .reduce((max: PAGE_ATTRIBUTE, item: PAGE_ATTRIBUTE) => {
-        const top = parseFloat((item?.style?.top as string) || "0");
-        return top > parseFloat((max?.style?.top as string) || "0")
-          ? item
-          : max;
-      });
-
-    const maxNum = parseFloat((maxItem.style.top as string) || "0");
     const uuid = uuidv4();
+
+    let maxNum = -30;
+    if (resumeData.filter((item) => item.type === "baseInfo").length !== 0) {
+      const maxItem = resumeData
+        .filter((item) => item.type === "baseInfo")
+        .reduce((max: PAGE_ATTRIBUTE, item: PAGE_ATTRIBUTE) => {
+          const top = parseFloat((item?.style?.top as string) || "0");
+          return top > parseFloat((max?.style?.top as string) || "0")
+            ? item
+            : max;
+        });
+      maxNum = parseFloat((maxItem.style.top as string) || "0");
+    }
     createData({
       className: "absolute",
       id: uuid,
