@@ -30,6 +30,7 @@ export default function AiMessageDialog({
   });
 
   const getAiEvaluate = async () => {
+    if (isAiMessaging.current) return message.warning("内容生成中，请稍后~");
     abortRef.current?.abort();
     try {
       const controller = new AbortController();
@@ -112,7 +113,6 @@ export default function AiMessageDialog({
         关闭
       </Button>
       <Button
-        disabled={isAiMessaging.current}
         onClick={() => getAiEvaluate()}
         styles={{ root: { backgroundColor: "#171717", color: "#fff" } }}
         type="primary"
