@@ -12,17 +12,30 @@ export async function POST(req: NextRequest) {
 
     // biome-ignore lint/suspicious/noConsole: <explanation>
     console.log(puppeteer.executablePath());
+    let browser = null;
+    if (process.env.NODE_ENV !== "development") {
+      browser = await puppeteer.launch({
+        args: [
+          "--no-sandbox",
+          "--disable-setuid-sandbox",
+          "--disable-dev-shm-usage",
+          "--disable-gpu",
+        ],
+        executablePath: "/opt/chrome/chrome-linux/chrome",
+        headless: true,
+      });
+    } else {
+      browser = await puppeteer.launch({
+        args: [
+          "--no-sandbox",
+          "--disable-setuid-sandbox",
+          "--disable-dev-shm-usage",
+          "--disable-gpu",
+        ],
+        headless: true,
+      });
+    }
     // 启动 Puppeteer
-    const browser = await puppeteer.launch({
-      args: [
-        "--no-sandbox",
-        "--disable-setuid-sandbox",
-        "--disable-dev-shm-usage",
-        "--disable-gpu",
-      ],
-      executablePath: "/opt/chrome/chrome-linux/chrome",
-      headless: true,
-    });
 
     // biome-ignore lint/suspicious/noConsole: <explanation>
     console.log(browser);
