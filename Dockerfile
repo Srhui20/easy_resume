@@ -4,6 +4,13 @@ FROM ghcr.io/puppeteer/puppeteer:latest
 # 1. 切换到 root 用户安装环境
 USER root
 
+
+# 2. 拷贝 Chromium（二进制）
+COPY chrome/chrome-linux /opt/chrome/chrome-linux
+
+# 3. 给执行权限（双保险）
+RUN chmod +x /opt/chrome/chrome-linux/chrome
+
 # 安装 pnpm
 RUN npm install -g pnpm
 

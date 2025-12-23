@@ -10,10 +10,23 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ code: 400, message: "html 不能为空" });
     }
 
+    // biome-ignore lint/suspicious/noConsole: <explanation>
+    console.log(puppeteer.executablePath());
     // 启动 Puppeteer
     const browser = await puppeteer.launch({
-      args: ["--no-sandbox", "--disable-setuid-sandbox"], // Linux 部署推荐
+      args: [
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+        "--disable-dev-shm-usage",
+        "--disable-gpu",
+      ],
+      executablePath: "/opt/chrome/chrome-linux/chrome",
+      headless: true,
     });
+
+    // biome-ignore lint/suspicious/noConsole: <explanation>
+    console.log(browser);
+
     const page = await browser.newPage();
 
     // 设置页面内容
@@ -76,7 +89,10 @@ export async function POST(req: NextRequest) {
       },
       status: 200,
     });
-  } catch {
+  } catch (e) {
+    // biome-ignore lint/suspicious/noConsole: <explanation>
+    console.error("错误错误！！！！！", e);
+
     // 错误信息可在上层进程记录，Handler 只返回 500
     return NextResponse.json({ code: 500, message: "服务端错误" });
   }
