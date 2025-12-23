@@ -1,31 +1,37 @@
-# 使用官方 Node 镜像
-FROM node:22-alpine AS builder
+# 使用 Puppeteer 官方镜像，内置了 Chrome 环境
+FROM ghcr.io/puppeteer/puppeteer:latest
 
+# 1. 切换到 root 用户安装环境
+USER root
+
+# 安装 pnpm
+RUN npm install -g pnpm
+
+# 设置工作目录
 WORKDIR /app
 
-# 只拷贝依赖文件
-COPY package.json package-lock.json* pnpm-lock.yaml* yarn.lock* ./
+# 2. 先拷贝依赖文件（利用缓存）
+# 确保你的服务器上有 pnpm-lock.yaml，如果没有，就把这行删掉
+COPY package.json pnpm-lock.yaml* ./
 
 # 安装依赖
+# --frozen-lockfile 确保环境一致性
 RUN pnpm install
 
-# 拷贝所有项目文件
+# 3. 拷贝所有源代码
+# 这步会把你的 app/ 目录、public/ 目录等拷贝到 /app
 COPY . .
 
-# 构建 Next.js
-RUN pnpm run build
+# 4. 关键：确保权限正确
+# Puppeteer 镜像默认有个 pptruser 用户，我们需要让它能读写代码目录
+# RUN chown -R pptruser:pptruser /app
 
-# 生产环境镜像
-FROM node:22-alpine AS runner
-WORKDIR /app
 
-ENV NODE_ENV production
+# 6. 切换回低权限用户运行（安全推荐）
+USER pptruser
 
-COPY --from=builder /app/package.json ./
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/public ./public
-
+# 暴露端口
 EXPOSE 3000
 
-CMD ["npm", "start"]
+# 启动命令
+CMD ["pnpm", "start"]

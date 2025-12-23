@@ -1,0 +1,6 @@
+node_modules
+out
+build
+.env.local
+.env.development
+.env.test

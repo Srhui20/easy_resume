@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  # Redis 服务
+  redis:
+    image: redis
+    container_name: my-redis # 匹配你现有的容器名
+    networks:
+      my_net:
+        ipv4_address: 172.20.0.2 # 锁定为你现有的 IP
+    volumes:
+      - redis_data:/data
+    restart: always
+
+  # Next.js 应用服务
+  next-app:
+    build: .
+    container_name: easy_resume
+    depends_on:
+      - redis
+    networks:
+      my_net:
+        ipv4_address: 172.20.0.3 # 为你的应用分配下一个可用 IP
+    environment:
+      # 建议直接用服务名 redis，Docker 会自动解析为 172.20.0.2
+      - REDIS_URL=redis://redis:6379
+    ports:
+      - "3000:3000"
+    # Puppeteer 运行必需的权限配置
+    cap_add:
+      - SYS_ADMIN
+    shm_size: '1gb'
+
+networks:
+  my_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16 # 匹配你 inspect 里的子网
+
+volumes:
+  redis_data:
