@@ -1,5 +1,6 @@
+import { LoadingOutlined } from "@ant-design/icons";
 import { useMount } from "ahooks";
-import { Button, Modal, message } from "antd";
+import { Button, Modal, message, Spin } from "antd";
 import { useEffect, useRef, useState } from "react";
 import Markdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
@@ -16,9 +17,11 @@ export default function AiMessageDialog({
 }: AiMessageProps) {
   const resumeData = usePublicStore.getState().resumeData;
 
-  const isAiMessaging = useRef(false);
+  const [isAiMessaging, setIsMessaging] = useState(false);
+  const [isLoading, setLoading] = useState(false);
 
   const [aiMessages, setAiMessages] = useState("");
+  const mdContainerRef = useRef<HTMLDivElement>(null);
 
   const bottomRef = useRef<HTMLDivElement>(null);
   const abortRef = useRef<AbortController | null>(null);
@@ -30,12 +33,13 @@ export default function AiMessageDialog({
   });
 
   const getAiEvaluate = async () => {
-    if (isAiMessaging.current) return message.warning("内容生成中，请稍后~");
+    if (isAiMessaging) return message.warning("内容生成中，请稍后~");
     abortRef.current?.abort();
+    setLoading(true);
     try {
       const controller = new AbortController();
       abortRef.current = controller;
-      isAiMessaging.current = true;
+      setIsMessaging(true);
       const res = await fetch("/api/ai", {
         body: JSON.stringify({
           dataString: JSON.stringify(
@@ -53,6 +57,7 @@ export default function AiMessageDialog({
         method: "POST",
         signal: controller.signal,
       });
+      setLoading(false);
 
       const contentType = res.headers.get("content-type") || "";
 
@@ -95,7 +100,15 @@ export default function AiMessageDialog({
             console.error("ai error", e);
           }
         }
-        bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+
+        requestAnimationFrame(() => {
+          const el = mdContainerRef.current;
+          if (el) {
+            el.scrollTop = el.scrollHeight;
+          } else {
+            bottomRef.current?.scrollIntoView({ behavior: "auto" });
+          }
+        });
       }
 
       // 处理最后剩余的缓冲数据
@@ -109,11 +122,22 @@ export default function AiMessageDialog({
           });
         } catch {}
       }
+      // 请求完全结束后，做一次平滑滚动并结束流式状态与光标显示
+      requestAnimationFrame(() => {
+        const el = mdContainerRef.current;
+        if (el) {
+          // 平滑滚动到尾部作为结束动画
+          el.scrollTo({ behavior: "smooth", top: el.scrollHeight });
+        } else {
+          bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+        }
+      });
     } catch (e) {
+      setLoading(false);
       // biome-ignore lint/suspicious/noConsole: <explanation>
       console.error("ai error", e);
     } finally {
-      isAiMessaging.current = false;
+      setIsMessaging(false);
     }
   };
 
@@ -137,6 +161,7 @@ export default function AiMessageDialog({
         关闭
       </Button>
       <Button
+        disabled={isAiMessaging}
         onClick={() => getAiEvaluate()}
         styles={{ root: { backgroundColor: "#171717", color: "#fff" } }}
         type="primary"
@@ -154,6 +179,12 @@ export default function AiMessageDialog({
       title="ai点评"
       width={700}
     >
+      <Spin
+        fullscreen
+        indicator={<LoadingOutlined spin style={{ fontSize: 48 }} />}
+        spinning={isLoading}
+        tip="请稍等~"
+      />
       <div className="mb-[10px] text-gray-400">
         已自动过滤基础文本信息，一台设备一天可测评五次!
       </div>
