@@ -20,6 +20,7 @@ import {
   Spin,
   Tooltip,
 } from "antd";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import MobileBaseInfoStyle from "@/components/baseInfo/MobileBaseInfoStyle";
 import ResumeOperation from "@/components/operation/ResumeOperation";
@@ -224,7 +225,16 @@ export default function Dashboard() {
       <div className="flex h-screen flex-col">
         {contextHolder}
         <div className="flex items-center justify-between border-gray-300 border-b pt-[10px] pr-8 pb-[10px] pl-8">
-          <div className="font-bold">EASY_RESUME</div>
+          <div className="flex items-center font-bold">
+            <Image
+              alt="Easy Resume Logo"
+              className="mr-[10px]"
+              height={32}
+              src="/logo.png"
+              width={32}
+            />
+            EASY_RESUME
+          </div>
           <div className="flex hidden gap-3 md:block">
             {btnList.map((btn) => (
               <Button
