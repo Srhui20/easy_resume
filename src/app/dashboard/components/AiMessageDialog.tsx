@@ -68,22 +68,46 @@ export default function AiMessageDialog({
 
       setAiMessages("");
       const decoder = new TextDecoder();
+      let buffer = ""; // 添加缓冲区
 
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
-        const chunk = decoder.decode(value);
-        const lines = chunk.split("\n");
+
+        const chunk = decoder.decode(value, { stream: true });
+        buffer += chunk; // 追加到缓冲区
+
+        const lines = buffer.split("\n");
+        // 保留最后一条可能不完整的行
+        buffer = lines.pop() || "";
+
         for (const line of lines) {
           if (!line) continue;
-          const data = JSON.parse(line || "{}");
+          try {
+            const data = JSON.parse(line);
+            data?.choices?.forEach((item: { delta: { content: string } }) => {
+              setAiMessages(
+                (prevMessages) => prevMessages + (item?.delta?.content ?? ""),
+              );
+            });
+          } catch (e) {
+            // biome-ignore lint/suspicious/noConsole: <explanation>
+            console.error("ai error", e);
+          }
+        }
+        bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+      }
+
+      // 处理最后剩余的缓冲数据
+      if (buffer) {
+        try {
+          const data = JSON.parse(buffer);
           data?.choices?.forEach((item: { delta: { content: string } }) => {
             setAiMessages(
               (prevMessages) => prevMessages + (item?.delta?.content ?? ""),
             );
           });
-        }
-        bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+        } catch {}
       }
     } catch (e) {
       // biome-ignore lint/suspicious/noConsole: <explanation>
