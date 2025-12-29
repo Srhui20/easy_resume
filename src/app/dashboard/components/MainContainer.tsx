@@ -328,30 +328,31 @@ export default function MainContainer() {
                                   }}
                                   whileTap={{ scale: 0.9 }}
                                 >
-                                  <Tooltip
-                                    placement="right"
-                                    title={paragraphBtn.label}
-                                  >
-                                    <Button
-                                      disabled={paragraphBtn.disabled(index)}
-                                      icon={
-                                        paragraphBtnIconMap[paragraphBtn.key]
-                                      }
-                                      onClick={() =>
-                                        paragraphBtnHandleFun(
-                                          paragraphBtn,
-                                          index,
-                                        )
-                                      }
-                                      shape="circle"
-                                      size="small"
-                                      style={{
-                                        background: "#171717",
-                                        color: "#fff",
-                                      }}
-                                      type="primary"
-                                    />
-                                  </Tooltip>
+                                  {!paragraphBtn.disabled(index) && (
+                                    <Tooltip
+                                      placement="right"
+                                      title={paragraphBtn.label}
+                                    >
+                                      <Button
+                                        icon={
+                                          paragraphBtnIconMap[paragraphBtn.key]
+                                        }
+                                        onClick={() =>
+                                          paragraphBtnHandleFun(
+                                            paragraphBtn,
+                                            index,
+                                          )
+                                        }
+                                        shape="circle"
+                                        size="small"
+                                        style={{
+                                          background: "#171717",
+                                          color: "#fff",
+                                        }}
+                                        type="primary"
+                                      />
+                                    </Tooltip>
+                                  )}
                                 </motion.div>
                               ))}
                             </div>
