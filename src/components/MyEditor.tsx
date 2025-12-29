@@ -42,6 +42,7 @@ function MyEditor({ value, onChange }: Props) {
       "delIndent",
       "bulletedList",
       "numberedList",
+      "fullScreen",
     ],
   };
   const editorConfig = {
