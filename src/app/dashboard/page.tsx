@@ -15,6 +15,8 @@ import {
   Drawer,
   Dropdown,
   FloatButton,
+  Input,
+  Modal,
   message,
   Slider,
   Spin,
@@ -132,7 +134,11 @@ export default function Dashboard() {
 
   // const [html] = useState("<h1 style='color:red;'>Hello PDF</h1>");
   const [spinning, setSpinning] = useState(false);
-  const handleDownload = async () => {
+  const [downloadModalOpen, setDownloadModalOpen] = useState(false);
+  const [fileName, setFileName] = useState("我的简历");
+
+  const executeDownload = async () => {
+    setDownloadModalOpen(false);
     // 先将文件转成static
     clearChoose();
     setPrintData();
@@ -166,7 +172,7 @@ export default function Dashboard() {
 
         const a = document.createElement("a");
         a.href = url;
-        a.download = "document.pdf";
+        a.download = `${fileName}.pdf`;
         a.click();
         URL.revokeObjectURL(url);
       } catch {
@@ -176,6 +182,10 @@ export default function Dashboard() {
         setPrintResumeData([]);
       }
     });
+  };
+
+  const handleDownload = () => {
+    setDownloadModalOpen(true);
   };
 
   const [systemDialogOpen, setSystemDialogOpen] = useState(false);
@@ -202,6 +212,22 @@ export default function Dashboard() {
         spinning={spinning}
         tip="下载中~"
       />
+      <Modal
+        cancelText="取消"
+        centered
+        okText="确定"
+        onCancel={() => setDownloadModalOpen(false)}
+        onOk={() => executeDownload()}
+        open={downloadModalOpen}
+        title="请输入文件名"
+      >
+        <Input
+          onChange={(e) => setFileName(e.target.value)}
+          placeholder="请输入文件名"
+          suffix=".pdf"
+          value={fileName}
+        />
+      </Modal>
       {/* 系统弹框 */}
       {systemDialogOpen && (
         <SystemDilaog
