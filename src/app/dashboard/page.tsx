@@ -264,6 +264,7 @@ export default function Dashboard() {
           <div className="flex hidden gap-3 md:block">
             {btnList.map((btn) => (
               <Button
+                disabled={btn.key === "ai"}
                 icon={iconMap[btn.key]}
                 key={btn.key}
                 onClick={() => btn.handleFunc()}
