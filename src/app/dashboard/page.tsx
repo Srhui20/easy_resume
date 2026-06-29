@@ -148,9 +148,10 @@ export default function Dashboard() {
       handleFunc: () => handleDownload(),
       isTip: false,
       key: "download",
-      label: "下载为pdf",
+      label: "下载 PDF",
       style: {
-        backgroundColor: "#171717",
+        backgroundColor: "#2563eb",
+        boxShadow: "0 8px 18px rgba(37, 99, 235, 0.22)",
       },
       type: "primary",
     },
@@ -160,7 +161,7 @@ export default function Dashboard() {
       key: "theme",
       label: "主题",
       style: {
-        color: "#171717",
+        color: "#374151",
       },
       type: "link",
     },
@@ -168,9 +169,9 @@ export default function Dashboard() {
       handleFunc: () => setAiMessageOpen(true),
       isTip: false,
       key: "ai",
-      label: "ai点评",
+      label: "AI 点评",
       style: {
-        color: "#171717",
+        color: "#9ca3af",
       },
       type: "link",
     },
@@ -180,7 +181,7 @@ export default function Dashboard() {
       key: "system",
       label: "系统",
       style: {
-        color: "#171717",
+        color: "#374151",
       },
       type: "link",
     },
@@ -309,50 +310,71 @@ export default function Dashboard() {
           onCancel={() => setThemeOpen(false)}
         />
       )}
-      <div className="flex h-screen flex-col">
+      <div className="flex h-screen flex-col bg-[#f5f7fb] text-[#111827]">
         {contextHolder}
-        <div className="flex items-center justify-between border-gray-300 border-b pt-[10px] pr-8 pb-[10px] pl-8">
-          <div className="flex items-center font-bold">
-            <Image
-              alt="Easy Resume Logo"
-              className="mr-[10px]"
-              height={32}
-              src="/logo.png"
-              width={32}
-            />
-            EASY_RESUME
+        <div className="z-20 flex h-14 shrink-0 items-center justify-between border-[#e5e7eb] border-b bg-white/95 px-4 shadow-[0_1px_2px_rgba(15,23,42,0.04)] backdrop-blur md:px-6">
+          <div className="flex min-w-0 items-center gap-3">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-[#e5e7eb] bg-white shadow-[0_1px_2px_rgba(15,23,42,0.06)]">
+              <Image
+                alt="Easy Resume Logo"
+                height={26}
+                src="/logo.png"
+                width={26}
+              />
+            </div>
+            <div className="min-w-0 leading-tight">
+              <div className="truncate font-semibold text-[#111827] text-[15px]">
+                Easy Resume
+              </div>
+              <div className="hidden text-[#6b7280] text-[12px] sm:block">
+                在线简历编辑器
+              </div>
+            </div>
           </div>
-          <div className="flex hidden gap-3 md:block">
-            {btnList.map((btn) => (
-              <Button
-                disabled={btn.key === "ai"}
-                icon={iconMap[btn.key]}
-                key={btn.key}
-                onClick={() => btn.handleFunc()}
-                style={btn.style}
-                type={btn.type}
-              >
-                {btn.label}
-              </Button>
-            ))}
+          <div className="hidden items-center gap-1 md:flex">
+            {btnList
+              .filter((btn) => btn.key !== "download")
+              .map((btn) => (
+                <Button
+                  className="font-medium"
+                  disabled={btn.key === "ai"}
+                  icon={iconMap[btn.key]}
+                  key={btn.key}
+                  onClick={() => btn.handleFunc()}
+                  style={btn.style}
+                  type={btn.type}
+                >
+                  {btn.label}
+                </Button>
+              ))}
             <Tooltip title="Github">
               <Button
+                className="text-[#4b5563]"
                 href="https://github.com/Srhui20/easy_resume"
                 icon={<GithubOutlined />}
-                style={{ fontSize: "24px" }}
                 type="text"
               />
             </Tooltip>
-          </div>
-          <div className="block flex md:hidden">
+            <div className="mx-2 h-6 w-px bg-[#e5e7eb]" />
             <Button
-              className="mr-[10px]"
+              className="font-semibold"
               icon={iconMap.download}
               onClick={() => handleDownload()}
-              style={{ backgroundColor: "#171717" }}
+              style={btnList[0].style}
               type="primary"
             >
-              下载为pdf
+              {btnList[0].label}
+            </Button>
+          </div>
+          <div className="flex items-center gap-3 md:hidden">
+            <Button
+              className="font-semibold"
+              icon={iconMap.download}
+              onClick={() => handleDownload()}
+              style={btnList[0].style}
+              type="primary"
+            >
+              下载 PDF
             </Button>
             <Dropdown
               menu={{
@@ -369,18 +391,22 @@ export default function Dashboard() {
               }}
               placement="bottomRight"
             >
-              <div className="flex items-center justify-center">
+              <Button
+                className="border-[#e5e7eb] text-[#374151]"
+                shape="circle"
+                type="default"
+              >
                 <MenuOutlined />
-              </div>
+              </Button>
             </Dropdown>
           </div>
         </div>
 
         <div className="flex min-h-0 flex-1">
-          <div className="w-[100%] md:w-[70%]">
+          <div className="min-w-0 flex-1">
             <MainContainer />
           </div>
-          <div className="hidden w-[0] md:block md:w-[30%]">
+          <div className="hidden w-[380px] shrink-0 border-[#e5e7eb] border-l bg-white md:block xl:w-[420px]">
             <RightInfo />
           </div>
 
@@ -388,7 +414,11 @@ export default function Dashboard() {
             <FloatButton
               icon={<SettingOutlined />}
               onClick={() => setFileOperationShow(true)}
-              style={{ backgroundColor: "#171717", insetInlineEnd: 24 }}
+              style={{
+                backgroundColor: "#2563eb",
+                boxShadow: "0 12px 24px rgba(37, 99, 235, 0.28)",
+                insetInlineEnd: 24,
+              }}
               type="primary"
             />
           </div>

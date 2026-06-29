@@ -27,20 +27,20 @@ export default function ResumeOperation() {
     useOperation();
 
   return (
-    <div className="">
+    <div>
       {contextHolder}
       {PageModel}
-      <Row gutter={[16, 20]}>
+      <Row gutter={[10, 10]}>
         {btnList.map((btn) => (
           <Col className="gutter-row" key={btn.key} span={6}>
             <Tooltip
               title={btn.key === "import" ? "仅支持导入 本站导出的文件" : ""}
             >
               <motion.div
-                className="relative flex cursor-pointer flex-col items-center justify-center rounded-lg p-[5] hover:bg-gray-200"
+                className="relative flex h-[68px] cursor-pointer flex-col items-center justify-center rounded-md border border-[#e5e7eb] bg-white p-1 text-[#374151] transition-colors hover:border-[#bfdbfe] hover:bg-[#eff6ff] hover:text-[#2563eb]"
                 onClick={() => handleClick(btn)}
                 whileHover={{
-                  scale: 1.08,
+                  scale: 1.02,
                   transition: { duration: 0.1 },
                 }}
                 whileTap={{ scale: 0.9 }}
@@ -50,13 +50,15 @@ export default function ResumeOperation() {
                     alignItems: "center",
                     display: "flex",
                     fontSize: "18px",
-                    height: "30px",
+                    height: "28px",
                     justifyContent: "center",
                   }}
                 >
                   {btnIcon[btn.key]}
                 </div>
-                <div>{btn.label}</div>
+                <div className="max-w-full truncate px-1 text-center text-[12px] leading-5">
+                  {btn.label}
+                </div>
 
                 {btn.key === "import" && (
                   <input

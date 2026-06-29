@@ -1,15 +1,13 @@
 @import "tailwindcss";
 
 .choose_label {
-  border: 1px dashed #2e73ff !important;
+  border: 1px solid #2563eb !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 
 .align_label {
-  border: 1px dashed #10b888 !important;
-}
-
-.markdown-box * {
-  all: revert;
+  border: 1px solid #10b981 !important;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.12);
 }
 
 .ant-carousel .slick-arrow {
@@ -37,7 +35,7 @@ ol {
 
 /* 兼容 Firefox 的滚动条 */
 * {
-  scrollbar-color: #999999 transparent; /* thumb 轨道 */
+  scrollbar-color: #cbd5e1 transparent; /* thumb 轨道 */
   scrollbar-width: thin; /* thumb 轨道 */
 }
 
@@ -56,13 +54,13 @@ ol {
 /* 滑块 */
 ::-webkit-scrollbar-thumb {
   cursor: pointer;
-  background-color: #999999;
+  background-color: #cbd5e1;
   border-radius: 5px;
 }
 
 /* Hover */
 ::-webkit-scrollbar-thumb:hover {
-  background-color: #999999;
+  background-color: #94a3b8;
 }
 
 /* 横纵滚动条交汇处 */
@@ -71,6 +69,10 @@ ol {
 }
 
 /* ===== Firefox ===== */
+
+.markdown-box * {
+  all: revert;
+}
 
 @media screen and (max-width: 768px) {
   /* 针对所有输入控件 */

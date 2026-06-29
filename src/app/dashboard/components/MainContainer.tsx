@@ -240,7 +240,7 @@ export default function MainContainer() {
 
   return (
     <DotBg
-      className="flex h-full flex-col"
+      className="flex h-full flex-col bg-[#f5f7fb]"
       gradient={false}
       gradientHeight="100%"
       gradientWidth="100%"
@@ -253,7 +253,7 @@ export default function MainContainer() {
       >
         <div className="h-full w-full">
           <div
-            className="relative flex w-[1688px] items-center justify-center"
+            className="relative flex w-[1688px] items-start justify-center px-16 pt-14"
             style={{ height: `${pageHeight + 500}px` }}
           >
             <div
@@ -265,9 +265,9 @@ export default function MainContainer() {
               }}
             >
               <div
-                className="absolute top-[-40px] right-[-40px] z-[-1] w-[874px] bg-white shadow-[0_0_15px_rgba(0,0,0,0.5)]"
+                className="absolute top-[-32px] right-[-32px] z-[-1] w-[858px] rounded-sm bg-white shadow-[0_18px_45px_rgba(15,23,42,0.12),0_1px_2px_rgba(15,23,42,0.08)]"
                 id="print-page-bg"
-                style={{ height: `${pageHeight + 80}px` }}
+                style={{ height: `${pageHeight + 64}px` }}
               />
 
               <div
@@ -304,7 +304,7 @@ export default function MainContainer() {
                         >
                           {attr.pageLabel || "空"}
                           {attr.id === chooseId && (
-                            <div className="absolute top-[0] right-[-38px] flex flex-col">
+                            <div className="absolute top-[0] right-[-42px] flex flex-col gap-1">
                               {baseInfoBtnList.map((baseBtn) => (
                                 <motion.div
                                   key={baseBtn.key}
@@ -327,8 +327,11 @@ export default function MainContainer() {
                                       shape="circle"
                                       size="small"
                                       style={{
-                                        background: "#171717",
-                                        color: "#fff",
+                                        background: "#ffffff",
+                                        borderColor: "#bfdbfe",
+                                        boxShadow:
+                                          "0 6px 14px rgba(15, 23, 42, 0.12)",
+                                        color: "#2563eb",
                                       }}
                                       type="primary"
                                     />
@@ -352,7 +355,7 @@ export default function MainContainer() {
                           style={attr.style}
                         >
                           {attr.id === chooseId && (
-                            <div className="absolute right-[-38px] flex flex-col">
+                            <div className="absolute right-[-42px] flex flex-col gap-1">
                               {paragraphBtnList.map((paragraphBtn) => (
                                 <motion.div
                                   key={paragraphBtn.key}
@@ -380,8 +383,11 @@ export default function MainContainer() {
                                         shape="circle"
                                         size="small"
                                         style={{
-                                          background: "#171717",
-                                          color: "#fff",
+                                          background: "#ffffff",
+                                          borderColor: "#bfdbfe",
+                                          boxShadow:
+                                            "0 6px 14px rgba(15, 23, 42, 0.12)",
+                                          color: "#2563eb",
                                         }}
                                         type="primary"
                                       />
