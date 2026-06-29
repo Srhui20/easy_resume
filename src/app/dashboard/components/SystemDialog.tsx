@@ -16,8 +16,7 @@ interface MenuType {
 }
 
 const activeMenuStyle = {
-  background:
-    "color-mix(in srgb, var(--app-accent) 18%, var(--app-panel) 82%)",
+  background: "color-mix(in srgb, var(--app-accent) 18%, var(--app-panel) 82%)",
   boxShadow:
     "inset 0 0 0 1px color-mix(in srgb, var(--app-accent) 24%, transparent)",
   color: "var(--app-text)",
@@ -27,15 +26,12 @@ const inactiveMenuStyle = {
   color: "var(--app-textMuted)",
 } satisfies CSSProperties;
 
-export default function SystemDilaog({
-  dialogOpen,
-  onCancel,
-}: SystemProps) {
+export default function SystemDilaog({ dialogOpen, onCancel }: SystemProps) {
   const [messageApi] = message.useMessage();
 
   const menuList: MenuType[] = [
-    { fileName: "NOTICE.md", key: "notice", title: "📢 系统公告" },
-    { fileName: "OPERATION.md", key: "important", title: "📃 系统须知" },
+    { fileName: "NOTICE.md", key: "notice", title: "系统公告" },
+    { fileName: "OPERATION.md", key: "important", title: "使用说明" },
   ];
 
   const [systemKey, setSystemKey] = useState("notice");
@@ -54,10 +50,10 @@ export default function SystemDilaog({
       if (result.code === 200) {
         setPageValue(result.data);
       } else {
-        throw new Error(result.message || "获取文件内容失败");
+        throw new Error(result.message || "读取文件内容失败");
       }
     } catch {
-      messageApi.error("获取失败，请稍后重试~");
+      messageApi.error("读取失败，请稍后重试。");
     }
   };
 
@@ -72,18 +68,16 @@ export default function SystemDilaog({
 
   return (
     <Modal
-      centered={true}
-      destroyOnHidden={true}
-      footer
+      centered
+      destroyOnHidden
+      footer={null}
       onCancel={onCancel}
       open={dialogOpen}
+      style={{ background: "var(--app-panel)" }}
       styles={{
         body: {
           background: "var(--app-panel)",
           color: "var(--app-text)",
-        },
-        content: {
-          background: "var(--app-panel)",
         },
         header: {
           background: "var(--app-panel)",
@@ -95,7 +89,7 @@ export default function SystemDilaog({
     >
       <div className="flex h-[400px] w-full">
         <div
-          className="f-ull flex w-[160px] flex-col gap-[10px] border-r border-solid pr-[10px]"
+          className="flex w-[160px] flex-col gap-[10px] border-r border-solid pr-[10px]"
           style={{ borderColor: "var(--app-border)" }}
         >
           {menuList.map((item) => (
@@ -103,7 +97,9 @@ export default function SystemDilaog({
               className="flex h-[36px] w-full cursor-pointer items-center rounded-lg px-[10px] transition-colors"
               key={item.key}
               onClick={() => menuClick(item)}
-              style={systemKey === item.key ? activeMenuStyle : inactiveMenuStyle}
+              style={
+                systemKey === item.key ? activeMenuStyle : inactiveMenuStyle
+              }
             >
               {item.title}
             </div>

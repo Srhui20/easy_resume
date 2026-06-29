@@ -3,23 +3,19 @@
 import {
   DesktopOutlined,
   DownloadOutlined,
-  GithubOutlined,
   LoadingOutlined,
-  MenuOutlined,
   SettingOutlined,
 } from "@ant-design/icons";
 import {
   Button,
   ConfigProvider,
   Drawer,
-  Dropdown,
   FloatButton,
   Input,
   Modal,
   message,
   Slider,
   Spin,
-  Tooltip,
 } from "antd";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -31,7 +27,7 @@ import { useTypesetting } from "@/lib/hooks/useTypesetting";
 import { usePrintStore } from "@/lib/store/print";
 import { usePublicStore } from "@/lib/store/public";
 import { useUndoStore } from "@/lib/store/undo";
-import type { OperationBtnType, PAGE_ATTRIBUTE } from "@/types/resume";
+import type { PAGE_ATTRIBUTE } from "@/types/resume";
 import { AppThemePopover } from "./components/AppThemePopover";
 import { ChooseTheme } from "./components/ChooseTheme";
 import MainContainer from "./components/MainContainer";
@@ -68,27 +64,27 @@ export default function Dashboard() {
   const {
     attributeShow,
     fileOperationShow,
-    setFileOperationShow,
     setAttributeShow,
+    setFileOperationShow,
   } = useMobilePage();
 
   useEffect(() => {
     if (chooseId) {
       setAttributeShow(true);
       setFileOperationShow(false);
-    } else setAttributeShow(false);
+    } else {
+      setAttributeShow(false);
+    }
   }, [chooseId, setAttributeShow, setFileOperationShow]);
 
   useEffect(() => {
     localStorage.setItem(
       "resumeData",
       JSON.stringify(
-        resumeData.map((item) => {
-          return {
-            ...item,
-            ref: null,
-          };
-        }),
+        resumeData.map((item) => ({
+          ...item,
+          ref: null,
+        })),
       ),
     );
   }, [resumeData]);
@@ -150,56 +146,12 @@ export default function Dashboard() {
     undoList.length,
   ]);
 
-  const btnList: OperationBtnType[] = [
-    {
-      handleFunc: () => handleDownload(),
-      isTip: false,
-      key: "download",
-      label: "下载 PDF",
-      style: {
-        backgroundColor: "var(--app-accent)",
-        boxShadow:
-          "0 8px 18px color-mix(in srgb, var(--app-accent) 24%, transparent)",
-      },
-      type: "primary",
-    },
-    {
-      handleFunc: () => setThemeOpen(true),
-      isTip: false,
-      key: "resumeTheme",
-      label: "简历样式",
-      style: {
-        color: "var(--app-text)",
-      },
-      type: "link",
-    },
-    {
-      handleFunc: () => setSystemDialogOpen(true),
-      isTip: false,
-      key: "system",
-      label: "系统",
-      style: {
-        color: "var(--app-text)",
-      },
-      type: "link",
-    },
-  ];
-
-  const iconMap: { [key: string]: React.ReactNode } = {
-    download: <DownloadOutlined />,
-    resumeTheme: <DesktopOutlined />,
-    system: <DesktopOutlined />,
-  };
-
   const executeDownload = async () => {
     setDownloadModalOpen(false);
-    // 先将文件转成static
     clearChoose();
     setPrintData();
 
     requestAnimationFrame(async () => {
-      // 第二次 rAF: 等待浏览器完成重绘
-
       const html = document.getElementById("print-container");
       const cloneHtml = html?.cloneNode(true) as HTMLElement;
       const bgInClone = cloneHtml.querySelector("#print-page-bg");
@@ -215,11 +167,12 @@ export default function Dashboard() {
           method: "POST",
         });
 
-        if (!res.ok)
+        if (!res.ok) {
           return messageApi.open({
-            content: "下载出错，请稍后重试~",
+            content: "下载失败，请稍后重试。",
             type: "error",
           });
+        }
 
         const blob = await res.blob();
         const url = URL.createObjectURL(blob);
@@ -230,16 +183,12 @@ export default function Dashboard() {
         a.click();
         URL.revokeObjectURL(url);
       } catch {
-        messageApi.error("下载出错，请稍后再试~");
+        messageApi.error("下载失败，请稍后重试。");
       } finally {
         setSpinning(false);
         setPrintResumeData([]);
       }
     });
-  };
-
-  const handleDownload = () => {
-    setDownloadModalOpen(true);
   };
 
   const currentNode: PAGE_ATTRIBUTE | null = usePublicStore((state) => {
@@ -250,6 +199,7 @@ export default function Dashboard() {
   const isBaseInfo = currentNode?.type === "baseInfo";
   const { isMobile } = useIsMobile();
   const setScale = usePublicStore((state) => state.setScale);
+
   const changePageSize = (val: number) => {
     setScale(0.5 + (val - 1) / 16);
   };
@@ -260,7 +210,7 @@ export default function Dashboard() {
         fullscreen
         indicator={<LoadingOutlined spin style={{ fontSize: 48 }} />}
         spinning={spinning}
-        tip="下载中~"
+        tip="正在导出 PDF..."
       />
       <Modal
         cancelText="取消"
@@ -278,7 +228,6 @@ export default function Dashboard() {
           value={fileName}
         />
       </Modal>
-      {/* 系统弹框 */}
       {systemDialogOpen && (
         <SystemDilaog
           dialogOpen={systemDialogOpen}
@@ -291,6 +240,7 @@ export default function Dashboard() {
           onCancel={() => setThemeOpen(false)}
         />
       )}
+
       <div
         className="flex h-screen flex-col"
         style={{
@@ -299,128 +249,158 @@ export default function Dashboard() {
         }}
       >
         {contextHolder}
-        <div
-          className="z-20 flex h-14 shrink-0 items-center justify-between border-b px-4 shadow-[0_1px_2px_rgba(15,23,42,0.04)] backdrop-blur md:px-6"
-          style={{
-            background: "color-mix(in srgb, var(--app-panel) 94%, transparent)",
-            borderColor: "var(--app-border)",
-          }}
-        >
-          <div className="flex min-w-0 items-center gap-3">
-            <div
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border shadow-[0_1px_2px_rgba(15,23,42,0.06)]"
-              style={{
-                background: "var(--app-panel)",
-                borderColor: "var(--app-border)",
-              }}
-            >
-              <Image
-                alt="Easy Resume Logo"
-                height={26}
-                src="/logo.png"
-                width={26}
-              />
-            </div>
-            <div className="min-w-0 leading-tight">
-              <div
-                className="truncate font-semibold text-[15px]"
-                style={{ color: "var(--app-text)" }}
-              >
-                Easy Resume
-              </div>
-              <div
-                className="hidden text-[12px] sm:block"
-                style={{ color: "var(--app-textMuted)" }}
-              >
-                在线简历编辑器
-              </div>
-            </div>
-          </div>
-          <div className="hidden items-center gap-1 md:flex">
-            <AppThemePopover
-              mode={mode}
-              onModeChange={setMode}
-              onThemeChange={setThemeKey}
-              themeKey={themeKey}
-            />
-            {btnList
-              .filter((btn) => btn.key !== "download")
-              .map((btn) => (
-                <Button
-                  className="font-medium"
-                  icon={iconMap[btn.key]}
-                  key={btn.key}
-                  onClick={() => btn.handleFunc()}
-                  style={btn.style}
-                  type={btn.type}
+
+        <div className="z-20">
+          <div
+            className="border-b px-3 py-3 shadow-[var(--app-shadow-sm)] backdrop-blur-xl md:flex md:h-[58px] md:items-center md:justify-between md:px-4 md:py-0"
+            style={{
+              background:
+                "color-mix(in srgb, var(--app-panel) 96%, transparent)",
+              borderColor: "var(--app-border)",
+            }}
+          >
+            <div className="flex items-center justify-between gap-3 md:min-w-0">
+              <div className="flex min-w-0 items-center gap-3">
+                <div
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border"
+                  style={{
+                    background:
+                      "linear-gradient(135deg, color-mix(in srgb, var(--app-accent) 14%, white), white)",
+                    borderColor: "var(--app-border)",
+                  }}
                 >
-                  {btn.label}
+                  <Image
+                    alt="Easy Resume Logo"
+                    height={22}
+                    src="/logo.png"
+                    width={22}
+                  />
+                </div>
+                <div className="min-w-0 leading-tight">
+                  <div
+                    className="truncate font-semibold text-[16px]"
+                    style={{ color: "var(--app-text)" }}
+                  >
+                    Easy Resume
+                  </div>
+                  <div
+                    className="hidden truncate text-[12px] md:block"
+                    style={{ color: "var(--app-textMuted)" }}
+                  >
+                    让您更轻松地创建简历
+                  </div>
+                </div>
+              </div>
+
+              <div className="md:hidden">
+                <Button
+                  className="font-semibold"
+                  icon={<DownloadOutlined />}
+                  onClick={() => setDownloadModalOpen(true)}
+                  style={{
+                    backgroundColor: "var(--app-accent)",
+                    border: "none",
+                    boxShadow:
+                      "0 12px 26px color-mix(in srgb, var(--app-accent) 28%, transparent)",
+                    height: 36,
+                    paddingInline: 12,
+                  }}
+                  type="primary"
+                >
+                  下载
                 </Button>
-              ))}
-            <Tooltip title="Github">
-              <Button
-                href="https://github.com/Srhui20/easy_resume"
-                icon={<GithubOutlined />}
-                style={{ color: "var(--app-textMuted)" }}
-                type="text"
+              </div>
+            </div>
+
+            <div className="mt-3 flex flex-wrap gap-2 md:hidden">
+              <AppThemePopover
+                mode={mode}
+                onModeChange={setMode}
+                onThemeChange={setThemeKey}
+                themeKey={themeKey}
               />
-            </Tooltip>
-            <div
-              className="mx-2 h-6 w-px"
-              style={{ background: "var(--app-border)" }}
-            />
-            <Button
-              className="font-semibold"
-              icon={iconMap.download}
-              onClick={() => handleDownload()}
-              style={btnList[0].style}
-              type="primary"
-            >
-              {btnList[0].label}
-            </Button>
-          </div>
-          <div className="flex items-center gap-3 md:hidden">
-            <AppThemePopover
-              mode={mode}
-              onModeChange={setMode}
-              onThemeChange={setThemeKey}
-              themeKey={themeKey}
-            />
-            <Button
-              className="font-semibold"
-              icon={iconMap.download}
-              onClick={() => handleDownload()}
-              style={btnList[0].style}
-              type="primary"
-            >
-              下载 PDF
-            </Button>
-            <Dropdown
-              menu={{
-                items: btnList
-                  .filter((item) => item.key !== "download")
-                  .map((item) => {
-                    return {
-                      icon: iconMap[item.key],
-                      key: item.key,
-                      label: item.label,
-                      onClick: item.handleFunc,
-                    };
-                  }),
-              }}
-              placement="bottomRight"
-            >
               <Button
-                shape="circle"
+                icon={<DesktopOutlined />}
+                onClick={() => setThemeOpen(true)}
                 style={{
-                  borderColor: "var(--app-border)",
+                  background: "transparent",
+                  border: "none",
+                  boxShadow: "none",
                   color: "var(--app-text)",
+                  height: 36,
                 }}
                 type="default"
               >
-                <MenuOutlined />
+                简历样式
               </Button>
-            </Dropdown>
+              <Button
+                icon={<SettingOutlined />}
+                onClick={() => setSystemDialogOpen(true)}
+                style={{
+                  background: "transparent",
+                  border: "none",
+                  boxShadow: "none",
+                  color: "var(--app-text)",
+                  height: 36,
+                }}
+                type="default"
+              >
+                系统
+              </Button>
+            </div>
+
+            <div className="hidden items-center gap-2 md:flex">
+              <AppThemePopover
+                mode={mode}
+                onModeChange={setMode}
+                onThemeChange={setThemeKey}
+                themeKey={themeKey}
+              />
+              <Button
+                icon={<DesktopOutlined />}
+                onClick={() => setThemeOpen(true)}
+                style={{
+                  background: "transparent",
+                  border: "none",
+                  boxShadow: "none",
+                  color: "var(--app-text)",
+                  height: 36,
+                }}
+                type="default"
+              >
+                简历样式
+              </Button>
+              <Button
+                icon={<SettingOutlined />}
+                onClick={() => setSystemDialogOpen(true)}
+                style={{
+                  background: "transparent",
+                  border: "none",
+                  boxShadow: "none",
+                  color: "var(--app-text)",
+                  height: 36,
+                }}
+                type="default"
+              >
+                系统
+              </Button>
+              <Button
+                className="font-semibold"
+                icon={<DownloadOutlined />}
+                onClick={() => setDownloadModalOpen(true)}
+                style={{
+                  backgroundColor: "var(--app-accent)",
+                  border: "none",
+                  boxShadow:
+                    "0 12px 26px color-mix(in srgb, var(--app-accent) 28%, transparent)",
+                  height: 36,
+                  paddingInline: 14,
+                }}
+                type="primary"
+              >
+                下载 PDF
+              </Button>
+            </div>
           </div>
         </div>
 
@@ -429,10 +409,9 @@ export default function Dashboard() {
             <MainContainer />
           </div>
           <div
-            className="hidden w-[380px] shrink-0 border-l md:block xl:w-[420px]"
+            className="hidden w-[380px] shrink-0 md:block xl:w-[420px]"
             style={{
-              background: "var(--app-panel)",
-              borderColor: "var(--app-border)",
+              background: "transparent",
             }}
           >
             <RightInfo />
@@ -472,7 +451,6 @@ export default function Dashboard() {
         <div className="block md:hidden">
           {isMobile ? (
             <>
-              {" "}
               <Drawer
                 closable={{ "aria-label": "Close Button" }}
                 mask={false}

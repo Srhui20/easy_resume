@@ -9,24 +9,8 @@ interface DotProps {
   children?: React.ReactNode;
   className?: string;
   style?: React.CSSProperties;
-  /**
-   * @description Whether to show the gradient or not
-   * @type {boolean}
-   * @default false
-   */
   gradient?: boolean;
-  /**
-   * @description The width of the gradient on either side
-   * @type {number | string}
-   * @default 100
-   */
   gradientWidth?: number | string;
-
-  /**
-   * @description The height of the gradient on either side
-   * @type {number | string}
-   * @default 200
-   */
   gradientHeight?: number | string;
 }
 
@@ -54,9 +38,9 @@ function Placeholder() {
 }
 
 export function DotBg({
-  color = "color-mix(in srgb, var(--app-accent) 18%, var(--app-border))",
+  color = "color-mix(in srgb, var(--app-accent) 10%, rgba(255,255,255,0.2))",
   size = 1,
-  spacing = 20,
+  spacing = 24,
   children,
   className,
   style,
@@ -64,7 +48,7 @@ export function DotBg({
   gradientWidth = 100,
   gradientHeight = 200,
 }: DotProps) {
-  const gradientColor = "hsl(var(--background))"; // 引用 Tailwind CSS 变量
+  const gradientColor = "rgba(255, 255, 255, 0.72)";
   const gradientStyle = useMemo(
     () => ({
       ["--gradient-color" as string]: gradientColor,
@@ -77,13 +61,15 @@ export function DotBg({
           ? `${gradientHeight}px`
           : gradientHeight,
     }),
-    [gradientWidth, gradientHeight],
+    [gradientHeight, gradientWidth],
   );
+
   return (
     <div
       className={cn("relative", className)}
       style={{
         backgroundImage: `radial-gradient(${color} ${size}px, transparent ${size}px)`,
+        backgroundPosition: "center top",
         backgroundSize: `calc(${spacing} * ${size}px) calc(${spacing} * ${size}px)`,
         height: "100%",
         position: "relative",
@@ -104,14 +90,12 @@ export function DotBg({
       </div>
       {gradient && (
         <div style={gradientStyle}>
-          {/* 上方渐变蒙版 */}
           <div
             className={cn(
               "pointer-events-none absolute top-0 left-0 z-2 h-[var(--gradient-height)] w-full",
               "bg-gradient-to-b from-[var(--gradient-color)] to-transparent",
             )}
           />
-          {/* 下方渐变蒙版 */}
           <div
             className={cn(
               "pointer-events-none absolute bottom-0 left-0 z-2 h-[var(--gradient-height)] w-full rotate-180 transform",
@@ -120,16 +104,14 @@ export function DotBg({
           />
           <div
             className={cn(
-              "pointer-events-none absolute top-0 left-0 z-2 h-full w-[var(--gradient-width)]",
+              "pointer-events-none absolute top-0 left-0 z-2 hidden h-full w-[var(--gradient-width)] md:block",
               "bg-gradient-to-r from-[var(--gradient-color)] to-transparent",
-              "hidden md:block",
             )}
           />
           <div
             className={cn(
-              "pointer-events-none absolute top-0 right-0 z-2 h-full w-[var(--gradient-width)] rotate-180 transform",
+              "pointer-events-none absolute top-0 right-0 z-2 hidden h-full w-[var(--gradient-width)] rotate-180 transform md:block",
               "bg-gradient-to-r from-[var(--gradient-color)] to-transparent",
-              "hidden md:block",
             )}
           />
         </div>

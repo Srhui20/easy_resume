@@ -43,18 +43,7 @@ type AppThemeResult = {
   key: AppThemeKey;
   mode: AppThemeMode;
   name: string;
-  colors: {
-    accent: string;
-    accentHover: string;
-    accentSoft: string;
-    bg: string;
-    border: string;
-    canvas: string;
-    panel: string;
-    panelAlt: string;
-    text: string;
-    textMuted: string;
-  };
+  colors: ThemePalette;
 };
 
 const STORAGE_KEY = "easyResumeAppTheme";
@@ -65,50 +54,50 @@ export const appThemes: AppTheme[] = [
     color: "#2563eb",
     hoverColor: "#1d4ed8",
     key: "default",
-    name: "默认",
-    softColor: "#eff6ff",
+    name: "经典蓝",
+    softColor: "#dbeafe",
   },
   {
-    color: "#16a34a",
-    hoverColor: "#15803d",
+    color: "#0f766e",
+    hoverColor: "#115e59",
     key: "stableGreen",
-    name: "稳定绿",
-    softColor: "#ecfdf5",
+    name: "森林简报",
+    softColor: "#d1fae5",
   },
   {
-    color: "#27272a",
-    hoverColor: "#18181b",
+    color: "#475569",
+    hoverColor: "#334155",
     key: "neutralGray",
-    name: "中性灰",
-    softColor: "#f4f4f5",
+    name: "石板桌面",
+    softColor: "#e2e8f0",
   },
   {
-    color: "#dc2626",
-    hoverColor: "#b91c1c",
+    color: "#c2410c",
+    hoverColor: "#9a3412",
     key: "strongRed",
-    name: "强调红",
-    softColor: "#fef2f2",
+    name: "陶土暖棕",
+    softColor: "#ffedd5",
   },
   {
-    color: "#e11d48",
-    hoverColor: "#be123c",
+    color: "#be185d",
+    hoverColor: "#9d174d",
     key: "rose",
-    name: "玫瑰红",
-    softColor: "#fff1f2",
+    name: "玫瑰信笺",
+    softColor: "#fce7f3",
   },
   {
-    color: "#7c3aed",
-    hoverColor: "#6d28d9",
+    color: "#5b21b6",
+    hoverColor: "#4c1d95",
     key: "purple",
-    name: "紫罗兰",
-    softColor: "#f5f3ff",
+    name: "皇家初紫",
+    softColor: "#ede9fe",
   },
   {
-    color: "#f2b705",
-    hoverColor: "#d99a00",
+    color: "#d97706",
+    hoverColor: "#b45309",
     key: "brightYellow",
-    name: "明亮黄",
-    softColor: "#fffbeb",
+    name: "金色标记",
+    softColor: "#fef3c7",
   },
 ];
 
@@ -129,14 +118,14 @@ function buildPalette(theme: AppTheme, mode: AppThemeMode): ThemePalette {
     return {
       accent: theme.color,
       accentHover: theme.hoverColor,
-      accentSoft: "color-mix(in srgb, var(--app-accent) 20%, #1f2937)",
-      bg: "#111827",
-      border: "#475569",
-      canvas: "#0b1220",
-      panel: "#1e293b",
-      panelAlt: "#172033",
-      text: "#f8fafc",
-      textMuted: "#d6dee9",
+      accentSoft: "color-mix(in srgb, var(--app-accent) 18%, #0f172a)",
+      bg: "#08111f",
+      border: "color-mix(in srgb, var(--app-accent) 28%, #233876)",
+      canvas: "#0a1020",
+      panel: "rgba(10, 18, 36, 0.92)",
+      panelAlt: "#101a33",
+      text: "#eff6ff",
+      textMuted: "#b6c7ea",
     };
   }
 
@@ -144,22 +133,13 @@ function buildPalette(theme: AppTheme, mode: AppThemeMode): ThemePalette {
     accent: theme.color,
     accentHover: theme.hoverColor,
     accentSoft: theme.softColor,
-    bg:
-      theme.key === "default"
-        ? "#f5f7fb"
-        : "color-mix(in srgb, var(--app-accent) 7%, #f8fafc)",
-    border:
-      theme.key === "default"
-        ? "#dbe4f0"
-        : "color-mix(in srgb, var(--app-accent) 22%, #dbe4f0)",
-    canvas:
-      theme.key === "default"
-        ? "#eef3fb"
-        : "color-mix(in srgb, var(--app-accent) 12%, #eef3fb)",
-    panel: "#ffffff",
-    panelAlt: "color-mix(in srgb, var(--app-accent) 5%, #fbfcfe)",
-    text: "#111827",
-    textMuted: "#64748b",
+    bg: "color-mix(in srgb, var(--app-accent) 4%, #f8fbff)",
+    border: "color-mix(in srgb, var(--app-accent) 16%, #d9e4f5)",
+    canvas: "color-mix(in srgb, var(--app-accent) 8%, #eef4ff)",
+    panel: "rgba(255, 255, 255, 0.9)",
+    panelAlt: "color-mix(in srgb, var(--app-accent) 4%, #f8fbff)",
+    text: "#1e293b",
+    textMuted: "#5b6b85",
   };
 }
 
@@ -209,7 +189,7 @@ export function useAppTheme() {
           ? antdThemeAlgorithm.darkAlgorithm
           : antdThemeAlgorithm.defaultAlgorithm,
       token: {
-        borderRadius: 6,
+        borderRadius: 16,
         colorBgContainer: currentTheme.colors.panel,
         colorBgElevated: currentTheme.colors.panel,
         colorBorder: currentTheme.colors.border,
@@ -218,6 +198,8 @@ export function useAppTheme() {
         colorPrimary: currentTheme.colors.accent,
         colorText: currentTheme.colors.text,
         colorTextSecondary: currentTheme.colors.textMuted,
+        controlHeight: 40,
+        fontFamily: "var(--app-body)",
       },
     }),
     [currentTheme],

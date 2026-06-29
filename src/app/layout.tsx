@@ -1,16 +1,16 @@
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Newsreader, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
+const jakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  variable: "--font-geist-sans",
+  variable: "--font-app-sans",
 });
 
-const geistMono = Geist_Mono({
+const newsreader = Newsreader({
   subsets: ["latin"],
-  variable: "--font-geist-mono",
+  variable: "--font-app-serif",
 });
 
 export const viewport: Viewport = {
@@ -47,7 +47,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} overflow-hidden antialiased`}
+        className={`${jakartaSans.variable} ${newsreader.variable} overflow-hidden antialiased`}
       >
         <AntdRegistry>{children}</AntdRegistry>
       </body>

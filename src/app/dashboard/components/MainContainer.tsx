@@ -28,7 +28,6 @@ export default function MainContainer() {
   const resumeData = usePublicStore((state) => state.resumeData);
   const isMoving = usePublicStore((state) => state.isMoving);
   const chooseId = usePublicStore((state) => state.chooseId);
-  // const pageRef = usePublicStore((state) => state.pageRef);
   const setPageRef = usePublicStore((state) => state.setPageRef);
   const movePageAttribute = usePublicStore((state) => state.movePageAttribute);
   const setResumeData = usePublicStore((state) => state.setResumeData);
@@ -88,7 +87,6 @@ export default function MainContainer() {
     width: 0,
   });
 
-  // 使用 requestAnimationFrame 合并一帧内多次 move 调用
   const lastPosRef = useRef<{ clientX: number; clientY: number } | null>(null);
   const rafIdRef = useRef<number | null>(null);
   const isMovingRef = useRef<boolean>(false);
@@ -148,7 +146,6 @@ export default function MainContainer() {
       const clientY = $e.nativeEvent.clientY;
 
       lastPosRef.current = { clientX, clientY };
-      // 一帧内执行一次moveChooseAttribute
       if (rafIdRef.current == null) {
         rafIdRef.current = window.requestAnimationFrame(() => {
           rafIdRef.current = null;
@@ -185,7 +182,6 @@ export default function MainContainer() {
     };
   };
 
-  // 组件卸载时清理未完成的动画帧
   useEffect(() => {
     return () => {
       if (rafIdRef.current != null) {
@@ -222,14 +218,13 @@ export default function MainContainer() {
     if (!el) return;
     const targetScrollLeft = (el.scrollWidth - el.clientWidth) / 2;
     el.scrollTo({
-      behavior: "smooth", // 关键属性：启用平滑滚动动画
+      behavior: "smooth",
       left: targetScrollLeft,
-      top: 100, // 保持垂直滚动位置不变
+      top: 100,
     });
   });
 
   const { paragraphBtnList, paragraphBtnHandleFun } = useParagraphBtnFun();
-
   const { baseInfoBtnList, baseInfoBtnHandleFun } = useBaseInfoBtnFun();
 
   const paragraphBtnIconMap: { [key: string]: React.ReactNode } = {
@@ -240,15 +235,16 @@ export default function MainContainer() {
   };
 
   const floatingActionButtonStyle = {
-    background: "rgba(30, 41, 59, 0.96)",
-    borderColor: "rgba(148, 163, 184, 0.3)",
-    boxShadow: "0 10px 20px rgba(15, 23, 42, 0.24)",
+    background: "color-mix(in srgb, var(--app-accent) 82%, #0f172a)",
+    borderColor: "color-mix(in srgb, var(--app-accent) 36%, white)",
+    boxShadow:
+      "0 16px 30px color-mix(in srgb, var(--app-accent) 30%, transparent)",
     color: "#fff",
   } satisfies React.CSSProperties;
 
   return (
     <DotBg
-      className="flex h-full flex-col"
+      className={`flex h-full flex-col ${styles.stage_shell}`}
       gradient={false}
       gradientHeight="100%"
       gradientWidth="100%"
@@ -262,14 +258,14 @@ export default function MainContainer() {
       >
         <div className="h-full w-full">
           <div
-            className="relative flex min-h-full w-full items-start justify-center px-16 pt-14"
+            className="relative flex min-h-full w-full items-start justify-center px-6 pt-14 pb-10 md:px-10 md:pt-16 xl:px-16"
             style={{
               height: `${pageHeight + 500}px`,
               minWidth: `${canvasMinWidth}px`,
             }}
           >
             <div
-              className={`relative flex flex-col gap-[10] ${styles.print_container}`}
+              className={`relative z-10 flex flex-col gap-[10] ${styles.print_container}`}
               id="print-container"
               ref={printContainerRef}
               style={{
@@ -277,16 +273,17 @@ export default function MainContainer() {
               }}
             >
               <div
-                className="absolute top-[-32px] right-[-32px] z-[-1] w-[858px] rounded-sm shadow-[0_18px_45px_rgba(15,23,42,0.12),0_1px_2px_rgba(15,23,42,0.08)]"
+                className="absolute top-[-12px] right-[-40px] z-[-1] w-[874px] rounded-[30px] border shadow-[0_30px_80px_rgba(15,23,42,0.1),0_8px_24px_rgba(15,23,42,0.05)]"
                 id="print-page-bg"
                 style={{
                   background: "#ffffff",
-                  height: `${pageHeight + 64}px`,
+                  borderColor: "#ffffff",
+                  height: `${pageHeight + 58}px`,
                 }}
               />
 
               <div
-                className={`relative flex w-[794px] flex-col justify-start justify-between bg-white ${styles.page_container}`}
+                className={`relative flex w-[794px] flex-col justify-start justify-between overflow-hidden bg-white ${styles.page_container}`}
                 onMouseMove={($e) => moveChooseAttribute($e)}
                 ref={($el: HTMLDivElement) => setPageRef($el)}
                 style={{
@@ -321,7 +318,7 @@ export default function MainContainer() {
                           }}
                           style={attr.style}
                         >
-                          {attr.pageLabel || "空"}
+                          {attr.pageLabel || "未命名"}
                           {attr.id === chooseId && (
                             <div className="absolute top-[0] right-[-42px] flex flex-col gap-1">
                               {baseInfoBtnList.map((baseBtn) => (
@@ -356,7 +353,7 @@ export default function MainContainer() {
                         </motion.div>
                       ) : (
                         <div
-                          className={` ${attr.className} ${chooseId === attr.id ? "choose_label" : ""}`}
+                          className={`${attr.className} ${chooseId === attr.id ? "choose_label" : ""}`}
                           key={attr.id}
                           onClick={($el) => mouseClickAttribute($el, attr.id)}
                           onMouseDown={($e) =>
@@ -427,7 +424,7 @@ export default function MainContainer() {
                                 className="w-[110px]"
                                 style={attr.titleInfo?.style}
                               >
-                                {attr.titleInfo?.label || "空"}
+                                {attr.titleInfo?.label || "未命名"}
                               </div>
                               <div
                                 className="transform-[scaleY(0.5)] mt-[-1px] h-[1px] w-full origin-bottom"
@@ -454,7 +451,7 @@ export default function MainContainer() {
                                   </div>
                                   <div
                                     dangerouslySetInnerHTML={{
-                                      __html: paragraph.label || "空",
+                                      __html: paragraph.label || "未命名",
                                     }}
                                   />
                                 </div>

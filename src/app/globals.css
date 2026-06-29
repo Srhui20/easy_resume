@@ -1,21 +1,56 @@
 @import "tailwindcss";
 
 :root {
-  --app-accent: #2563eb;
-  --app-accentHover: #1d4ed8;
-  --app-accentSoft: #eff6ff;
-  --app-bg: #f5f7fb;
-  --app-border: #dbe4f0;
-  --app-canvas: #eef3fb;
-  --app-panel: #ffffff;
-  --app-panelAlt: #fbfcfe;
-  --app-text: #111827;
-  --app-textMuted: #64748b;
+  --app-accent: #0d9488;
+  --app-accentHover: #0f766e;
+  --app-accentSoft: #ccfbf1;
+  --app-bg: #f2f7f6;
+  --app-border: #d8ebe8;
+  --app-canvas: transparent;
+  --app-panel: rgba(255, 255, 255, 0.88);
+  --app-panelAlt: #f8fcfb;
+  --app-text: #163532;
+  --app-textMuted: #5c7874;
+  --app-heading: var(--font-app-serif), Georgia, serif;
+  --app-body: var(--font-app-sans), "Segoe UI", sans-serif;
+  --app-shadow-sm: 0 10px 30px rgba(20, 78, 74, 0.08);
+  --app-shadow-md: 0 24px 60px rgba(20, 78, 74, 0.14);
+  --app-shadow-lg: 0 36px 80px rgba(20, 78, 74, 0.18);
+}
+
+html {
+  background:
+    radial-gradient(
+      circle at 50% 22%,
+      rgba(255, 255, 255, 0.92),
+      transparent 34%
+    ),
+    radial-gradient(
+      circle at top left,
+      rgba(45, 212, 191, 0.14),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at top right,
+      rgba(148, 163, 184, 0.08),
+      transparent 26%
+    ), linear-gradient(180deg, #f8fbfa 0%, #eef5f4 48%, #edf4f3 100%);
 }
 
 body {
+  font-family: var(--app-body);
   color: var(--app-text);
-  background: var(--app-bg);
+  background: transparent;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--app-heading);
+  letter-spacing: -0.02em;
 }
 
 @media screen and (max-width: 768px) {
@@ -32,7 +67,7 @@ body {
 [data-app-theme-mode="dark"] .ant-picker,
 [data-app-theme-mode="dark"] .ant-select-selector {
   color: var(--app-text);
-  background: #253349;
+  background: #173431;
   border-color: var(--app-border);
 }
 
@@ -52,6 +87,15 @@ body {
 [data-app-theme-mode="dark"] .w-e-text-container [data-slate-editor] {
   color: #111827;
   background: #ffffff;
+}
+
+.ant-btn,
+.ant-input,
+.ant-select,
+.ant-modal,
+.ant-drawer,
+.ant-popover {
+  font-family: var(--app-body);
 }
 
 .choose_label {

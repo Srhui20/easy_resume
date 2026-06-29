@@ -7,3 +7,29 @@
     }
   }
 }
+
+.stage_shell {
+  position: relative;
+}
+
+.stage_shell::after {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 12%, rgba(255, 255, 255, 0.72), transparent 26%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0));
+  content: "";
+  pointer-events: none;
+}
+
+.stage_shell::before {
+  position: absolute;
+  inset: 32px 16px auto;
+  height: 220px;
+  border-radius: 40px;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.78), transparent 68%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.48), rgba(255, 255, 255, 0));
+  content: "";
+  pointer-events: none;
+}
