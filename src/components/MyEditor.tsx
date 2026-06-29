@@ -84,7 +84,6 @@ function MyEditor({ value, onChange }: Props) {
         onChange={(editor) => handleChange(editor.getHtml())}
         onCreated={setEditor}
         style={{ height: "250px" }}
-        value={initialValueRef?.current}
       />
     </div>
   );
