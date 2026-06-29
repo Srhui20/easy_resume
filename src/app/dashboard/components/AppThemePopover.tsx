@@ -95,13 +95,15 @@ export function AppThemePopover({
     <Popover
       arrow={false}
       content={content}
-      overlayInnerStyle={{
-        borderRadius: 10,
-        boxShadow:
-          "0 16px 42px rgba(15, 23, 42, 0.16), 0 2px 8px rgba(15, 23, 42, 0.08)",
-        padding: 0,
-      }}
       placement="bottomRight"
+      styles={{
+        body: {
+          borderRadius: 10,
+          boxShadow:
+            "0 16px 42px rgba(15, 23, 42, 0.16), 0 2px 8px rgba(15, 23, 42, 0.08)",
+          padding: 0,
+        },
+      }}
       trigger="click"
     >
       <Button

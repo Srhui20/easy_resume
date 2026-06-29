@@ -64,5 +64,11 @@
     "**.{ts,tsx,json}": [
       "biome check --write --no-errors-on-unmatched"
     ]
+  },
+  "pnpm": {
+    "overrides": {
+      "motion-dom": "12.23.23",
+      "motion-utils": "12.23.6"
+    }
   }
 }

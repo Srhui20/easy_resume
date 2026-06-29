@@ -23,6 +23,7 @@ import styles from "./index.module.scss";
 export default function MainContainer() {
   const { moveRef, scale } = useMouseOpeartion();
   const printContainerRef = useRef<HTMLDivElement>(null);
+  const canvasMinWidth = Math.max(960, Math.ceil(794 * scale + 140));
 
   const resumeData = usePublicStore((state) => state.resumeData);
   const isMoving = usePublicStore((state) => state.isMoving);
@@ -261,8 +262,11 @@ export default function MainContainer() {
       >
         <div className="h-full w-full">
           <div
-            className="relative flex w-[1688px] items-start justify-center px-16 pt-14"
-            style={{ height: `${pageHeight + 500}px` }}
+            className="relative flex min-h-full w-full items-start justify-center px-16 pt-14"
+            style={{
+              height: `${pageHeight + 500}px`,
+              minWidth: `${canvasMinWidth}px`,
+            }}
           >
             <div
               className={`relative flex flex-col gap-[10] ${styles.print_container}`}
