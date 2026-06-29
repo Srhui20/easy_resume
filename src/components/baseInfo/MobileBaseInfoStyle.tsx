@@ -4,10 +4,27 @@ import {
   UnderlineOutlined,
 } from "@ant-design/icons";
 import { ColorPicker } from "antd";
+import type { CSSProperties } from "react";
 import { Input } from "tdesign-mobile-react";
 import { usePublicStore } from "@/lib/store/public";
 import type { PAGE_ATTRIBUTE } from "@/types/resume";
 import { useBaseInfoStyle } from "./useBaseInfoStyle";
+
+const toolbarStyle = {
+  background: "color-mix(in srgb, var(--app-panelAlt) 92%, var(--app-bg) 8%)",
+  border: "1px solid var(--app-border)",
+} satisfies CSSProperties;
+
+const getStyleItemStyle = (isChoose: boolean) =>
+  ({
+    background: isChoose
+      ? "color-mix(in srgb, var(--app-accent) 18%, var(--app-panel) 82%)"
+      : "transparent",
+    boxShadow: isChoose
+      ? "inset 0 0 0 1px color-mix(in srgb, var(--app-accent) 24%, transparent)"
+      : "none",
+    color: isChoose ? "var(--app-accent)" : "var(--app-textMuted)",
+  }) satisfies CSSProperties;
 
 export default function MobileBaseInfoStyle() {
   const currentNode: PAGE_ATTRIBUTE | null = usePublicStore((state) => {
@@ -32,6 +49,7 @@ export default function MobileBaseInfoStyle() {
     italic: <ItalicOutlined />,
     underline: <UnderlineOutlined />,
   };
+
   return (
     <div className="flex flex-col">
       <Input
@@ -105,12 +123,16 @@ export default function MobileBaseInfoStyle() {
 
       <div className="t-input--border flex items-center p-[16px]">
         <div className="w-[80px]">样式</div>
-        <div className="flex h-[40px] w-[110px] justify-center gap-[4px] rounded-lg bg-gray-100 p-[3px] pr-[8px] pl-[8px]">
+        <div
+          className="flex h-[40px] w-[110px] justify-center gap-[4px] rounded-lg p-[3px] pr-[8px] pl-[8px]"
+          style={toolbarStyle}
+        >
           {fontStylesList.map((item) => (
             <div
-              className={`flex w-[30px] cursor-pointer items-center justify-center rounded-lg ${item.isChoose ? "bg-blue-200 text-blue-500" : "hover:bg-gray-300"}`}
+              className="flex w-[30px] cursor-pointer items-center justify-center rounded-lg transition-colors"
               key={item.key}
               onClick={() => editFontStyle(item)}
+              style={getStyleItemStyle(item.isChoose)}
             >
               {iconMap[item.icon]}
             </div>
