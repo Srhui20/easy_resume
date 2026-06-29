@@ -53,28 +53,13 @@ export function ChooseTheme({ dialogOpen, onCancel }: ThemeProps) {
 
     setUndoList(resumeData);
     setResumeData(arr);
-    message.success("设置成功");
+    message.success("简历样式已更新");
     onCancel();
   };
   const footer: React.ReactNode = (
     <>
-      <Button
-        onClick={onCancel}
-        styles={{
-          root: {
-            backgroundColor: "#fff",
-            borderColor: "#ccc",
-            color: "#171717",
-          },
-        }}
-      >
-        关闭
-      </Button>
-      <Button
-        onClick={() => changeTheme()}
-        styles={{ root: { backgroundColor: "#171717" } }}
-        type="primary"
-      >
+      <Button onClick={onCancel}>关闭</Button>
+      <Button onClick={() => changeTheme()} type="primary">
         确定
       </Button>
     </>
@@ -87,23 +72,23 @@ export function ChooseTheme({ dialogOpen, onCancel }: ThemeProps) {
       keyboard={false}
       onCancel={onCancel}
       open={dialogOpen}
-      title="主题"
+      title="简历样式"
       width={700}
     >
-      <div className="h-[200px]">
+      <div className="h-[220px] rounded-md border border-[var(--app-border)] bg-[var(--app-panelAlt)] p-3">
         <Carousel
           afterChange={getIndex}
           arrows
           draggable={true}
           infinite={true}
-          style={{ height: "200px" }}
+          style={{ height: "196px" }}
         >
           {themeList.map((item) => (
-            <div key={item.key}>
+            <div className="flex justify-center" key={item.key}>
               <Image
                 alt={`简历模板示例-${item.key}`}
                 src={item.img}
-                style={{ height: "200px" }}
+                style={{ height: "196px", margin: "0 auto", width: "auto" }}
               />
             </div>
           ))}

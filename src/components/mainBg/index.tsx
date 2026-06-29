@@ -54,11 +54,12 @@ function Placeholder() {
 }
 
 export function DotBg({
-  color = "#cbd5e1",
+  color = "color-mix(in srgb, var(--app-accent) 18%, var(--app-border))",
   size = 1,
   spacing = 20,
   children,
   className,
+  style,
   gradient = true,
   gradientWidth = 100,
   gradientHeight = 200,
@@ -88,6 +89,7 @@ export function DotBg({
         position: "relative",
         width: "100%",
         zIndex: 1,
+        ...style,
       }}
     >
       <div

@@ -238,12 +238,20 @@ export default function MainContainer() {
     up: <ArrowUpOutlined />,
   };
 
+  const floatingActionButtonStyle = {
+    background: "rgba(30, 41, 59, 0.96)",
+    borderColor: "rgba(148, 163, 184, 0.3)",
+    boxShadow: "0 10px 20px rgba(15, 23, 42, 0.24)",
+    color: "#fff",
+  } satisfies React.CSSProperties;
+
   return (
     <DotBg
-      className="flex h-full flex-col bg-[#f5f7fb]"
+      className="flex h-full flex-col"
       gradient={false}
       gradientHeight="100%"
       gradientWidth="100%"
+      style={{ background: "var(--app-canvas)" }}
     >
       <div
         className="main-container flex h-full flex-col overflow-auto"
@@ -265,16 +273,23 @@ export default function MainContainer() {
               }}
             >
               <div
-                className="absolute top-[-32px] right-[-32px] z-[-1] w-[858px] rounded-sm bg-white shadow-[0_18px_45px_rgba(15,23,42,0.12),0_1px_2px_rgba(15,23,42,0.08)]"
+                className="absolute top-[-32px] right-[-32px] z-[-1] w-[858px] rounded-sm shadow-[0_18px_45px_rgba(15,23,42,0.12),0_1px_2px_rgba(15,23,42,0.08)]"
                 id="print-page-bg"
-                style={{ height: `${pageHeight + 64}px` }}
+                style={{
+                  background: "#ffffff",
+                  height: `${pageHeight + 64}px`,
+                }}
               />
 
               <div
                 className={`relative flex w-[794px] flex-col justify-start justify-between bg-white ${styles.page_container}`}
                 onMouseMove={($e) => moveChooseAttribute($e)}
                 ref={($el: HTMLDivElement) => setPageRef($el)}
-                style={{ fontSize: "20px", height: `${pageHeight}px` }}
+                style={{
+                  color: "#111827",
+                  fontSize: "20px",
+                  height: `${pageHeight}px`,
+                }}
               >
                 <AnimatePresence>
                   {(printResumeData.length ? printResumeData : resumeData).map(
@@ -326,13 +341,7 @@ export default function MainContainer() {
                                       }
                                       shape="circle"
                                       size="small"
-                                      style={{
-                                        background: "#ffffff",
-                                        borderColor: "#bfdbfe",
-                                        boxShadow:
-                                          "0 6px 14px rgba(15, 23, 42, 0.12)",
-                                        color: "#2563eb",
-                                      }}
+                                      style={floatingActionButtonStyle}
                                       type="primary"
                                     />
                                   </Tooltip>
@@ -382,13 +391,7 @@ export default function MainContainer() {
                                         }
                                         shape="circle"
                                         size="small"
-                                        style={{
-                                          background: "#ffffff",
-                                          borderColor: "#bfdbfe",
-                                          boxShadow:
-                                            "0 6px 14px rgba(15, 23, 42, 0.12)",
-                                          color: "#2563eb",
-                                        }}
+                                        style={floatingActionButtonStyle}
                                         type="primary"
                                       />
                                     </Tooltip>

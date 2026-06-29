@@ -73,13 +73,17 @@ function MyEditor({ initialValue, onBlur, onChange }: Props) {
   return (
     <div
       onBlur={onBlur}
-      style={{ border: "1px solid #ccc", marginTop: "15px", zIndex: 100 }}
+      style={{
+        border: "1px solid var(--app-border)",
+        marginTop: "15px",
+        zIndex: 100,
+      }}
     >
       <Toolbar
         defaultConfig={toolbarConfig}
         editor={editor}
         mode="default"
-        style={{ borderBottom: "1px solid #ccc" }}
+        style={{ borderBottom: "1px solid var(--app-border)" }}
       />
       <Editor
         defaultConfig={editorConfig}

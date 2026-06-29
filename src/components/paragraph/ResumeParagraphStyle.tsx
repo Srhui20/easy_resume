@@ -87,7 +87,7 @@ export default function ResumeParagraphStyle() {
         <div>
           {/* 文本 */}
           <div className="mb-[20px] flex flex-col">
-            <div className="mb-[10px] text-gray-600">文本</div>
+            <div className="mb-[10px] text-[var(--app-textMuted)]">文本</div>
             <Input
               onBlur={() => endHistorySession("titleLabel")}
               onChange={(e) => editLabel(e.target.value)}
@@ -100,7 +100,7 @@ export default function ResumeParagraphStyle() {
           {/* 字体大小和颜色 */}
           <div className="mb-[20px] flex w-full justify-between gap-[80px]">
             <div className="flex flex-1 flex-col">
-              <div className="mb-[10px] text-gray-600">大小</div>
+              <div className="mb-[10px] text-[var(--app-textMuted)]">大小</div>
               <div className="flex w-full justify-center">
                 <InputNumber
                   className="flex-1"
@@ -122,7 +122,7 @@ export default function ResumeParagraphStyle() {
               </div>
             </div>
             <div className="flex flex-1 flex-col">
-              <div className="mb-[10px] text-gray-600">颜色</div>
+              <div className="mb-[10px] text-[var(--app-textMuted)]">颜色</div>
               <ColorPicker
                 onChange={editFontColor}
                 showText
@@ -134,7 +134,9 @@ export default function ResumeParagraphStyle() {
           {/* 背景色和下边框颜色 */}
           <div className="mb-[20px] flex w-full justify-between gap-[80px]">
             <div className="flex flex-1 flex-col">
-              <div className="mb-[10px] text-gray-600">背景色</div>
+              <div className="mb-[10px] text-[var(--app-textMuted)]">
+                背景色
+              </div>
               <div className="flex w-full justify-center">
                 <ColorPicker
                   onChange={editBgColor}
@@ -147,7 +149,9 @@ export default function ResumeParagraphStyle() {
               </div>
             </div>
             <div className="flex flex-1 flex-col">
-              <div className="mb-[10px] text-gray-600">下边框颜色</div>
+              <div className="mb-[10px] text-[var(--app-textMuted)]">
+                下边框颜色
+              </div>
               <ColorPicker
                 onChange={editBorderBgColor}
                 showText
@@ -158,12 +162,12 @@ export default function ResumeParagraphStyle() {
           </div>
           {/* 样式 */}
           <div className="flex h-[50px] items-center">
-            <div className="mr-[10px] text-gray-600">样式</div>
-            <div className="flex h-full w-[110px] justify-center gap-[4px] rounded-lg bg-gray-100 p-[3px] pr-[8px] pl-[8px]">
+            <div className="mr-[10px] text-[var(--app-textMuted)]">样式</div>
+            <div className="flex h-full w-[110px] justify-center gap-[4px] rounded-lg bg-[var(--app-panelAlt)] p-[3px] pr-[8px] pl-[8px]">
               {fontStylesList.map((item) => (
                 <Tooltip key={item.key} title={item.label}>
                   <div
-                    className={`flex w-[30px] cursor-pointer items-center justify-center rounded-lg ${item.isChoose ? "bg-blue-200 text-blue-500" : "hover:bg-gray-300"}`}
+                    className={`flex w-[30px] cursor-pointer items-center justify-center rounded-lg ${item.isChoose ? "bg-[var(--app-accentSoft)] text-[var(--app-accent)]" : "hover:bg-[var(--app-accentSoft)]"}`}
                     onClick={() => editFontStyle(item)}
                   >
                     {iconMap[item.icon]}
@@ -182,7 +186,7 @@ export default function ResumeParagraphStyle() {
             <Button
               icon={<AppstoreAddOutlined />}
               onClick={createParagraphArr}
-              style={{ color: "#171717" }}
+              style={{ color: "var(--app-accent)" }}
               type="link"
             >
               新增
@@ -191,7 +195,7 @@ export default function ResumeParagraphStyle() {
 
           {currentNode?.paragraphArr?.map((item, index) => (
             <div
-              className="flex items-center bg-[#f7f7f7] p-[5px]"
+              className="flex items-center border border-[var(--app-border)] bg-[var(--app-panel)] p-[5px]"
               key={item.id}
             >
               <motion.div

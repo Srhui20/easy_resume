@@ -37,8 +37,13 @@ export default function ResumeOperation() {
               title={btn.key === "import" ? "仅支持导入 本站导出的文件" : ""}
             >
               <motion.div
-                className="relative flex h-[68px] cursor-pointer flex-col items-center justify-center rounded-md border border-[#e5e7eb] bg-white p-1 text-[#374151] transition-colors hover:border-[#bfdbfe] hover:bg-[#eff6ff] hover:text-[#2563eb]"
+                className="relative flex h-[68px] cursor-pointer flex-col items-center justify-center rounded-md border p-1 transition-colors hover:border-[var(--app-accent)] hover:bg-[var(--app-accentSoft)] hover:text-[var(--app-accent)]"
                 onClick={() => handleClick(btn)}
+                style={{
+                  background: "var(--app-panel)",
+                  borderColor: "var(--app-border)",
+                  color: "var(--app-text)",
+                }}
                 whileHover={{
                   scale: 1.02,
                   transition: { duration: 0.1 },

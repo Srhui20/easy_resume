@@ -1,8 +1,62 @@
 @import "tailwindcss";
 
+:root {
+  --app-accent: #2563eb;
+  --app-accentHover: #1d4ed8;
+  --app-accentSoft: #eff6ff;
+  --app-bg: #f5f7fb;
+  --app-border: #dbe4f0;
+  --app-canvas: #eef3fb;
+  --app-panel: #ffffff;
+  --app-panelAlt: #fbfcfe;
+  --app-text: #111827;
+  --app-textMuted: #64748b;
+}
+
+body {
+  color: var(--app-text);
+  background: var(--app-bg);
+}
+
+@media screen and (max-width: 768px) {
+  /* 针对所有输入控件 */
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}
+
+[data-app-theme-mode="dark"] .ant-input,
+[data-app-theme-mode="dark"] .ant-input-number,
+[data-app-theme-mode="dark"] .ant-picker,
+[data-app-theme-mode="dark"] .ant-select-selector {
+  color: var(--app-text);
+  background: #253349;
+  border-color: var(--app-border);
+}
+
+[data-app-theme-mode="dark"] .ant-input::placeholder {
+  color: var(--app-textMuted);
+}
+
+[data-app-theme-mode="dark"] .ant-form-item-label > label,
+[data-app-theme-mode="dark"] .ant-picker-input > input,
+[data-app-theme-mode="dark"] .ant-tabs-tab,
+[data-app-theme-mode="dark"] .ant-tabs-tab-btn {
+  color: var(--app-text);
+}
+
+[data-app-theme-mode="dark"] .w-e-bar,
+[data-app-theme-mode="dark"] .w-e-text-container,
+[data-app-theme-mode="dark"] .w-e-text-container [data-slate-editor] {
+  color: #111827;
+  background: #ffffff;
+}
+
 .choose_label {
-  border: 1px solid #2563eb !important;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  border: 1px solid var(--app-accent) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--app-accent) 16%, transparent);
 }
 
 .align_label {
@@ -35,7 +89,8 @@ ol {
 
 /* 兼容 Firefox 的滚动条 */
 * {
-  scrollbar-color: #cbd5e1 transparent; /* thumb 轨道 */
+  scrollbar-color: color-mix(in srgb, var(--app-accent) 32%, #cbd5e1)
+    transparent; /* thumb 轨道 */
   scrollbar-width: thin; /* thumb 轨道 */
 }
 
@@ -54,13 +109,13 @@ ol {
 /* 滑块 */
 ::-webkit-scrollbar-thumb {
   cursor: pointer;
-  background-color: #cbd5e1;
+  background-color: color-mix(in srgb, var(--app-accent) 32%, #cbd5e1);
   border-radius: 5px;
 }
 
 /* Hover */
 ::-webkit-scrollbar-thumb:hover {
-  background-color: #94a3b8;
+  background-color: color-mix(in srgb, var(--app-accent) 48%, #94a3b8);
 }
 
 /* 横纵滚动条交汇处 */
@@ -72,13 +127,4 @@ ol {
 
 .markdown-box * {
   all: revert;
-}
-
-@media screen and (max-width: 768px) {
-  /* 针对所有输入控件 */
-  input,
-  textarea,
-  select {
-    font-size: 16px !important;
-  }
 }
