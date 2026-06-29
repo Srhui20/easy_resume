@@ -6,7 +6,6 @@ import {
   GithubOutlined,
   LoadingOutlined,
   MenuOutlined,
-  OpenAIOutlined,
   SettingOutlined,
   SketchOutlined,
 } from "@ant-design/icons";
@@ -33,7 +32,6 @@ import { usePrintStore } from "@/lib/store/print";
 import { usePublicStore } from "@/lib/store/public";
 import { useUndoStore } from "@/lib/store/undo";
 import type { OperationBtnType, PAGE_ATTRIBUTE } from "@/types/resume";
-import AiMessageDialog from "./components/AiMessageDialog";
 import { ChooseTheme } from "./components/ChooseTheme";
 import MainContainer from "./components/MainContainer";
 import RightInfo from "./components/RightInfo";
@@ -166,16 +164,6 @@ export default function Dashboard() {
       type: "link",
     },
     {
-      handleFunc: () => setAiMessageOpen(true),
-      isTip: false,
-      key: "ai",
-      label: "AI 点评",
-      style: {
-        color: "#9ca3af",
-      },
-      type: "link",
-    },
-    {
       handleFunc: () => setSystemDialogOpen(true),
       isTip: false,
       key: "system",
@@ -188,7 +176,6 @@ export default function Dashboard() {
   ];
 
   const iconMap: { [key: string]: React.ReactNode } = {
-    ai: <OpenAIOutlined />,
     download: <DownloadOutlined />,
     system: <DesktopOutlined />,
     theme: <SketchOutlined />,
@@ -251,7 +238,6 @@ export default function Dashboard() {
   };
 
   const [systemDialogOpen, setSystemDialogOpen] = useState(false);
-  const [aiMessageOpen, setAiMessageOpen] = useState(false);
   const [themeOpen, setThemeOpen] = useState(false);
 
   const currentNode: PAGE_ATTRIBUTE | null = usePublicStore((state) => {
@@ -297,13 +283,6 @@ export default function Dashboard() {
           onCancel={() => setSystemDialogOpen(false)}
         />
       )}
-      {/* ai弹框 */}
-      {aiMessageOpen && (
-        <AiMessageDialog
-          dialogOpen={aiMessageOpen}
-          onCancel={() => setAiMessageOpen(false)}
-        />
-      )}
       {themeOpen && (
         <ChooseTheme
           dialogOpen={themeOpen}
@@ -337,7 +316,6 @@ export default function Dashboard() {
               .map((btn) => (
                 <Button
                   className="font-medium"
-                  disabled={btn.key === "ai"}
                   icon={iconMap[btn.key]}
                   key={btn.key}
                   onClick={() => btn.handleFunc()}
