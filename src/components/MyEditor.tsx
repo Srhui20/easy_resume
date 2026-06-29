@@ -7,6 +7,7 @@ import { memo, useCallback, useEffect, useRef, useState } from "react";
 
 interface Props {
   initialValue: string;
+  onBlur?: () => void;
   onChange: (val: string) => void;
 }
 
@@ -32,7 +33,7 @@ const editorConfig = {
   placeholder: "请输入内容...",
 };
 
-function MyEditor({ initialValue, onChange }: Props) {
+function MyEditor({ initialValue, onBlur, onChange }: Props) {
   const [editor, setEditor] = useState<IDomEditor | null>(null);
   const skipInitialChangeRef = useRef(false);
 
@@ -70,7 +71,10 @@ function MyEditor({ initialValue, onChange }: Props) {
   }, [editor]);
 
   return (
-    <div style={{ border: "1px solid #ccc", marginTop: "15px", zIndex: 100 }}>
+    <div
+      onBlur={onBlur}
+      style={{ border: "1px solid #ccc", marginTop: "15px", zIndex: 100 }}
+    >
       <Toolbar
         defaultConfig={toolbarConfig}
         editor={editor}

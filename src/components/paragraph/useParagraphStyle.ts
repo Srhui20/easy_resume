@@ -1,7 +1,7 @@
 import { useThrottleFn } from "ahooks";
 import { message } from "antd";
 import type { Color } from "antd/es/color-picker";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { useTypesetting } from "@/lib/hooks/useTypesetting";
 import { usePrintStore } from "@/lib/store/print";
@@ -14,6 +14,7 @@ export const useParagraph = () => {
   const resumeData = usePublicStore((state) => state.resumeData);
   const setPrintResumeData = usePrintStore((state) => state.setPrintResumeData);
   const setUndoList = useUndoStore.getState().setUndoList;
+  const historySessionRef = useRef<string | null>(null);
 
   const [activeKey, setActiveKey] = useState("text");
 
@@ -23,6 +24,45 @@ export const useParagraph = () => {
     if (!state.chooseId) return null;
     return state.resumeData[state.attributeIndex];
   });
+
+  const beginHistorySession = useCallback(
+    (key: string) => {
+      if (historySessionRef.current === key) return;
+      historySessionRef.current = key;
+      setUndoList(usePublicStore.getState().resumeData);
+    },
+    [setUndoList],
+  );
+
+  const endHistorySession = useCallback((key?: string) => {
+    if (!key || historySessionRef.current === key) {
+      historySessionRef.current = null;
+    }
+  }, []);
+
+  const recordHistory = useCallback(
+    (key: string) => {
+      beginHistorySession(key);
+    },
+    [beginHistorySession],
+  );
+
+  const recordPointerHistory = useCallback(
+    (key: string) => {
+      if (historySessionRef.current === key) return;
+      historySessionRef.current = key;
+      setUndoList(usePublicStore.getState().resumeData);
+
+      window.addEventListener(
+        "pointerup",
+        () => {
+          historySessionRef.current = null;
+        },
+        { once: true },
+      );
+    },
+    [setUndoList],
+  );
 
   const fontStylesList: BaseInfoFontStyleType[] = useMemo(
     () => [
@@ -56,6 +96,7 @@ export const useParagraph = () => {
 
   const editLabel = (value: string) => {
     if (!currentNode) return;
+    recordHistory("titleLabel");
     updateResumeData({
       ...currentNode,
       titleInfo: {
@@ -63,11 +104,11 @@ export const useParagraph = () => {
         style: currentNode.titleInfo?.style ?? {},
       },
     });
-    setUndoList(resumeData);
   };
 
   const editFontSize = (val: number | null) => {
     if (!currentNode) return;
+    recordHistory("titleFontSize");
     updateResumeData({
       ...currentNode,
       titleInfo: {
@@ -78,11 +119,11 @@ export const useParagraph = () => {
         },
       },
     });
-    setUndoList(resumeData);
   };
 
   const editFontColor = (_: Color, css: string) => {
     if (!currentNode) return;
+    recordPointerHistory("titleFontColor");
     updateResumeData({
       ...currentNode,
       titleInfo: {
@@ -93,11 +134,11 @@ export const useParagraph = () => {
         },
       },
     });
-    setUndoList(resumeData);
   };
 
   const editBgColor = (_: Color, css: string) => {
     if (!currentNode) return;
+    recordPointerHistory("titleBgColor");
     updateResumeData({
       ...currentNode,
       titleInfo: {
@@ -108,11 +149,11 @@ export const useParagraph = () => {
         },
       },
     });
-    setUndoList(resumeData);
   };
 
   const editBorderBgColor = (_: Color, css: string) => {
     if (!currentNode) return;
+    recordPointerHistory("borderBgColor");
     updateResumeData({
       ...currentNode,
       borderStyle: {
@@ -120,12 +161,12 @@ export const useParagraph = () => {
         backgroundColor: css,
       },
     });
-    setUndoList(resumeData);
   };
 
   const editFontStyle = (editItem: BaseInfoFontStyleType) => {
     const { isChoose, defaultValue, key } = editItem;
     if (!currentNode) return;
+    setUndoList(resumeData);
     updateResumeData({
       ...currentNode,
       titleInfo: {
@@ -136,11 +177,11 @@ export const useParagraph = () => {
         },
       },
     });
-    setUndoList(resumeData);
   };
 
   const editMainName = (id: string, value: string) => {
     if (!currentNode) return;
+    recordHistory(`mainName:${id}`);
     updateResumeData({
       ...currentNode,
       paragraphArr:
@@ -151,11 +192,11 @@ export const useParagraph = () => {
           };
         }) ?? [],
     });
-    setUndoList(resumeData);
   };
 
   const editDate = (id: string, val: null | string[]) => {
     if (!currentNode) return;
+    setUndoList(usePublicStore.getState().resumeData);
     updateResumeData({
       ...currentNode,
       paragraphArr:
@@ -167,11 +208,11 @@ export const useParagraph = () => {
           };
         }) ?? [],
     });
-    setUndoList(resumeData);
   };
 
   const editPosition = (id: string, value: string) => {
     if (!currentNode) return;
+    recordHistory(`position:${id}`);
     updateResumeData({
       ...currentNode,
       paragraphArr:
@@ -182,7 +223,6 @@ export const useParagraph = () => {
           };
         }) ?? [],
     });
-    setUndoList(resumeData);
   };
 
   const { run: createParagraphArr } = useThrottleFn(
@@ -190,6 +230,7 @@ export const useParagraph = () => {
       if (!currentNode?.paragraphArr) return;
       if (currentNode.paragraphArr?.length >= 10)
         return message.error("不可添加更多~");
+      setUndoList(resumeData);
       updateResumeData({
         ...currentNode,
         paragraphArr: [
@@ -206,7 +247,6 @@ export const useParagraph = () => {
         ],
       });
 
-      setUndoList(usePublicStore.getState().resumeData);
       setPrintData();
       requestAnimationFrame(() => {
         setPrintResumeData([]);
@@ -226,6 +266,7 @@ export const useParagraph = () => {
 
   return {
     activeKey,
+    beginHistorySession,
     colorPickerStyle,
     createParagraphArr,
     editBgColor,
@@ -237,6 +278,7 @@ export const useParagraph = () => {
     editLabel,
     editMainName,
     editPosition,
+    endHistorySession,
     fontStylesList,
     setActiveKey,
   };
@@ -249,6 +291,7 @@ export const useParagraphText = () => {
   });
 
   const updateResumeData = usePublicStore((state) => state.updateResumeData);
+  const resumeData = usePublicStore((state) => state.resumeData);
   const setPrintResumeData = usePrintStore((state) => state.setPrintResumeData);
   const setUndoList = useUndoStore.getState().setUndoList;
 
@@ -300,11 +343,11 @@ export const useParagraphText = () => {
       ...(currentNode?.paragraphArr?.slice(index + 1) || []),
     ];
 
+    setUndoList(resumeData);
     updateResumeData({
       ...(currentNode as PAGE_ATTRIBUTE),
       paragraphArr: newArr,
     });
-    setUndoList(usePublicStore.getState().resumeData);
     setPrintData();
     requestAnimationFrame(() => {
       setPrintResumeData([]);
@@ -312,11 +355,11 @@ export const useParagraphText = () => {
   };
 
   const deleteText = (index: number) => {
+    setUndoList(resumeData);
     updateResumeData({
       ...(currentNode as PAGE_ATTRIBUTE),
       paragraphArr: currentNode?.paragraphArr?.filter((_, i) => index !== i),
     });
-    setUndoList(usePublicStore.getState().resumeData);
     setPrintData();
     requestAnimationFrame(() => {
       setPrintResumeData([]);
@@ -327,6 +370,7 @@ export const useParagraphText = () => {
     if (index === (currentNode?.paragraphArr?.length || 1) - 1) return;
     const arr = [...(currentNode?.paragraphArr ?? [])];
     [arr[index], arr[index + 1]] = [arr[index + 1], arr[index]];
+    setUndoList(resumeData);
     updateResumeData({
       ...(currentNode as PAGE_ATTRIBUTE),
       paragraphArr: [],
@@ -336,7 +380,6 @@ export const useParagraphText = () => {
         ...(currentNode as PAGE_ATTRIBUTE),
         paragraphArr: arr,
       });
-      setUndoList(usePublicStore.getState().resumeData);
 
       setPrintData();
       requestAnimationFrame(() => {
@@ -349,6 +392,7 @@ export const useParagraphText = () => {
     if (index === 0) return;
     const arr = [...(currentNode?.paragraphArr ?? [])];
     [arr[index], arr[index - 1]] = [arr[index - 1], arr[index]];
+    setUndoList(resumeData);
     updateResumeData({
       ...(currentNode as PAGE_ATTRIBUTE),
       paragraphArr: [],

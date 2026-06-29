@@ -1,6 +1,7 @@
 import dynamic from "next/dynamic";
-import { memo, useCallback } from "react";
+import { memo, useCallback, useRef } from "react";
 import { usePublicStore } from "@/lib/store/public";
+import { useUndoStore } from "@/lib/store/undo";
 
 const MyEditor = dynamic(() => import("../MyEditor"), { ssr: false });
 
@@ -13,6 +14,8 @@ export const EditorWrapper = memo(
     paragraphId: string;
   }) {
     const setResumeData = usePublicStore((state) => state.setResumeData);
+    const setUndoList = useUndoStore((state) => state.setUndoList);
+    const hasRecordedHistoryRef = useRef(false);
     const nodeId = usePublicStore((state) => {
       const node = state.resumeData[attributeIndex];
       return node?.id;
@@ -26,6 +29,11 @@ export const EditorWrapper = memo(
       (val: string) => {
         const currentState = usePublicStore.getState();
         if (!nodeId) return;
+
+        if (!hasRecordedHistoryRef.current) {
+          setUndoList(currentState.resumeData);
+          hasRecordedHistoryRef.current = true;
+        }
 
         setResumeData(
           currentState.resumeData.map((node) => {
@@ -44,13 +52,18 @@ export const EditorWrapper = memo(
           }),
         );
       },
-      [nodeId, paragraphId, setResumeData],
+      [nodeId, paragraphId, setResumeData, setUndoList],
     );
+
+    const resetHistoryRecord = useCallback(() => {
+      hasRecordedHistoryRef.current = false;
+    }, []);
 
     return (
       <MyEditor
         initialValue={paragraphValue ?? ""}
         key={paragraphId}
+        onBlur={resetHistoryRecord}
         onChange={editPageContent}
       />
     );

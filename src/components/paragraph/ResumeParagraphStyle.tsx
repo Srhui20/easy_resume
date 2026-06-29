@@ -30,20 +30,22 @@ export default function ResumeParagraphStyle() {
   const attributeIndex = usePublicStore((state) => state.attributeIndex);
 
   const {
-    fontStylesList,
+    activeKey,
+    beginHistorySession,
+    colorPickerStyle,
+    createParagraphArr,
     editBgColor,
     editBorderBgColor,
     editDate,
+    fontStylesList,
     editFontColor,
     editFontSize,
     editFontStyle,
     editLabel,
     editMainName,
     editPosition,
-    createParagraphArr,
-    activeKey,
+    endHistorySession,
     setActiveKey,
-    colorPickerStyle,
   } = useParagraph();
 
   // 订阅 currentNode 的其他属性（用于样式等）
@@ -87,7 +89,9 @@ export default function ResumeParagraphStyle() {
           <div className="mb-[20px] flex flex-col">
             <div className="mb-[10px] text-gray-600">文本</div>
             <Input
+              onBlur={() => endHistorySession("titleLabel")}
               onChange={(e) => editLabel(e.target.value)}
+              onFocus={() => beginHistorySession("titleLabel")}
               size="large"
               style={{ fontSize: "16px", height: "50px" }}
               value={currentNode?.titleInfo?.label}
@@ -100,7 +104,9 @@ export default function ResumeParagraphStyle() {
               <div className="flex w-full justify-center">
                 <InputNumber
                   className="flex-1"
+                  onBlur={() => endHistorySession("titleFontSize")}
                   onChange={editFontSize}
+                  onFocus={() => beginHistorySession("titleFontSize")}
                   size="large"
                   style={{ fontSize: "16px", height: "50px", width: "100%" }}
                   suffix="PX"
@@ -118,10 +124,10 @@ export default function ResumeParagraphStyle() {
             <div className="flex flex-1 flex-col">
               <div className="mb-[10px] text-gray-600">颜色</div>
               <ColorPicker
-                defaultValue={currentNode?.titleInfo?.style.color ?? "#000"}
                 onChange={editFontColor}
                 showText
                 style={colorPickerStyle}
+                value={currentNode?.titleInfo?.style.color ?? "#000"}
               />
             </div>
           </div>
@@ -131,24 +137,22 @@ export default function ResumeParagraphStyle() {
               <div className="mb-[10px] text-gray-600">背景色</div>
               <div className="flex w-full justify-center">
                 <ColorPicker
-                  defaultValue={
-                    currentNode?.titleInfo?.style.backgroundColor ?? "#000"
-                  }
                   onChange={editBgColor}
                   showText
                   style={colorPickerStyle}
+                  value={
+                    currentNode?.titleInfo?.style.backgroundColor ?? "#000"
+                  }
                 />
               </div>
             </div>
             <div className="flex flex-1 flex-col">
               <div className="mb-[10px] text-gray-600">下边框颜色</div>
               <ColorPicker
-                defaultValue={
-                  currentNode?.borderStyle?.backgroundColor ?? "#000"
-                }
                 onChange={editBorderBgColor}
                 showText
                 style={colorPickerStyle}
+                value={currentNode?.borderStyle?.backgroundColor ?? "#000"}
               />
             </div>
           </div>

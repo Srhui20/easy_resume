@@ -59,8 +59,8 @@ export const useParagraphBtnFun = () => {
         },
       };
     });
+    setUndoList(resumeData);
     setResumeData(arr);
-    setUndoList(usePublicStore.getState().resumeData);
     setPrintData();
     requestAnimationFrame(() => {
       setPrintResumeData([]);
@@ -88,9 +88,9 @@ export const useParagraphBtnFun = () => {
         top: arrIndexItem.style.top,
       },
     };
+    setUndoList(resumeData);
     clearChoose();
     setResumeData(arr);
-    setUndoList(usePublicStore.getState().resumeData);
     setPrintData();
     requestAnimationFrame(() => {
       setPrintResumeData([]);
@@ -123,9 +123,9 @@ export const useParagraphBtnFun = () => {
         top: arrIndexItem.style.top,
       },
     };
+    setUndoList(resumeData);
     clearChoose();
     setResumeData(arr);
-    setUndoList(usePublicStore.getState().resumeData);
     setPrintData();
     requestAnimationFrame(() => {
       setPrintResumeData([]);
@@ -134,9 +134,9 @@ export const useParagraphBtnFun = () => {
   };
 
   const delParagraph = (index: number) => {
+    setUndoList(resumeData);
     clearChoose();
     setResumeData(resumeData.filter((_, i) => i !== index));
-    setUndoList(usePublicStore.getState().resumeData);
     setPrintData();
     requestAnimationFrame(() => {
       setPrintResumeData([]);
@@ -175,9 +175,9 @@ export const useBaseInfoBtnFun = () => {
   ];
 
   const delBaseInfo = (index: number) => {
+    setUndoList(resumeData);
     clearChoose();
     setResumeData(resumeData.filter((_, i) => i !== index));
-    setUndoList(usePublicStore.getState().resumeData);
     setPrintData();
     requestAnimationFrame(() => {
       setPrintResumeData([]);

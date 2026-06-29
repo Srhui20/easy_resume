@@ -1,5 +1,5 @@
 import type { Color } from "antd/es/color-picker";
-import { useMemo } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import { usePublicStore } from "@/lib/store/public";
 import { useUndoStore } from "@/lib/store/undo";
 import type { BaseInfoFontStyleType, PAGE_ATTRIBUTE } from "@/types/resume";
@@ -7,6 +7,46 @@ import type { BaseInfoFontStyleType, PAGE_ATTRIBUTE } from "@/types/resume";
 export const useBaseInfoStyle = () => {
   const { updateResumeData, resumeData } = usePublicStore();
   const setUndoList = useUndoStore.getState().setUndoList;
+  const historySessionRef = useRef<string | null>(null);
+
+  const beginHistorySession = useCallback(
+    (key: string) => {
+      if (historySessionRef.current === key) return;
+      historySessionRef.current = key;
+      setUndoList(usePublicStore.getState().resumeData);
+    },
+    [setUndoList],
+  );
+
+  const endHistorySession = useCallback((key?: string) => {
+    if (!key || historySessionRef.current === key) {
+      historySessionRef.current = null;
+    }
+  }, []);
+
+  const recordHistory = useCallback(
+    (key: string) => {
+      beginHistorySession(key);
+    },
+    [beginHistorySession],
+  );
+
+  const recordPointerHistory = useCallback(
+    (key: string) => {
+      if (historySessionRef.current === key) return;
+      historySessionRef.current = key;
+      setUndoList(usePublicStore.getState().resumeData);
+
+      window.addEventListener(
+        "pointerup",
+        () => {
+          historySessionRef.current = null;
+        },
+        { once: true },
+      );
+    },
+    [setUndoList],
+  );
 
   const currentNode: PAGE_ATTRIBUTE | null = usePublicStore((state) => {
     if (!state.chooseId) return null;
@@ -45,15 +85,16 @@ export const useBaseInfoStyle = () => {
 
   const editLabel = (value: string) => {
     if (!currentNode) return;
+    recordHistory("label");
     updateResumeData({
       ...currentNode,
       pageLabel: value,
     });
-    setUndoList(resumeData);
   };
 
   const editFontSize = (val: number | null) => {
     if (!currentNode) return;
+    recordHistory("fontSize");
     updateResumeData({
       ...currentNode,
       style: {
@@ -61,11 +102,11 @@ export const useBaseInfoStyle = () => {
         fontSize: val ? `${val}px` : "18px",
       },
     });
-    setUndoList(resumeData);
   };
 
   const editFontColor = (_: Color, css: string) => {
     if (!currentNode) return;
+    recordPointerHistory("fontColor");
     updateResumeData({
       ...currentNode,
       style: {
@@ -73,11 +114,11 @@ export const useBaseInfoStyle = () => {
         color: css,
       },
     });
-    setUndoList(resumeData);
   };
 
   const editLeft = (val: number | null) => {
     if (!currentNode) return;
+    recordHistory("left");
     updateResumeData({
       ...currentNode,
       style: {
@@ -85,10 +126,10 @@ export const useBaseInfoStyle = () => {
         left: val ? `${val}px` : "40px",
       },
     });
-    setUndoList(resumeData);
   };
   const editTop = (val: number | null) => {
     if (!currentNode) return;
+    recordHistory("top");
     updateResumeData({
       ...currentNode,
       style: {
@@ -96,13 +137,13 @@ export const useBaseInfoStyle = () => {
         top: val ? `${val}px` : "40px",
       },
     });
-    setUndoList(resumeData);
   };
 
   const editFontStyle = (editItem: BaseInfoFontStyleType) => {
     const { isChoose, defaultValue, key } = editItem;
 
     if (!currentNode) return;
+    setUndoList(resumeData);
     updateResumeData({
       ...currentNode,
       style: {
@@ -110,15 +151,16 @@ export const useBaseInfoStyle = () => {
         [editItem.styleKey]: isChoose ? defaultValue : key,
       },
     });
-    setUndoList(resumeData);
   };
   return {
+    beginHistorySession,
     editFontColor,
     editFontSize,
     editFontStyle,
     editLabel,
     editLeft,
     editTop,
+    endHistorySession,
     fontStylesList,
   };
 };

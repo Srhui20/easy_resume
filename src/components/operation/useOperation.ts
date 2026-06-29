@@ -18,8 +18,12 @@ export const useOperation = () => {
   const setResumeData = usePublicStore((state) => state.setResumeData);
   const clearChoose = usePublicStore((state) => state.clearChoose);
 
-  const { undoList, redoList, toSetUndo, toSetRedo, setUndoList } =
-    useUndoStore();
+  const undoList = useUndoStore((state) => state.undoList);
+  const redoList = useUndoStore((state) => state.redoList);
+  const toSetUndo = useUndoStore((state) => state.toSetUndo);
+  const toSetRedo = useUndoStore((state) => state.toSetRedo);
+  const setUndoList = useUndoStore((state) => state.setUndoList);
+  const resetHistory = useUndoStore((state) => state.resetHistory);
 
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -103,6 +107,7 @@ export const useOperation = () => {
         });
       maxNum = parseFloat((maxItem.style.top as string) || "0");
     }
+    setUndoList(resumeData);
     createData({
       className: "absolute",
       id: uuid,
@@ -114,7 +119,6 @@ export const useOperation = () => {
       },
       type: "baseInfo",
     });
-    setUndoList(resumeData);
     setChooseResumeData(uuid);
   };
 
@@ -151,6 +155,7 @@ export const useOperation = () => {
     const dataId = uuidv4();
     const paraId = uuidv4();
 
+    setUndoList(resumeData);
     createData({
       borderStyle: {
         ...(maxItem?.borderStyle ?? {
@@ -189,7 +194,6 @@ export const useOperation = () => {
       },
       type: "paragraph",
     });
-    setUndoList(resumeData);
   };
 
   const delData = () => {
@@ -199,8 +203,8 @@ export const useOperation = () => {
         type: "error",
       });
     }
-    delAttribute();
     setUndoList(resumeData);
+    delAttribute();
   };
 
   const exportFile = () => {
@@ -224,26 +228,33 @@ export const useOperation = () => {
   };
 
   const toUndo = () => {
-    if (undoList.length <= 1) return;
-    toSetUndo();
-    setResumeData(undoList[undoList.length - 1]);
-    if (undoList.length === 0) {
-      setUndoList(resumeData);
-    }
+    if (!undoList.length) return;
+    const currentResumeData = usePublicStore.getState().resumeData;
+    const prevResumeData = toSetUndo(currentResumeData);
+    if (prevResumeData) setResumeData(prevResumeData);
   };
 
   const toRedo = () => {
     if (!redoList.length) return;
-    toSetRedo();
-    setResumeData(undoList[undoList.length - 1]);
+    const currentResumeData = usePublicStore.getState().resumeData;
+    const nextResumeData = toSetRedo(currentResumeData);
+    if (nextResumeData) setResumeData(nextResumeData);
   };
 
-  const { run: handleClick } = useThrottleFn(
+  const { run: throttledHandleClick } = useThrottleFn(
     (btn) => {
       btn.handleFunc();
     },
     { trailing: false, wait: 500 },
   );
+
+  const handleClick = (btn: OperationBtnType) => {
+    if (btn.key === "undo" || btn.key === "redo") {
+      btn.handleFunc();
+      return;
+    }
+    throttledHandleClick(btn);
+  };
 
   const toTypesetting = () => {
     clearChoose();
@@ -274,8 +285,9 @@ export const useOperation = () => {
               messageApi.info("已取消导入");
             },
             onOk() {
-              setResumeData(arr);
+              resetHistory();
               setUndoList(resumeData);
+              setResumeData(arr);
               clearChoose();
             },
             title: "导入文件",

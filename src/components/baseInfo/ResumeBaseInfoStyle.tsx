@@ -14,12 +14,14 @@ export default function ResumeBaseInfoStyle() {
   });
 
   const {
+    beginHistorySession,
     editFontColor,
     editFontSize,
     editFontStyle,
     editLabel,
     editLeft,
     editTop,
+    endHistorySession,
     fontStylesList,
   } = useBaseInfoStyle();
 
@@ -35,7 +37,9 @@ export default function ResumeBaseInfoStyle() {
       <div className="mb-[20px] flex flex-col">
         <div className="mb-[10px] text-gray-600">文本</div>
         <Input
+          onBlur={() => endHistorySession("label")}
           onChange={(e) => editLabel(e.target.value)}
+          onFocus={() => beginHistorySession("label")}
           size="large"
           style={{ fontSize: "16px", height: "50px" }}
           value={currentNode?.pageLabel}
@@ -48,7 +52,9 @@ export default function ResumeBaseInfoStyle() {
           <div className="flex w-full justify-center">
             <InputNumber
               className="flex-1"
+              onBlur={() => endHistorySession("fontSize")}
               onChange={editFontSize}
+              onFocus={() => beginHistorySession("fontSize")}
               size="large"
               style={{ fontSize: "16px", height: "50px", width: "100%" }}
               suffix="PX"
@@ -63,7 +69,6 @@ export default function ResumeBaseInfoStyle() {
         <div className="flex flex-1 flex-col">
           <div className="mb-[10px] text-gray-600">颜色</div>
           <ColorPicker
-            defaultValue={currentNode?.style?.color ?? "#000"}
             onChange={editFontColor}
             showText
             style={{
@@ -74,6 +79,7 @@ export default function ResumeBaseInfoStyle() {
               paddingLeft: "20px",
               width: "100%",
             }}
+            value={currentNode?.style?.color ?? "#000"}
           />
         </div>
       </div>
@@ -84,7 +90,9 @@ export default function ResumeBaseInfoStyle() {
           <div className="flex w-full justify-center">
             <InputNumber
               className="flex-1"
+              onBlur={() => endHistorySession("left")}
               onChange={editLeft}
+              onFocus={() => beginHistorySession("left")}
               size="large"
               style={{ fontSize: "16px", height: "50px", width: "100%" }}
               suffix="PX"
@@ -101,7 +109,9 @@ export default function ResumeBaseInfoStyle() {
           <div className="flex w-full justify-center">
             <InputNumber
               className="flex-1"
+              onBlur={() => endHistorySession("top")}
               onChange={editTop}
+              onFocus={() => beginHistorySession("top")}
               size="large"
               style={{ fontSize: "16px", height: "50px", width: "100%" }}
               suffix="PX"

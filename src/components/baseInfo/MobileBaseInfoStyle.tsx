@@ -16,12 +16,14 @@ export default function MobileBaseInfoStyle() {
   });
 
   const {
+    beginHistorySession,
     editFontColor,
     editFontSize,
     editFontStyle,
     editLabel,
     editLeft,
     editTop,
+    endHistorySession,
     fontStylesList,
   } = useBaseInfoStyle();
 
@@ -34,14 +36,18 @@ export default function MobileBaseInfoStyle() {
     <div className="flex flex-col">
       <Input
         label="文本"
+        onBlur={() => endHistorySession("label")}
         onChange={(val) => editLabel(val as string)}
+        onFocus={() => beginHistorySession("label")}
         placeholder="请输入"
         value={currentNode?.pageLabel}
       />
       <Input
         align="right"
         label="大小"
+        onBlur={() => endHistorySession("fontSize")}
         onChange={(val) => editFontSize(val as number)}
+        onFocus={() => beginHistorySession("fontSize")}
         placeholder="请输入"
         suffix="PX"
         type="number"
@@ -54,7 +60,6 @@ export default function MobileBaseInfoStyle() {
       <div className="t-input--border flex items-center p-[16px]">
         <div className="w-[80px]">颜色</div>
         <ColorPicker
-          defaultValue={currentNode?.style?.color ?? "#000"}
           onChange={editFontColor}
           showText
           style={{
@@ -64,12 +69,15 @@ export default function MobileBaseInfoStyle() {
             paddingLeft: "20px",
             width: "100%",
           }}
+          value={currentNode?.style?.color ?? "#000"}
         />
       </div>
       <Input
         align="right"
         label="X轴"
+        onBlur={() => endHistorySession("left")}
         onChange={(val) => editLeft(val as number)}
+        onFocus={() => beginHistorySession("left")}
         placeholder="请输入"
         suffix="PX"
         type="number"
@@ -82,7 +90,9 @@ export default function MobileBaseInfoStyle() {
       <Input
         align="right"
         label="Y轴"
+        onBlur={() => endHistorySession("top")}
         onChange={(val) => editTop(val as number)}
+        onFocus={() => beginHistorySession("top")}
         placeholder="请输入"
         suffix="PX"
         type="number"

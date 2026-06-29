@@ -8,6 +8,7 @@ import style1 from "@/lib/resume_sytle/style1";
 import style2 from "@/lib/resume_sytle/style2";
 import style3 from "@/lib/resume_sytle/style3";
 import { usePublicStore } from "@/lib/store/public";
+import { useUndoStore } from "@/lib/store/undo";
 import type { PAGE_ATTRIBUTE } from "@/types/resume";
 
 interface ThemeProps {
@@ -18,6 +19,7 @@ interface ThemeProps {
 export function ChooseTheme({ dialogOpen, onCancel }: ThemeProps) {
   const resumeData = usePublicStore((state) => state.resumeData);
   const setResumeData = usePublicStore((state) => state.setResumeData);
+  const setUndoList = useUndoStore((state) => state.setUndoList);
 
   const themeList = [
     { img: Image1, key: "1", style: style1 },
@@ -49,6 +51,7 @@ export function ChooseTheme({ dialogOpen, onCancel }: ThemeProps) {
       };
     });
 
+    setUndoList(resumeData);
     setResumeData(arr);
     message.success("设置成功");
     onCancel();

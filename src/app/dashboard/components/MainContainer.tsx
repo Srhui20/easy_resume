@@ -40,7 +40,8 @@ export default function MainContainer() {
   const setChooseValue = usePublicStore((state) => state.setChooseValue);
   const clearChoose = usePublicStore((state) => state.clearChoose);
 
-  const setUndoList = useUndoStore.getState().setUndoList;
+  const resetHistory = useUndoStore((state) => state.resetHistory);
+  const setUndoList = useUndoStore((state) => state.setUndoList);
   const printResumeData = usePrintStore.getState().printResumeData;
 
   const [pageHeight, setPageHeight] = useState(1123);
@@ -74,9 +75,9 @@ export default function MainContainer() {
       localStorage.getItem("resumeData") || JSON.stringify(resumeStyle1),
     );
 
-    setUndoList(localData);
+    resetHistory();
     setResumeData(localData);
-  }, [setResumeData, setUndoList]);
+  }, [resetHistory, setResumeData]);
 
   const [position, setPosition] = useState({
     x: 0,
@@ -102,6 +103,7 @@ export default function MainContainer() {
     if ($e.ctrlKey || $e.metaKey) {
       return;
     }
+    setUndoList(usePublicStore.getState().resumeData);
     setPosition({
       x: $e.nativeEvent.clientX,
       y: $e.nativeEvent.clientY,
@@ -156,7 +158,6 @@ export default function MainContainer() {
       x: 0,
       y: 0,
     });
-    setUndoList(resumeData);
   };
 
   // 组件卸载时清理未完成的动画帧

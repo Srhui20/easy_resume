@@ -28,7 +28,10 @@ export default function MobileParagraphStyle() {
 
   const attributeIndex = usePublicStore((state) => state.attributeIndex);
   const {
-    fontStylesList,
+    activeKey,
+    beginHistorySession,
+    colorPickerStyle,
+    createParagraphArr,
     editBgColor,
     editBorderBgColor,
     // editDate,
@@ -38,10 +41,9 @@ export default function MobileParagraphStyle() {
     editLabel,
     editMainName,
     editPosition,
-    createParagraphArr,
-    activeKey,
+    endHistorySession,
+    fontStylesList,
     setActiveKey,
-    colorPickerStyle,
   } = useParagraph();
 
   const { arrBtnList, handleTextFun } = useParagraphText();
@@ -72,6 +74,7 @@ export default function MobileParagraphStyle() {
   const setDateTime = (val: string) => {
     if (!currentNode) return;
 
+    setUndoList(usePublicStore.getState().resumeData);
     updateResumeData({
       ...currentNode,
       paragraphArr:
@@ -88,7 +91,6 @@ export default function MobileParagraphStyle() {
             };
         }) ?? [],
     });
-    setUndoList(usePublicStore.getState().resumeData);
     setDateVisible(false);
   };
 
@@ -110,14 +112,18 @@ export default function MobileParagraphStyle() {
         <div className="flex flex-col">
           <Input
             label="文本"
+            onBlur={() => endHistorySession("titleLabel")}
             onChange={(val) => editLabel(val as string)}
+            onFocus={() => beginHistorySession("titleLabel")}
             placeholder="请输入"
             value={currentNode?.titleInfo?.label}
           />
           <Input
             align="right"
             label="大小"
+            onBlur={() => endHistorySession("titleFontSize")}
             onChange={(val) => editFontSize(val as number)}
+            onFocus={() => beginHistorySession("titleFontSize")}
             placeholder="请输入"
             suffix="PX"
             type="number"
@@ -130,30 +136,28 @@ export default function MobileParagraphStyle() {
           <div className="t-input--border flex items-center p-[16px]">
             <div className="w-[100px]">颜色</div>
             <ColorPicker
-              defaultValue={currentNode?.titleInfo?.style.color ?? "#000"}
               onChange={editFontColor}
               showText
               style={colorPickerStyle}
+              value={currentNode?.titleInfo?.style.color ?? "#000"}
             />
           </div>
           <div className="t-input--border flex items-center p-[16px]">
             <div className="w-[100px]">背景色</div>
             <ColorPicker
-              defaultValue={
-                currentNode?.titleInfo?.style.backgroundColor ?? "#000"
-              }
               onChange={editBgColor}
               showText
               style={colorPickerStyle}
+              value={currentNode?.titleInfo?.style.backgroundColor ?? "#000"}
             />
           </div>
           <div className="t-input--border flex items-center p-[16px]">
             <div className="w-[100px]">下边框颜色</div>
             <ColorPicker
-              defaultValue={currentNode?.borderStyle?.backgroundColor ?? "#000"}
               onChange={editBorderBgColor}
               showText
               style={colorPickerStyle}
+              value={currentNode?.borderStyle?.backgroundColor ?? "#000"}
             />
           </div>
           <div className="t-input--border flex items-center p-[16px]">
