@@ -1,6 +1,6 @@
 import { useMount } from "ahooks";
 import { Modal, message } from "antd";
-import { useState } from "react";
+import { useState, type CSSProperties } from "react";
 import Markdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 
@@ -9,22 +9,36 @@ interface SystemProps {
   onCancel: () => void;
 }
 
-interface menuType {
+interface MenuType {
+  fileName: string;
   key: string;
   title: string;
-  fileName: string;
 }
 
-export default function SystemDilaog({ dialogOpen, onCancel }: SystemProps) {
+const activeMenuStyle = {
+  background:
+    "color-mix(in srgb, var(--app-accent) 18%, var(--app-panel) 82%)",
+  boxShadow:
+    "inset 0 0 0 1px color-mix(in srgb, var(--app-accent) 24%, transparent)",
+  color: "var(--app-text)",
+} satisfies CSSProperties;
+
+const inactiveMenuStyle = {
+  color: "var(--app-textMuted)",
+} satisfies CSSProperties;
+
+export default function SystemDilaog({
+  dialogOpen,
+  onCancel,
+}: SystemProps) {
   const [messageApi] = message.useMessage();
 
-  const menuList: menuType[] = [
+  const menuList: MenuType[] = [
     { fileName: "NOTICE.md", key: "notice", title: "📢 系统公告" },
     { fileName: "OPERATION.md", key: "important", title: "📃 系统须知" },
   ];
 
   const [systemKey, setSystemKey] = useState("notice");
-
   const [pageValue, setPageValue] = useState("");
 
   const getReadNotice = async (fileName: string) => {
@@ -35,15 +49,11 @@ export default function SystemDilaog({ dialogOpen, onCancel }: SystemProps) {
         },
         method: "GET",
       });
-      // 4. 解析 JSON 响应体
       const result = await res.json();
 
-      // 5. 根据你的业务 code 字段判断是否成功
       if (result.code === 200) {
-        // 返回文件内容字符串
         setPageValue(result.data);
       } else {
-        // 路由中定义的业务错误信息
         throw new Error(result.message || "获取文件内容失败");
       }
     } catch {
@@ -51,7 +61,7 @@ export default function SystemDilaog({ dialogOpen, onCancel }: SystemProps) {
     }
   };
 
-  const menuClick = (item: menuType) => {
+  const menuClick = (item: MenuType) => {
     setSystemKey(item.key);
     getReadNotice(item.fileName);
   };
@@ -59,6 +69,7 @@ export default function SystemDilaog({ dialogOpen, onCancel }: SystemProps) {
   useMount(() => {
     getReadNotice("NOTICE.md");
   });
+
   return (
     <Modal
       centered={true}
@@ -66,22 +77,42 @@ export default function SystemDilaog({ dialogOpen, onCancel }: SystemProps) {
       footer
       onCancel={onCancel}
       open={dialogOpen}
+      styles={{
+        body: {
+          background: "var(--app-panel)",
+          color: "var(--app-text)",
+        },
+        content: {
+          background: "var(--app-panel)",
+        },
+        header: {
+          background: "var(--app-panel)",
+          borderBottom: "1px solid var(--app-border)",
+        },
+      }}
       title="系统"
       width={700}
     >
       <div className="flex h-[400px] w-full">
-        <div className="f-ull flex w-[160px] flex-col gap-[10px] border-gray-300 border-r border-solid pr-[10px]">
+        <div
+          className="f-ull flex w-[160px] flex-col gap-[10px] border-r border-solid pr-[10px]"
+          style={{ borderColor: "var(--app-border)" }}
+        >
           {menuList.map((item) => (
             <div
-              className={`flex h-[36px] w-full cursor-pointer items-center rounded-lg px-[10px] ${systemKey === item.key ? "bg-gray-800 text-white" : ""} `}
+              className="flex h-[36px] w-full cursor-pointer items-center rounded-lg px-[10px] transition-colors"
               key={item.key}
               onClick={() => menuClick(item)}
+              style={systemKey === item.key ? activeMenuStyle : inactiveMenuStyle}
             >
               {item.title}
             </div>
           ))}
         </div>
-        <div className="h-full flex-1 overflow-y-auto">
+        <div
+          className="h-full flex-1 overflow-y-auto"
+          style={{ color: "var(--app-text)" }}
+        >
           <div className="markdown-box max-w-none px-[20px]">
             <Markdown rehypePlugins={[rehypeRaw]}>{pageValue}</Markdown>
           </div>
