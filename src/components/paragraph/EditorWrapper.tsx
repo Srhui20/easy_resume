@@ -1,99 +1,64 @@
 import dynamic from "next/dynamic";
-import { memo, useCallback, useEffect, useRef, useState } from "react";
+import { memo, useCallback } from "react";
 import { usePublicStore } from "@/lib/store/public";
+
+const MyEditor = dynamic(() => import("../MyEditor"), { ssr: false });
 
 export const EditorWrapper = memo(
   function EditorWrapper({
-    chooseId,
     attributeIndex,
     paragraphId,
-    paragraphIndex,
   }: {
-    chooseId: string;
     attributeIndex: number;
     paragraphId: string;
-    paragraphIndex: number;
   }) {
-    const MyEditor = dynamic(() => import("../MyEditor"), { ssr: false });
-
-    const updateResumeData = usePublicStore((state) => state.updateResumeData);
-
-    const resumeDataRef = useRef(usePublicStore.getState().resumeData);
-    const chooseIdRef = useRef(chooseId);
-    const paragraphIndexRef = useRef(paragraphIndex);
-    const attributeIndexRef = useRef(attributeIndex);
-
-    const getInitialPageLabel = () => {
-      const state = usePublicStore.getState();
-
-      if (chooseId || state.attributeIndex !== attributeIndex) {
-        return "";
-      }
-      return (
-        resumeDataRef.current[attributeIndexRef.current].paragraphArr?.[
-          paragraphIndexRef.current
-        ].label ?? ""
-      );
-    };
-
-    const [editValue, setEditValue] = useState(getInitialPageLabel());
-
-    const editorKeyRef = useRef(`${chooseId}-${paragraphId}`);
-
-    useEffect(() => {
-      const state = usePublicStore.getState();
-      resumeDataRef.current = state.resumeData;
-      chooseIdRef.current = chooseId;
-      attributeIndexRef.current = attributeIndex;
-
-      // 重新读取初始值并更新 key，强制 MyEditor 重新创建
-      if (state.chooseId === chooseId) {
-        setEditValue(
-          resumeDataRef.current[attributeIndexRef.current].paragraphArr?.[
-            paragraphIndexRef.current
-          ]?.label ?? "",
-        );
-        editorKeyRef.current = `${chooseId}`;
-      }
-    }, [chooseId, attributeIndex]);
+    const setResumeData = usePublicStore((state) => state.setResumeData);
+    const nodeId = usePublicStore((state) => {
+      const node = state.resumeData[attributeIndex];
+      return node?.id;
+    });
+    const paragraphValue = usePublicStore((state) => {
+      const node = state.resumeData[attributeIndex];
+      return node?.paragraphArr?.find((item) => item.id === paragraphId)?.label;
+    });
 
     const editPageContent = useCallback(
       (val: string) => {
         const currentState = usePublicStore.getState();
-        resumeDataRef.current = currentState.resumeData;
+        if (!nodeId) return;
 
-        const cNode = resumeDataRef.current[attributeIndexRef.current];
-        if (!cNode) return;
+        setResumeData(
+          currentState.resumeData.map((node) => {
+            if (node.id !== nodeId) return node;
 
-        updateResumeData({
-          ...cNode,
-          paragraphArr:
-            cNode?.paragraphArr?.map((item) => {
-              if (item.id === paragraphId) {
-                item.label = val;
-              }
-              return {
-                ...item,
-              };
-            }) ?? [],
-        });
-
-        // 更新 ref
-        resumeDataRef.current = usePublicStore.getState().resumeData;
+            return {
+              ...node,
+              paragraphArr:
+                node.paragraphArr?.map((item) => {
+                  return {
+                    ...item,
+                    label: item.id === paragraphId ? val : item.label,
+                  };
+                }) ?? [],
+            };
+          }),
+        );
       },
-      [updateResumeData, paragraphId],
+      [nodeId, paragraphId, setResumeData],
     );
 
     return (
       <MyEditor
-        key={editorKeyRef.current}
+        initialValue={paragraphValue ?? ""}
+        key={paragraphId}
         onChange={editPageContent}
-        value={editValue}
       />
     );
   },
   (prevProps, nextProps) => {
-    // 自定义比较函数：只有 chooseId 变化时才重新渲染
-    return prevProps.chooseId === nextProps.chooseId;
+    return (
+      prevProps.attributeIndex === nextProps.attributeIndex &&
+      prevProps.paragraphId === nextProps.paragraphId
+    );
   },
 );

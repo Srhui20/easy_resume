@@ -27,7 +27,6 @@ import { useParagraph, useParagraphText } from "./useParagraphStyle";
 
 export default function ResumeParagraphStyle() {
   // 使用 selector 只订阅需要的值
-  const chooseId = usePublicStore((state) => state.chooseId);
   const attributeIndex = usePublicStore((state) => state.attributeIndex);
 
   const {
@@ -230,9 +229,7 @@ export default function ResumeParagraphStyle() {
                 </div>
                 <EditorWrapper
                   attributeIndex={attributeIndex}
-                  chooseId={chooseId}
                   paragraphId={item.id}
-                  paragraphIndex={index}
                 />
               </motion.div>
               <div className="flex h-full flex-col gap-[5px]">

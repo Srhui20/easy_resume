@@ -3,70 +3,69 @@
 import "@wangeditor-next/editor/dist/css/style.css"; // 引入 css
 import type { IDomEditor } from "@wangeditor-next/editor";
 import { Editor, Toolbar } from "@wangeditor-next/editor-for-react";
-import { memo, useEffect, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
 
 interface Props {
-  value: string;
+  initialValue: string;
   onChange: (val: string) => void;
 }
-function MyEditor({ value, onChange }: Props) {
-  const [editor, setEditor] = useState<IDomEditor | null>(null); // 存储 editor 实例
-  const initialValueRef = useRef(value); // 只在初始化时使用
-  const onChangeRef = useRef(onChange);
-  const isInitializedRef = useRef(false);
 
-  // 保持 onChange 引用最新
-  useEffect(() => {
-    onChangeRef.current = onChange;
-  }, [onChange]);
+const toolbarConfig = {
+  toolbarKeys: [
+    "headerSelect",
+    "bold",
+    "italic",
+    "through",
+    "color",
+    "bgColor",
+    "fontSize",
+    "fontFamily",
+    "indent",
+    "delIndent",
+    "bulletedList",
+    "numberedList",
+    "fullScreen",
+  ],
+};
 
-  const handleChange = (val: string) => {
-    // 直接调用最新的 onChange
-    if (!editor?.getText()) {
-      return onChangeRef.current("");
-    }
-    onChangeRef.current(val);
-  };
+const editorConfig = {
+  placeholder: "请输入内容...",
+};
 
-  const toolbarConfig = {
-    toolbarKeys: [
-      "headerSelect",
-      "bold",
-      "italic",
-      "through",
-      "color",
-      "bgColor",
-      "fontSize",
-      "fontFamily",
-      "indent",
-      "delIndent",
-      "bulletedList",
-      "numberedList",
-      "fullScreen",
-    ],
-  };
-  const editorConfig = {
-    placeholder: "请输入内容...",
-  };
+function MyEditor({ initialValue, onChange }: Props) {
+  const [editor, setEditor] = useState<IDomEditor | null>(null);
+  const skipInitialChangeRef = useRef(false);
 
-  // 只在编辑器创建时设置初始值，之后完全不受控
-  useEffect(() => {
-    if (editor && !isInitializedRef.current) {
-      editor?.setHtml(initialValueRef.current);
-      isInitializedRef.current = true;
+  const handleCreated = useCallback(
+    (createdEditor: IDomEditor) => {
+      skipInitialChangeRef.current = true;
+      createdEditor.setHtml(initialValue);
+      setEditor(createdEditor);
       setTimeout(() => {
-        editor.focus(true);
+        createdEditor.focus(true);
       });
-    }
-  }, [editor]);
+    },
+    [initialValue],
+  );
 
-  // 及时销毁 editor
+  const handleChange = useCallback(
+    (currentEditor: IDomEditor) => {
+      const nextValue = currentEditor.getText() ? currentEditor.getHtml() : "";
+      if (skipInitialChangeRef.current) {
+        skipInitialChangeRef.current = false;
+        if (nextValue === "" || nextValue === initialValue) return;
+      }
+
+      onChange(nextValue);
+    },
+    [initialValue, onChange],
+  );
+
   useEffect(() => {
     return () => {
+      skipInitialChangeRef.current = false;
       if (editor == null) return;
       editor.destroy();
-      setEditor(null);
-      isInitializedRef.current = false;
     };
   }, [editor]);
 
@@ -81,21 +80,14 @@ function MyEditor({ value, onChange }: Props) {
       <Editor
         defaultConfig={editorConfig}
         mode="default"
-        onChange={(editor) => handleChange(editor.getHtml())}
-        onCreated={setEditor}
+        onChange={handleChange}
+        onCreated={handleCreated}
         style={{ height: "250px" }}
       />
     </div>
   );
 }
 
-// 使用自定义比较函数
-// 编辑器完全不受控，只在初始化时设置值，所以 props 变化不应该导致重新渲染
-// 当需要更新内容时，通过 key 变化来重新创建组件
 export default memo(MyEditor, (prevProps, nextProps) => {
-  // 如果 value 变化，可能是切换节点，应该重新创建（通过 key 处理）
-  // 如果 value 相同，不重新渲染
-  // 但实际上，由于 EditorWrapper 使用了 key，value 变化时 key 也会变化，组件会重新创建
-  // 所以这里可以总是返回 true，表示不因为 props 变化而重新渲染
-  return prevProps.value === nextProps.value;
+  return prevProps.initialValue === nextProps.initialValue;
 });

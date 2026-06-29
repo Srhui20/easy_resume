@@ -26,7 +26,6 @@ export default function MobileParagraphStyle() {
   const updateResumeData = usePublicStore((state) => state.updateResumeData);
   const setUndoList = useUndoStore.getState().setUndoList;
 
-  const chooseId = usePublicStore((state) => state.chooseId);
   const attributeIndex = usePublicStore((state) => state.attributeIndex);
   const {
     fontStylesList,
@@ -233,9 +232,7 @@ export default function MobileParagraphStyle() {
                 </div>
                 <EditorWrapper
                   attributeIndex={attributeIndex}
-                  chooseId={chooseId}
                   paragraphId={item.id}
-                  paragraphIndex={index}
                 />
               </motion.div>
               <div className="flex h-full flex-col gap-[5px]">
