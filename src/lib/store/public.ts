@@ -29,6 +29,7 @@ interface PublicState {
    * @returns
    */
   setResumeData: (value: PAGE_ATTRIBUTE[]) => void;
+  applyResumeSnapshot: (value: PAGE_ATTRIBUTE[]) => void;
   /**
    * 选择页面元素
    * @param id
@@ -55,6 +56,7 @@ interface PublicState {
    * @returns
    */
   setChooseValue: (chooseId: string, ai: number) => void;
+  syncSelectionWithResumeData: (value: PAGE_ATTRIBUTE[]) => void;
 
   clearAlignLabel: () => void;
 
@@ -69,10 +71,12 @@ interface PublicState {
    * @returns
    */
   movePageAttribute: (
+    targetId: string,
     clientX: number,
     clientY: number,
     attrX: number,
     attrY: number,
+    attrSize: { height: number; width: number },
     scale: number,
   ) => void;
   /**
@@ -96,6 +100,54 @@ interface PublicState {
 }
 
 export const usePublicStore = create<PublicState>((set) => ({
+  applyResumeSnapshot: (value) =>
+    set((state) => {
+      if (!state.chooseId) {
+        return {
+          attributeIndex: 0,
+          chooseId: "",
+          resumeData: value.map((item) => ({
+            ...item,
+            style: {
+              ...item.style,
+              zIndex: item.type === "baseInfo" ? 1 : 0,
+            },
+          })),
+        };
+      }
+
+      const nextIndex = value.findIndex((item) => item.id === state.chooseId);
+      if (nextIndex === -1) {
+        return {
+          attributeIndex: 0,
+          chooseId: "",
+          resumeData: value.map((item) => ({
+            ...item,
+            style: {
+              ...item.style,
+              zIndex: item.type === "baseInfo" ? 1 : 0,
+            },
+          })),
+        };
+      }
+
+      return {
+        attributeIndex: nextIndex,
+        chooseId: state.chooseId,
+        resumeData: value.map((item) => ({
+          ...item,
+          style: {
+            ...item.style,
+            zIndex:
+              item.id === state.chooseId
+                ? 99
+                : item.type === "baseInfo"
+                  ? 1
+                  : 0,
+          },
+        })),
+      };
+    }),
   attributeIndex: 0,
   chooseId: "",
   clearAlignLabel: () =>
@@ -146,10 +198,25 @@ export const usePublicStore = create<PublicState>((set) => ({
       };
     }),
   isMoving: false,
-  movePageAttribute: (clientX, clientY, attrX, attrY, scale) =>
+  movePageAttribute: (
+    targetId,
+    clientX,
+    clientY,
+    attrX,
+    attrY,
+    attrSize,
+    scale,
+  ) =>
     set((state) => {
       const attrs = [...state.resumeData];
-      const { attributeIndex: ai } = state;
+      const ai = attrs.findIndex((item) => item.id === targetId);
+      if (ai === -1) {
+        return state;
+      }
+      const currentAttr = attrs[ai];
+      if (!currentAttr) {
+        return state;
+      }
 
       const {
         left: pageLeft = 0,
@@ -157,19 +224,15 @@ export const usePublicStore = create<PublicState>((set) => ({
         width: pageWidth,
         height: pageHeight,
       } = state.pageRef?.getBoundingClientRect() as DOMRect;
-      const {
-        left: attrLeft = 0,
-        top: attrTop = 0,
-        width: attrWidth,
-        height: attrHeight,
-      } = attrs[ai].ref?.getBoundingClientRect() as DOMRect;
+      const { width: attrWidth, height: attrHeight } = attrSize;
+      if (!attrWidth || !attrHeight) return state;
 
       /**
        * clientX - pageLeft 鼠标在纸里的位置
        * attrX - attrLeft 鼠标在元素里的位置
        */
-      let left = (clientX - pageLeft - attrX + attrLeft) / scale;
-      let top = (clientY - pageTop - attrY + attrTop) / scale;
+      let left = (clientX - pageLeft - attrX) / scale;
+      let top = (clientY - pageTop - attrY) / scale;
       const maxLeft = (pageWidth - attrWidth) / scale - 0;
       const maxTop = (pageHeight - attrHeight) / scale - 0;
       if (left <= 0) left = 0;
@@ -183,7 +246,7 @@ export const usePublicStore = create<PublicState>((set) => ({
       let alignTop = 0;
 
       attrs.forEach((item, index) => {
-        if (index === ai) return;
+        if (!item || index === ai) return;
 
         const { left: itLeft = "", top: itTop = "" } = item.style;
         const leftInt = parseInt(itLeft as string, 10);
@@ -214,8 +277,8 @@ export const usePublicStore = create<PublicState>((set) => ({
       left = alignLeft === 0 ? left : alignLeft;
       top = alignTop === 0 ? top : alignTop;
 
-      attrs[ai].style = {
-        ...attrs[ai].style,
+      currentAttr.style = {
+        ...currentAttr.style,
         left: `${left}px`,
         top: `${top}px`,
         zIndex: 99,
@@ -264,6 +327,28 @@ export const usePublicStore = create<PublicState>((set) => ({
   setScale: (val) =>
     set({
       scale: val,
+    }),
+  syncSelectionWithResumeData: (value) =>
+    set((state) => {
+      if (!state.chooseId) {
+        return {
+          attributeIndex: 0,
+          chooseId: "",
+        };
+      }
+
+      const nextIndex = value.findIndex((item) => item.id === state.chooseId);
+      if (nextIndex === -1) {
+        return {
+          attributeIndex: 0,
+          chooseId: "",
+        };
+      }
+
+      return {
+        attributeIndex: nextIndex,
+        chooseId: state.chooseId,
+      };
     }),
   updateResumeData: (data) =>
     set((state) => ({

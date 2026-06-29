@@ -27,7 +27,6 @@ export default function MainContainer() {
   const resumeData = usePublicStore((state) => state.resumeData);
   const isMoving = usePublicStore((state) => state.isMoving);
   const chooseId = usePublicStore((state) => state.chooseId);
-  const attributeIndex = usePublicStore((state) => state.attributeIndex);
   // const pageRef = usePublicStore((state) => state.pageRef);
   const setPageRef = usePublicStore((state) => state.setPageRef);
   const movePageAttribute = usePublicStore((state) => state.movePageAttribute);
@@ -79,15 +78,20 @@ export default function MainContainer() {
     setResumeData(localData);
   }, [resetHistory, setResumeData]);
 
-  const [position, setPosition] = useState({
+  const dragOffsetRef = useRef({
     x: 0,
     y: 0,
+  });
+  const dragSizeRef = useRef({
+    height: 0,
+    width: 0,
   });
 
   // 使用 requestAnimationFrame 合并一帧内多次 move 调用
   const lastPosRef = useRef<{ clientX: number; clientY: number } | null>(null);
   const rafIdRef = useRef<number | null>(null);
   const isMovingRef = useRef<boolean>(false);
+  const draggingIdRef = useRef<string>("");
 
   useEffect(() => {
     isMovingRef.current = isMoving;
@@ -99,26 +103,44 @@ export default function MainContainer() {
     ai: number,
   ) => {
     $e.stopPropagation();
-    if (attrId !== chooseId || ai !== attributeIndex) return;
     if ($e.ctrlKey || $e.metaKey) {
       return;
     }
+    const currentAttr = usePublicStore.getState().resumeData[ai];
+    if (!currentAttr || currentAttr.type === "paragraph") {
+      setChooseResumeData(attrId);
+      return;
+    }
+
+    setChooseResumeData(attrId);
     setUndoList(usePublicStore.getState().resumeData);
-    setPosition({
-      x: $e.nativeEvent.clientX,
-      y: $e.nativeEvent.clientY,
-    });
+    const rect = $e.currentTarget.getBoundingClientRect();
+    dragOffsetRef.current = {
+      x: $e.nativeEvent.clientX - rect.left,
+      y: $e.nativeEvent.clientY - rect.top,
+    };
+    dragSizeRef.current = {
+      height: rect.height,
+      width: rect.width,
+    };
     setChooseValue(attrId, ai);
+    draggingIdRef.current = attrId;
+    isMovingRef.current = true;
     setIsMoving(true);
   };
 
   const moveChooseAttribute = useCallback(
     ($e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-      if (!isMoving) return;
+      if (!isMovingRef.current) return;
       if ($e.ctrlKey || $e.metaKey) {
         return;
       }
-      if (resumeData[attributeIndex].type === "paragraph") return;
+
+      const currentState = usePublicStore.getState();
+      const currentAttr = currentState.resumeData.find(
+        (item) => item.id === draggingIdRef.current,
+      );
+      if (!currentAttr || currentAttr.type === "paragraph") return;
       $e.stopPropagation();
 
       const clientX = $e.nativeEvent.clientX;
@@ -132,32 +154,34 @@ export default function MainContainer() {
           if (!lastPosRef.current || !isMovingRef.current) return;
           const { clientX: lx, clientY: ly } = lastPosRef.current;
 
-          movePageAttribute(lx, ly, position.x, position.y, scale);
-          setPosition({
-            x: lx,
-            y: ly,
-          });
+          movePageAttribute(
+            draggingIdRef.current,
+            lx,
+            ly,
+            dragOffsetRef.current.x,
+            dragOffsetRef.current.y,
+            dragSizeRef.current,
+            scale,
+          );
         });
       }
     },
-    [
-      attributeIndex,
-      isMoving,
-      movePageAttribute,
-      position.x,
-      position.y,
-      resumeData,
-      scale,
-    ],
+    [movePageAttribute, scale],
   );
 
   const mouseUpAttribute = () => {
-    if (!isMoving) return;
+    if (!isMovingRef.current) return;
+    draggingIdRef.current = "";
+    isMovingRef.current = false;
     setIsMoving(false);
-    setPosition({
+    dragOffsetRef.current = {
       x: 0,
       y: 0,
-    });
+    };
+    dragSizeRef.current = {
+      height: 0,
+      width: 0,
+    };
   };
 
   // 组件卸载时清理未完成的动画帧
@@ -172,6 +196,15 @@ export default function MainContainer() {
   useUpdateEffect(() => {
     if (!isMoving) {
       clearAlignLabel();
+      draggingIdRef.current = "";
+      dragOffsetRef.current = {
+        x: 0,
+        y: 0,
+      };
+      dragSizeRef.current = {
+        height: 0,
+        width: 0,
+      };
     }
   }, [isMoving, clearAlignLabel]);
 

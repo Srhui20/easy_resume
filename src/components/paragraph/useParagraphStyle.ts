@@ -22,7 +22,7 @@ export const useParagraph = () => {
 
   const currentNode: PAGE_ATTRIBUTE | null = usePublicStore((state) => {
     if (!state.chooseId) return null;
-    return state.resumeData[state.attributeIndex];
+    return state.resumeData[state.attributeIndex] ?? null;
   });
 
   const beginHistorySession = useCallback(
@@ -287,7 +287,7 @@ export const useParagraph = () => {
 export const useParagraphText = () => {
   const currentNode: PAGE_ATTRIBUTE | null = usePublicStore((state) => {
     if (!state.chooseId) return null;
-    return state.resumeData[state.attributeIndex];
+    return state.resumeData[state.attributeIndex] ?? null;
   });
 
   const updateResumeData = usePublicStore((state) => state.updateResumeData);

@@ -21,7 +21,7 @@ import { useParagraph, useParagraphText } from "./useParagraphStyle";
 export default function MobileParagraphStyle() {
   const currentNode: PAGE_ATTRIBUTE | null = usePublicStore((state) => {
     if (!state.chooseId) return null;
-    return state.resumeData[state.attributeIndex];
+    return state.resumeData[state.attributeIndex] ?? null;
   });
   const updateResumeData = usePublicStore((state) => state.updateResumeData);
   const setUndoList = useUndoStore.getState().setUndoList;

@@ -10,7 +10,7 @@ import { useBaseInfoStyle } from "./useBaseInfoStyle";
 export default function ResumeBaseInfoStyle() {
   const currentNode: PAGE_ATTRIBUTE | null = usePublicStore((state) => {
     if (!state.chooseId) return null;
-    return state.resumeData[state.attributeIndex];
+    return state.resumeData[state.attributeIndex] ?? null;
   });
 
   const {

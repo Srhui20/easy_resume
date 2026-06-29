@@ -15,8 +15,11 @@ export const useOperation = () => {
   const resumeData = usePublicStore((state) => state.resumeData);
   const delAttribute = usePublicStore((state) => state.delAttribute);
   const chooseId = usePublicStore((state) => state.chooseId);
-  const setResumeData = usePublicStore((state) => state.setResumeData);
+  const applyResumeSnapshot = usePublicStore(
+    (state) => state.applyResumeSnapshot,
+  );
   const clearChoose = usePublicStore((state) => state.clearChoose);
+  const setIsMoving = usePublicStore((state) => state.setIsMoving);
 
   const undoList = useUndoStore((state) => state.undoList);
   const redoList = useUndoStore((state) => state.redoList);
@@ -229,16 +232,18 @@ export const useOperation = () => {
 
   const toUndo = () => {
     if (!undoList.length) return;
+    setIsMoving(false);
     const currentResumeData = usePublicStore.getState().resumeData;
     const prevResumeData = toSetUndo(currentResumeData);
-    if (prevResumeData) setResumeData(prevResumeData);
+    if (prevResumeData) applyResumeSnapshot(prevResumeData);
   };
 
   const toRedo = () => {
     if (!redoList.length) return;
+    setIsMoving(false);
     const currentResumeData = usePublicStore.getState().resumeData;
     const nextResumeData = toSetRedo(currentResumeData);
-    if (nextResumeData) setResumeData(nextResumeData);
+    if (nextResumeData) applyResumeSnapshot(nextResumeData);
   };
 
   const { run: throttledHandleClick } = useThrottleFn(
@@ -287,7 +292,7 @@ export const useOperation = () => {
             onOk() {
               resetHistory();
               setUndoList(resumeData);
-              setResumeData(arr);
+              applyResumeSnapshot(arr);
               clearChoose();
             },
             title: "导入文件",

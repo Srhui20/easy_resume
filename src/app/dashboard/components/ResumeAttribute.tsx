@@ -6,7 +6,7 @@ import type { PAGE_ATTRIBUTE } from "@/types/resume";
 export default function ResumeAttribute() {
   const currentNode: PAGE_ATTRIBUTE | null = usePublicStore((state) => {
     if (!state.chooseId) return null;
-    return state.resumeData[state.attributeIndex];
+    return state.resumeData[state.attributeIndex] ?? null;
   });
 
   const isBaseInfo = currentNode?.type === "baseInfo";

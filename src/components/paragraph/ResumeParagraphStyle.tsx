@@ -51,7 +51,7 @@ export default function ResumeParagraphStyle() {
   // 订阅 currentNode 的其他属性（用于样式等）
   const currentNode: PAGE_ATTRIBUTE | null = usePublicStore((state) => {
     if (!state.chooseId) return null;
-    return state.resumeData[state.attributeIndex];
+    return state.resumeData[state.attributeIndex] ?? null;
   });
 
   const iconMap = {

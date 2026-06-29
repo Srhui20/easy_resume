@@ -31,6 +31,7 @@ import { useIsMobile } from "@/lib/hooks/useIsMobile";
 import { useTypesetting } from "@/lib/hooks/useTypesetting";
 import { usePrintStore } from "@/lib/store/print";
 import { usePublicStore } from "@/lib/store/public";
+import { useUndoStore } from "@/lib/store/undo";
 import type { OperationBtnType, PAGE_ATTRIBUTE } from "@/types/resume";
 import AiMessageDialog from "./components/AiMessageDialog";
 import { ChooseTheme } from "./components/ChooseTheme";
@@ -42,8 +43,16 @@ import { useMobilePage } from "./hooks/usePage";
 export default function Dashboard() {
   const [messageApi, contextHolder] = message.useMessage();
   const resumeData = usePublicStore((state) => state.resumeData);
+  const applyResumeSnapshot = usePublicStore(
+    (state) => state.applyResumeSnapshot,
+  );
   const clearChoose = usePublicStore((state) => state.clearChoose);
   const chooseId = usePublicStore((state) => state.chooseId);
+  const setIsMoving = usePublicStore((state) => state.setIsMoving);
+  const undoList = useUndoStore((state) => state.undoList);
+  const redoList = useUndoStore((state) => state.redoList);
+  const toSetUndo = useUndoStore((state) => state.toSetUndo);
+  const toSetRedo = useUndoStore((state) => state.toSetRedo);
 
   const { setPrintData, setRsData } = useTypesetting();
   const printResumeData = usePrintStore((state) => state.printResumeData);
@@ -81,6 +90,58 @@ export default function Dashboard() {
     if (!printResumeData.length) return;
     setRsData();
   }, [printResumeData, setRsData]);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.defaultPrevented) return;
+
+      const target = event.target;
+      if (
+        target instanceof HTMLElement &&
+        (target.isContentEditable ||
+          ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName) ||
+          target.closest(".w-e-text-container"))
+      ) {
+        return;
+      }
+
+      const isUndo =
+        (event.metaKey || event.ctrlKey) &&
+        !event.shiftKey &&
+        event.key === "z";
+      const isRedo =
+        (event.metaKey && event.shiftKey && event.key === "z") ||
+        (event.ctrlKey && event.key === "y");
+
+      if (isUndo) {
+        if (!undoList.length) return;
+        event.preventDefault();
+        setIsMoving(false);
+        const prevResumeData = toSetUndo(usePublicStore.getState().resumeData);
+        if (prevResumeData) applyResumeSnapshot(prevResumeData);
+      }
+
+      if (isRedo) {
+        if (!redoList.length) return;
+        event.preventDefault();
+        setIsMoving(false);
+        const nextResumeData = toSetRedo(usePublicStore.getState().resumeData);
+        if (nextResumeData) applyResumeSnapshot(nextResumeData);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [
+    redoList.length,
+    applyResumeSnapshot,
+    setIsMoving,
+    toSetRedo,
+    toSetUndo,
+    undoList.length,
+  ]);
 
   const btnList: OperationBtnType[] = [
     {
@@ -194,7 +255,7 @@ export default function Dashboard() {
 
   const currentNode: PAGE_ATTRIBUTE | null = usePublicStore((state) => {
     if (!state.chooseId) return null;
-    return state.resumeData[state.attributeIndex];
+    return state.resumeData[state.attributeIndex] ?? null;
   });
 
   const isBaseInfo = currentNode?.type === "baseInfo";
