@@ -11,19 +11,19 @@ COPY chrome/chrome-linux /opt/chrome/chrome-linux
 # 3. 给执行权限（双保险）
 RUN chmod +x /opt/chrome/chrome-linux/chrome
 
-# 安装与当前 lockfile 兼容的 pnpm
-RUN npm install -g pnpm@8.15.8
+# 安装固定版本的 pnpm，避免 Docker 中拿到过新的主版本
+RUN npm install -g pnpm@10.17.1
 
 # 设置工作目录
 WORKDIR /app
 
 # 2. 先拷贝依赖文件（利用缓存）
 # 确保你的服务器上有 pnpm-lock.yaml，如果没有，就把这行删掉
-COPY package.json pnpm-lock.yaml* ./
+COPY package.json pnpm-lock.yaml* .npmrc ./
 
 # 安装依赖
-# 使用旧版 lockfile，并显式允许依赖安装阶段的构建脚本
-RUN pnpm install --frozen-lockfile --config.ignore-scripts=false
+# Docker 构建时允许 lockfile 做兼容性更新，避免因为 pnpm 主版本差异直接失败
+RUN pnpm install --no-frozen-lockfile --config.ignore-scripts=false
 
 # 3. 拷贝所有源代码
 # 这步会把你的 app/ 目录、public/ 目录等拷贝到 /app
