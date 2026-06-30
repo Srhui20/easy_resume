@@ -11,8 +11,8 @@ COPY chrome/chrome-linux /opt/chrome/chrome-linux
 # 3. 给执行权限（双保险）
 RUN chmod +x /opt/chrome/chrome-linux/chrome
 
-# 安装 pnpm
-RUN npm install -g pnpm
+# 安装与当前 lockfile 兼容的 pnpm
+RUN npm install -g pnpm@8.15.8
 
 # 设置工作目录
 WORKDIR /app
@@ -22,8 +22,8 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml* ./
 
 # 安装依赖
-# --frozen-lockfile 确保环境一致性
-RUN pnpm install
+# 使用旧版 lockfile，并显式允许依赖安装阶段的构建脚本
+RUN pnpm install --frozen-lockfile --config.ignore-scripts=false
 
 # 3. 拷贝所有源代码
 # 这步会把你的 app/ 目录、public/ 目录等拷贝到 /app
